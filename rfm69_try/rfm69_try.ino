@@ -2,7 +2,7 @@
 #include <RFM69.h>
 
 #define CLOCK_MS 10   // 100Hz
-#define PIN_LED 9
+#define PIN_LED 9     // pulses, so has to support PWM/analogWrite()
 
 #define DEBUG(input)   Serial.print(input)
 #define DEBUGln(input) Serial.println(input)
@@ -48,8 +48,8 @@ void loop() {
 
   // tick
   unsigned long newTick = millis();
-  int needSleep = newTick - lastTick;
-  if (needSleep > 0) delay(needSleep);
+  int needSleep = CLOCK_MS - (newTick - lastTick);
+  if (needSleep > 0) delay(min(needSleep, CLOCK_MS)); // handle millis() overflow
   lastTick = newTick;
 
   // calculate led brightness for next tick
@@ -58,6 +58,7 @@ void loop() {
   if (input == 't') {
     DEBUGln("Serial test...");
   } else {
+    // 1024ms up, then 1024ms down; so last 10 bits of tick mark brightness, while 11th bit marks direction up or down
     byte brightness = (newTick && 1023)>>2;
     if (newTick & 1024 > 0) brightness = 255 - brightness;
   }
