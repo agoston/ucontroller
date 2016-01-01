@@ -4,6 +4,9 @@
 #define CLOCK_MS 10   // 100Hz
 #define PIN_LED 9
 
+#define DEBUG(input)   Serial.print(input)
+#define DEBUGln(input) Serial.println(input)
+
 // this one gotta be 128 bits long
 #define ENCRYPTKEY      "1;59IUa\"sNL2EA2M"
 
@@ -12,6 +15,7 @@ RFM69 radio;
 int nodeId = 241;
 int networkId = 117;
 unsigned long lastTick = 0;
+char input;
 
 void setup() {
   pinMode(PIN_LED, OUTPUT);
@@ -40,32 +44,15 @@ void loop() {
       DEBUG(" - ACK sent.");
     }
 
-    if (ring)
-    {
-      //if other relay is ON we must temporarily turn it off while we pulse the RING relay, to avoid any rail collapse and reset
-      if (disableStatus) digitalWrite(DISABLE_RELAY, 0);
-      pulseRelay();
-      if (disableStatus) digitalWrite(DISABLE_RELAY, 1);
-      radio.sendWithRetry(GATEWAYID, "RING OK", 4);
-      ring = false;
-    }
-
-    if (disable)
-    {
-      digitalWrite(DISABLE_RELAY, disableStatus); //disable it
-      sprintf(buff, "BELL:%d", disableStatus ? 0 : 1);
-      radio.sendWithRetry(GATEWAYID, buff, 6);
-      disable=false;
-    }
-
-    DEBUGln();
   }
 
+  // tick
   unsigned long newTick = millis();
   int needSleep = newTick - lastTick;
   if (needSleep > 0) delay(needSleep);
   lastTick = newTick;
 
+  // calculate led brightness for next tick
   byte brightness = 255;
 
   if (input == 't') {
