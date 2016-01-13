@@ -1,7 +1,11 @@
 #include <SPI.h>
 #include <RFM69.h>
 
+// TODO: deep sleep library
 #define CLOCK_MS 20   // 50Hz
+
+const byte PIN_MOTOR[4] = {5, 6, 7, 8}; // 2 pins per motor; A is PWM speed, B is direction
+
 #define PIN_LED 3     // pulses, so has to support PWM/analogWrite()
 
 #define DEBUG(input)   Serial.print(input)
@@ -22,7 +26,13 @@ char buf[40];
 
 void setup() {
   Serial.begin(9600);
+
+  for (int i = 0; i < sizeof(PIN_MOTOR); i++) pinMode(PIN_MOTOR[i], OUTPUT);
   pinMode(PIN_LED, OUTPUT);
+
+  drive(0, 0);
+  drive(1, 0);
+
   radio.initialize(RF69_433MHZ, nodeId, networkId);
   // don't need that kind of power just yet...
   //radio.setHighPower();
@@ -72,3 +82,9 @@ void loop() {
   
   analogWrite(PIN_LED, brightness);
 }
+
+void drive(byte motor, int speed) {
+  digitalWrite(PIN_MOTOR[motor<<1], abs(speed));
+  digitalWrite(PIN_MOTOR[(motor<<1)+1], speed < 0 ? LOW : HIGH);
+}
+
