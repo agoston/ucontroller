@@ -1,11 +1,9 @@
+#include <LowPower.h>
+
 #include <SPI.h>
 #include <RFM69.h>
 
-// TODO: deep sleep library
-#define CLOCK_MS 20   // 50Hz
-
 const byte PIN_MOTOR[4] = {5, 6, 7, 8}; // 2 pins per motor; A is PWM speed, B is direction
-
 #define PIN_LED 3     // pulses, so has to support PWM/analogWrite()
 
 #define DEBUG(input)   Serial.print(input)
@@ -19,10 +17,9 @@ RFM69 radio;
 
 int nodeId = 241;
 int networkId = 117;
-unsigned long lastTick = 0;
-unsigned int lastSleep = 0;
 char input;
 char buf[40];
+unsigned long lastTick = 0;
 
 void setup() {
   Serial.begin(9600);
@@ -60,13 +57,7 @@ void loop() {
 //
 //  }
 
-  // tick
-  unsigned long newTick = millis();
-  unsigned int needSleep = min(CLOCK_MS, CLOCK_MS - (newTick - lastTick - lastSleep));
-//  DEBUGln(needSleep);
-  delay(needSleep);
-  lastTick = newTick;
-  lastSleep = needSleep;
+  unsigned int elapsed = tick();
 
   // calculate led brightness for next tick
   byte brightness = 255;
@@ -75,16 +66,27 @@ void loop() {
     DEBUGln("Serial test...");
   } else {
     // 1024ms up, then 1024ms down; so last 10 bits of tick mark brightness, while 11th bit marks direction up or down
-    brightness = (byte)(newTick>>2);
-    if ((newTick >> 10 & 1) != 0) brightness = ~brightness;
-    LOG("%u - %u\n", needSleep, brightness);
+    brightness = (byte)(lastTick>>2);
+    if ((lastTick >> 10 & 1) != 0) brightness = ~brightness;
+    LOG("%u - %u\n", elapsed, brightness);
   }
   
   analogWrite(PIN_LED, brightness);
 }
 
+/************************ L9110 */
 void drive(byte motor, int speed) {
   digitalWrite(PIN_MOTOR[motor<<1], abs(speed));
   digitalWrite(PIN_MOTOR[(motor<<1)+1], speed < 0 ? LOW : HIGH);
 }
+
+/************************ TICK */
+unsigned int tick() {
+  LowPower.powerDown(SLEEP_30MS, ADC_OFF, BOD_OFF);
+  unsigned long newTick = millis();
+  unsigned int elapsed = newTick - lastTick;
+  lastTick = newTick;
+  return elapsed;
+}
+
 
