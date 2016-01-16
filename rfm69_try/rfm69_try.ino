@@ -1,5 +1,5 @@
+#include <NewPing.h>
 #include <LowPower.h>
-
 #include <SPI.h>
 #include <RFM69.h>
 
@@ -15,14 +15,14 @@ const byte PIN_MOTOR[4] = {5, 6, 7, 8}; // 2 pins per motor; A is PWM speed, B i
 
 RFM69 radio;
 
-int nodeId = 241;
-int networkId = 117;
+uint8_t nodeId = 241;
+uint8_t networkId = 117;
 char input;
 char buf[40];
 unsigned long lastTick = 0;
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
 
   for (int i = 0; i < sizeof(PIN_MOTOR); i++) pinMode(PIN_MOTOR[i], OUTPUT);
   pinMode(PIN_LED, OUTPUT);
@@ -57,7 +57,7 @@ void loop() {
 //
 //  }
 
-  unsigned int elapsed = tick();
+  uint_fast16_t elapsed = tick();
 
   // calculate led brightness for next tick
   byte brightness = 255;
@@ -75,16 +75,16 @@ void loop() {
 }
 
 /************************ L9110 */
-void drive(byte motor, int speed) {
+void drive(byte motor, int_fast16_t speed) {
   digitalWrite(PIN_MOTOR[motor<<1], abs(speed));
   digitalWrite(PIN_MOTOR[(motor<<1)+1], speed < 0 ? LOW : HIGH);
 }
 
 /************************ TICK */
-unsigned int tick() {
+uint_fast16_t tick() {
   LowPower.powerDown(SLEEP_30MS, ADC_OFF, BOD_OFF);
   unsigned long newTick = millis();
-  unsigned int elapsed = newTick - lastTick;
+  uint_fast16_t elapsed = newTick - lastTick;
   lastTick = newTick;
   return elapsed;
 }
