@@ -1,7 +1,7 @@
 #include <NewPing.h>
 #include <SPI.h>
 
-const byte PIN_MOTOR[4] = {5, 6, 7, 8}; // 2 pins per motor; A is PWM speed, B is direction
+const byte PIN_MOTOR[4] = {6, 5, 9, 8}; // 2 pins per motor; A is PWM speed, B is direction
 #define PIN_LED 13     // use built-in LED
 
 #define DEBUG(input)   Serial.print(input)
@@ -54,7 +54,6 @@ void loop() {
     case 3:
       drive(1, 0); break;
   }
-  
 }
 
 /************************ L9110 */
