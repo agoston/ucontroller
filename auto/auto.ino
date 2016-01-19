@@ -1,6 +1,34 @@
 #include <NewPing.h>
 #include <SPI.h>
 
+/**
+Breadboard pin assignments:
+
+U24 = BA
+U23 = BB
+
+U22 = GND
+U21 = VCC
+
+U20 = AA
+U19 = AB
+
+U15 = VCC
+U14 = GND
+
+D11 = D2
+D10 = D3
+D09 = D4
+D08 = D5
+D07 = D6
+D06 = D7
+D05 = D8
+D04 = D9
+D03 = D10
+D02 = D11
+D01 = D12
+*/
+
 const byte PIN_MOTOR[4] = {6, 5, 9, 8}; // 2 pins per motor; A is PWM speed, B is direction
 #define PIN_LED 13     // use built-in LED
 
