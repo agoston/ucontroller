@@ -55,7 +55,7 @@ const byte PIN_MOTOR[4] = {6, 5, 9, 8}; // 2 pins per motor; A is PWM speed, B i
 #define PIN_LED 13     // use built-in LED
 #define PIN_TRIGGER 12
 #define PIN_ECHO 11
-#define MAX_DISTANCE_CM 100
+#define MAX_DISTANCE_CM 80
 
 unsigned long lastTick;
 
@@ -66,10 +66,8 @@ template <typename T> int sgn(T val) {
 
 /************************ L9110 */
 int state_motor[2] = {0, 0};
-
-#define STATE_CRUISING 1
-#define STATE_CHASING 2
-int state = 0;
+int req_motor[2] = {0, 0};
+unsigned long motorTick = 0;
 
 inline byte direction(int speed) {
   return speed < 0 ? LOW : HIGH;
@@ -87,27 +85,28 @@ void setSpeed(byte motor, int speed) {
   state_motor[motor] = speed;
 }
 
+void tick_motor() {
+  u16 elapsed = lastTick - motorTick;
+  motorTick = lastTick;
+  
+  for (byte i = 0; i < 2; i++) {
+    int diff = req_motor[i] - state_motor[i];
+    if (diff == 0) continue;
+    
+    // 1 speed per ms
+    if (diff > 0) {
+      setSpeed(i, state_motor[i] + min(elapsed, diff));
+    } else {
+      setSpeed(i, state_motor[i] + max(-elapsed, diff));
+    }
+  }
+}
+
 // input range: (-255, 255)
 void drive(int left, int right) {
-  // gently scale motors to avoid losing grip on laminated floor
-  int dir_left = sgn(left - state_motor[0]);
-  int dir_right = sgn(right - state_motor[1]);
-  
-  while (state_motor[0] != left || state_motor[1] != right) {
-    if (dir_left) setSpeed(0, state_motor[0] + dir_left);
-    if (dir_right) setSpeed(1, state_motor[1] + dir_right);
-    delay(1);
-  }
+  req_motor[0] = left;
+  req_motor[1] = right;
 }
-
-void tick_motor() {
-  switch (state) {
-    case 0:
-    break;
-  
-  }
-}
-
 
 /************************ LED */
 byte state_led = 0;
@@ -124,18 +123,17 @@ void tick_led() {
 /************************ HC-SR04 */
 NewPing sonar(PIN_TRIGGER, PIN_ECHO, MAX_DISTANCE_CM);
 byte state_ping = 0;
-u16 distance = 0;
+u16 distance[8] = {0,0,0,0,0,0,0,0};
+byte lastDistance = 0;
 
 void tick_ping() {
   // measure about 15 times per second
   byte new_ping = (lastTick >> 6) & 0xff;
   if (new_ping != state_ping) {
     unsigned int uS = sonar.ping();
-    
-    if (uS > US_ROUNDTRIP_CM) {     // ignore measurement errors
-      distance = uS / US_ROUNDTRIP_CM;
-      LOG("Measured %d cm", distance);
-    }
+    lastDistance = (lastDistance + 1) & 7;
+    distance[lastDistance] = uS / US_ROUNDTRIP_CM;
+    LOG("Measured %d cm", distance[lastDistance]);
     
     state_ping = new_ping;
   }
@@ -155,6 +153,11 @@ void setup() {
 }
 
 /************************ LOOP */
+
+#define STATE_CRUISING 1
+#define STATE_CHASING 2
+int state = 0;
+
 void loop() {
 #ifdef DEV
   if (Serial.available()) {
@@ -173,4 +176,31 @@ void loop() {
   tick_led();
   tick_ping();
   tick_motor();
+
+  switch (state) {
+    case STATE_CRUISING:
+      // if last 2 measurements were high enough, switch to CHASE
+      for (int i = lastDistance, j = 0; j < 2; i = (i - 1) & 0xf, j++) {
+        if (distance[i] == 0) break;
+      }
+      drive(255,255);
+      state = STATE_CHASING;
+      break;
+    
+    case STATE_CHASING:
+      // if any of last 4 distance measurement < 10, stop and start cruising
+      for (int i = lastDistance, j = 0; j < 4; i = (i - 1) & 0xf, j++) {
+        if (distance[i] > 0 && distance[i] < 10) {
+          drive(25, 0);
+          state = STATE_CRUISING;
+        }
+      }
+      break;
+    
+    default:  // init
+      motorTick = lastTick;
+      drive(25, 0);
+      state = STATE_CRUISING;
+      break;
+  }
 }
