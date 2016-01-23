@@ -57,42 +57,60 @@ const byte PIN_MOTOR[4] = {6, 5, 9, 8}; // 2 pins per motor; A is PWM speed, B i
 #define PIN_ECHO 11
 #define MAX_DISTANCE_CM 100
 
-NewPing sonar(PIN_TRIGGER, PIN_ECHO, MAX_DISTANCE_CM);
-
 unsigned long lastTick;
 
-byte state_led = 0;
-
-byte state_motor[2] = {0,0};
-
-byte state_ping = 0;
-u16 distance = 0;
+/************************ util */
+template <typename T> int sgn(T val) {
+    return (T(0) < val) - (val < T(0));
+}
 
 /************************ L9110 */
-void drive(byte motor, u16 speed) {
-  LOG("%d %d\n", motor, speed);
-  digitalWrite(PIN_MOTOR[motor<<1], abs(speed));
-  digitalWrite(PIN_MOTOR[(motor<<1)+1], speed < 0 ? LOW : HIGH);
+int state_motor[2] = {0, 0};
+
+#define STATE_CRUISING 1
+#define STATE_CHASING 2
+int state = 0;
+
+inline byte direction(int speed) {
+  return speed < 0 ? LOW : HIGH;
+}
+
+void setSpeed(byte motor, int speed) {
+  if (state_motor[motor] == speed) return;
+  
+  byte req_speed = abs(speed);
+  byte req_direction = direction(speed);
+
+  if (abs(state_motor[motor]) != req_speed) digitalWrite(PIN_MOTOR[motor<<1], req_speed);
+  if (direction(state_motor[motor]) != req_direction) digitalWrite(PIN_MOTOR[(motor<<1)+1], req_direction);
+
+  state_motor[motor] = speed;
+}
+
+// input range: (-255, 255)
+void drive(int left, int right) {
+  // gently scale motors to avoid losing grip on laminated floor
+  int dir_left = sgn(left - state_motor[0]);
+  int dir_right = sgn(right - state_motor[1]);
+  
+  while (state_motor[0] != left || state_motor[1] != right) {
+    if (dir_left) setSpeed(0, state_motor[0] + dir_left);
+    if (dir_right) setSpeed(1, state_motor[1] + dir_right);
+    delay(1);
+  }
 }
 
 void tick_motor() {
-  // TODO: slow start for motors - wheels lose grip instantly when going from zero to high in a single step
+  switch (state) {
+    case 0:
+    break;
   
-  // XXX
-  
-//  switch (state) {
-//    case 0:
-//      drive(0, 96); break;
-//    case 1:
-//      drive(1, 96); break;
-//    case 2:
-//      drive(0, 0); break;
-//    case 3:
-//      drive(1, 0); break;
-//  }
+  }
 }
 
+
 /************************ LED */
+byte state_led = 0;
 void tick_led() {
   // blink about once per second
   byte new_led = (lastTick >> 10) & 1;
@@ -102,10 +120,15 @@ void tick_led() {
   }
 }
 
+
 /************************ HC-SR04 */
+NewPing sonar(PIN_TRIGGER, PIN_ECHO, MAX_DISTANCE_CM);
+byte state_ping = 0;
+u16 distance = 0;
+
 void tick_ping() {
-  // measure about 10 times per second
-  byte new_ping = (lastTick >> 7) & 15;
+  // measure about 15 times per second
+  byte new_ping = (lastTick >> 6) & 0xff;
   if (new_ping != state_ping) {
     unsigned int uS = sonar.ping();
     
@@ -118,7 +141,7 @@ void tick_ping() {
   }
 }
 
-/************************ atmega168/328 */
+/************************ INIT */
 void setup() {
 #ifdef DEV
   delay(50);  // bootloader listens for firmware update, should not get garbage, wait a bit
@@ -128,13 +151,10 @@ void setup() {
   for (int i = 0; i < sizeof(PIN_MOTOR); i++) pinMode(PIN_MOTOR[i], OUTPUT);
   pinMode(PIN_LED, OUTPUT);
 
-  drive(0, 0);
-  drive(1, 0);
-
   lastTick = millis();
 }
 
-// the loop routine runs over and over again forever:
+/************************ LOOP */
 void loop() {
 #ifdef DEV
   if (Serial.available()) {
