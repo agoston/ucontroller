@@ -46,31 +46,32 @@ D01 = D12
 #define LOG(format, args...) snprintf(buf,sizeof(buf),format,args);Serial.println(buf);
 
 char input;
-char buf[40];
+char buf[80];
 #else
 #define LOG(format, args...)
 #endif
 
-const byte PIN_MOTOR[4] = {6, 5, 9, 8}; // 2 pins per motor; A is PWM speed, B is direction
-#define PIN_LED 13     // use built-in LED
-#define PIN_TRIGGER 12
-#define PIN_ECHO 11
-#define MAX_DISTANCE_CM 80
 
 unsigned long lastTick;
+
+
 
 /************************ util */
 template <typename T> int sgn(T val) {
     return (T(0) < val) - (val < T(0));
 }
 
+
+
 /************************ L9110 */
-int state_motor[2] = {0, 0};
+const byte PIN_MOTOR[4] = {6, 5, 9, 8}; // 2 pins per motor; A is PWM speed, B is direction
+
+int state_motor[2] = {-1, -1};
 int req_motor[2] = {0, 0};
 unsigned long motorTick = 0;
 
 inline byte direction(int speed) {
-  return speed < 0 ? LOW : HIGH;
+  return speed <= 0 ? LOW : HIGH;
 }
 
 void setSpeed(byte motor, int speed) {
@@ -79,7 +80,7 @@ void setSpeed(byte motor, int speed) {
   byte req_speed = abs(speed);
   byte req_direction = direction(speed);
 
-  if (abs(state_motor[motor]) != req_speed) digitalWrite(PIN_MOTOR[motor<<1], req_speed);
+  if (abs(state_motor[motor]) != req_speed) analogWrite(PIN_MOTOR[motor<<1], req_speed);
   if (direction(state_motor[motor]) != req_direction) digitalWrite(PIN_MOTOR[(motor<<1)+1], req_direction);
 
   state_motor[motor] = speed;
@@ -108,7 +109,11 @@ void drive(int left, int right) {
   req_motor[1] = right;
 }
 
+
+
+
 /************************ LED */
+#define PIN_LED 13     // use built-in LED
 byte state_led = 0;
 void tick_led() {
   // blink about once per second
@@ -121,6 +126,9 @@ void tick_led() {
 
 
 /************************ HC-SR04 */
+#define PIN_TRIGGER 12
+#define PIN_ECHO 11
+#define MAX_DISTANCE_CM 100
 NewPing sonar(PIN_TRIGGER, PIN_ECHO, MAX_DISTANCE_CM);
 byte state_ping = 0;
 u16 distance[8] = {0,0,0,0,0,0,0,0};
@@ -133,10 +141,75 @@ void tick_ping() {
     unsigned int uS = sonar.ping();
     lastDistance = (lastDistance + 1) & 7;
     distance[lastDistance] = uS / US_ROUNDTRIP_CM;
-    LOG("Measured %d cm", distance[lastDistance]);
     
     state_ping = new_ping;
   }
+}
+
+
+
+/************************ Logic */
+#define STATE_CRUISING 1
+#define STATE_CHASING 2
+int state = 0;
+byte cruiseMotor = 0;
+
+void tick_logic() {
+  // TODO: motor reverses (?!), always at full speed - debug!
+  LOG("distance: %d, state: %d, motor: %d/%d %d/%d", distance[lastDistance], state, state_motor[0], req_motor[0], state_motor[1], req_motor[1]);
+
+  // avoid collosion
+  if (check_obstacle_ahead(2, 5)) {
+    start_halt();
+    return;
+  }
+
+  switch (state) {
+    case STATE_CRUISING:
+      if (check_obstacle_ahead(2, 75)) {
+        drive(0,0);
+        tick_motor(); // evil, but this way we force a stop before acceleration
+        start_chasing();
+      }
+      return;
+
+    case STATE_CHASING:
+      if (check_obstacle_ahead(3, 10)) {
+          start_halt();
+      }
+      return;
+    
+    default:
+      if (check_obstacle_ahead(3, 6)) return;
+      start_cruising();
+  }
+}
+
+boolean check_obstacle_ahead(byte samples, byte cm) {
+  for (int i = lastDistance, j = 0; j < samples; i = (i - 1) & 0xf, j++) {
+    if (distance[i] > cm) return false;
+  }
+  return true;
+}
+
+void start_cruising() {
+  if (cruiseMotor) {
+    drive(5, -5);
+  } else {
+    drive(-5, 5);
+  }
+  cruiseMotor = !cruiseMotor;
+  state = STATE_CRUISING;
+}
+
+void start_chasing() {
+  drive(128,128);
+  state = STATE_CHASING;
+}
+
+void start_halt() {
+  drive(0,0);
+  state = 0;
 }
 
 /************************ INIT */
@@ -150,13 +223,10 @@ void setup() {
   pinMode(PIN_LED, OUTPUT);
 
   lastTick = millis();
+  motorTick = lastTick;
 }
 
 /************************ LOOP */
-
-#define STATE_CRUISING 1
-#define STATE_CHASING 2
-int state = 0;
 
 void loop() {
 #ifdef DEV
@@ -175,32 +245,6 @@ void loop() {
   
   tick_led();
   tick_ping();
+  tick_logic();
   tick_motor();
-
-  switch (state) {
-    case STATE_CRUISING:
-      // if last 2 measurements were high enough, switch to CHASE
-      for (int i = lastDistance, j = 0; j < 2; i = (i - 1) & 0xf, j++) {
-        if (distance[i] == 0) break;
-      }
-      drive(255,255);
-      state = STATE_CHASING;
-      break;
-    
-    case STATE_CHASING:
-      // if any of last 4 distance measurement < 10, stop and start cruising
-      for (int i = lastDistance, j = 0; j < 4; i = (i - 1) & 0xf, j++) {
-        if (distance[i] > 0 && distance[i] < 10) {
-          drive(25, 0);
-          state = STATE_CRUISING;
-        }
-      }
-      break;
-    
-    default:  // init
-      motorTick = lastTick;
-      drive(25, 0);
-      state = STATE_CRUISING;
-      break;
-  }
 }
