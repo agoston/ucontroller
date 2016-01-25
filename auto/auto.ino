@@ -1,6 +1,8 @@
 // this means 3-4 KB (!!!)
 //#define DEV
 
+// TODO: flash LED when obstacle was detected (-> switch states) for easier debug
+
 /*
 Breadboard pin assignments:
 
@@ -152,21 +154,20 @@ void tick_ping() {
 #define STATE_CRUISING 1
 #define STATE_CHASING 2
 int state = 0;
-byte cruiseMotor = 0;
+int cruise = 5;
 
 void tick_logic() {
-  // TODO: motor reverses (?!), always at full speed - debug!
   LOG("distance: %d, state: %d, motor: %d/%d %d/%d", distance[lastDistance], state, state_motor[0], req_motor[0], state_motor[1], req_motor[1]);
 
   // avoid collosion
-  if (check_obstacle_ahead(2, 5)) {
+  if (check_obstacle_ahead(3, 10)) {
     start_halt();
     return;
   }
 
   switch (state) {
     case STATE_CRUISING:
-      if (check_obstacle_ahead(2, 75)) {
+      if (check_obstacle_ahead(3, 60)) {
         drive(0,0);
         tick_motor(); // evil, but this way we force a stop before acceleration
         start_chasing();
@@ -174,9 +175,7 @@ void tick_logic() {
       return;
 
     case STATE_CHASING:
-      if (check_obstacle_ahead(3, 10)) {
-          start_halt();
-      }
+      // standard collosion avoidance good here
       return;
     
     default:
@@ -185,29 +184,32 @@ void tick_logic() {
   }
 }
 
-boolean check_obstacle_ahead(byte samples, byte cm) {
+boolean check_obstacle_ahead(byte samples, byte min_cm) {
   for (int i = lastDistance, j = 0; j < samples; i = (i - 1) & 0xf, j++) {
-    if (distance[i] > cm) return false;
+    // if we have at least 1 sample above threshold, it must be free (tm)
+    // also, 0 = no response, so road is free until MAX_DISTANCE 
+    if (distance[i] == 0 || distance[i] > min_cm) return false;
   }
+  LOG("obstacle within %d cm", min_cm);
   return true;
 }
 
 void start_cruising() {
-  if (cruiseMotor) {
-    drive(5, -5);
-  } else {
-    drive(-5, 5);
-  }
-  cruiseMotor = !cruiseMotor;
+  LOG("starting cruising", 0);
+  // cruise should switch direction time to time to avoid one-sided wear
+  drive(cruise, -cruise);
+  cruise = -cruise;
   state = STATE_CRUISING;
 }
 
 void start_chasing() {
+  LOG("starting chasing", 0);
   drive(128,128);
   state = STATE_CHASING;
 }
 
 void start_halt() {
+  LOG("starting halting", 0);
   drive(0,0);
   state = 0;
 }
