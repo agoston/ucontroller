@@ -1,7 +1,7 @@
 // this means 3-4 KB (!!!)
 //#define DEV
 
-// TODO: flash LED when obstacle was detected (-> switch states) for easier debug
+// TODO: fine-tune! still headbangs radiator; even speed 2 goes very fast 
 
 /*
 Breadboard pin assignments:
@@ -115,15 +115,17 @@ void drive(int left, int right) {
 
 
 /************************ LED */
-#define PIN_LED 13     // use built-in LED
-byte state_led = 0;
+byte state_led = LOW;
 void tick_led() {
-  // blink about once per second
-  byte new_led = (lastTick >> 10) & 1;
-  if (new_led != state_led) {
-    digitalWrite(LED_BUILTIN, (new_led > 0 ? HIGH : LOW));
-    state_led = new_led;
-  }
+//  // blink about once per second
+//  byte new_led = (lastTick >> 10) & 1;
+//  if (new_led != state_led) {
+//    digitalWrite(LED_BUILTIN, (new_led > 0 ? HIGH : LOW));
+//    state_led = new_led;
+//  }
+
+  digitalWrite(LED_BUILTIN, state_led);
+  state_led = LOW;
 }
 
 
@@ -141,8 +143,11 @@ void tick_ping() {
   byte new_ping = (lastTick >> 6) & 0xff;
   if (new_ping != state_ping) {
     unsigned int uS = sonar.ping();
+    u16 dist_cm = uS / US_ROUNDTRIP_CM;
+    if (!dist_cm) dist_cm = MAX_DISTANCE_CM;
+    
     lastDistance = (lastDistance + 1) & 7;
-    distance[lastDistance] = uS / US_ROUNDTRIP_CM;
+    distance[lastDistance] = dist_cm;
     
     state_ping = new_ping;
   }
@@ -154,7 +159,7 @@ void tick_ping() {
 #define STATE_CRUISING 1
 #define STATE_CHASING 2
 int state = 0;
-int cruise = 5;
+int cruise = 2;
 
 void tick_logic() {
   LOG("distance: %d, state: %d, motor: %d/%d %d/%d", distance[lastDistance], state, state_motor[0], req_motor[0], state_motor[1], req_motor[1]);
@@ -179,19 +184,19 @@ void tick_logic() {
       return;
     
     default:
-      if (check_obstacle_ahead(3, 6)) return;
       start_cruising();
   }
 }
 
 boolean check_obstacle_ahead(byte samples, byte min_cm) {
   for (int i = lastDistance, j = 0; j < samples; i = (i - 1) & 0xf, j++) {
-    // if we have at least 1 sample above threshold, it must be free (tm)
-    // also, 0 = no response, so road is free until MAX_DISTANCE 
-    if (distance[i] == 0 || distance[i] > min_cm) return false;
+    if (distance[i] <= min_cm) {
+      LOG("obstacle within %d cm", min_cm);
+      state_led = HIGH;
+      return true;
+    }
   }
-  LOG("obstacle within %d cm", min_cm);
-  return true;
+  return false;
 }
 
 void start_cruising() {
@@ -222,7 +227,6 @@ void setup() {
 #endif
 
   for (int i = 0; i < sizeof(PIN_MOTOR); i++) pinMode(PIN_MOTOR[i], OUTPUT);
-  pinMode(PIN_LED, OUTPUT);
 
   lastTick = millis();
   motorTick = lastTick;
