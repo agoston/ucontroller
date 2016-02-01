@@ -89,7 +89,7 @@ void setSpeed(byte motor, int speed) {
 }
 
 void tick_motor() {
-  u16 elapsed = lastTick - motorTick;
+  int elapsed = lastTick - motorTick;
   motorTick = lastTick;
   
   for (byte i = 0; i < 2; i++) {
@@ -139,8 +139,8 @@ u16 distance[8] = {0,0,0,0,0,0,0,0};
 byte lastDistance = 0;
 
 void tick_ping() {
-  // measure about 15 times per second
-  byte new_ping = (lastTick >> 6) & 0xff;
+  // try to measre 32 times per second
+  byte new_ping = (lastTick >> 5) & 0xff;
   if (new_ping != state_ping) {
     unsigned int uS = sonar.ping();
     u16 dist_cm = uS / US_ROUNDTRIP_CM;
@@ -226,7 +226,7 @@ void setup() {
   Serial.begin(9600);
 #endif
 
-  for (int i = 0; i < sizeof(PIN_MOTOR); i++) pinMode(PIN_MOTOR[i], OUTPUT);
+  for (int i = 0; i < 4; i++) pinMode(PIN_MOTOR[i], OUTPUT);
 
   lastTick = millis();
   motorTick = lastTick;
