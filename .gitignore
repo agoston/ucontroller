@@ -1,0 +1,6 @@
+.metadata/
+RemoteSystemsTempFiles/
+.cproject
+.ino.cpp
+.project
+.settings/
