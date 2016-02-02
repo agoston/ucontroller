@@ -1,7 +1,15 @@
 // this means 3-4 KB (!!!)
 //#define DEV
 
-// TODO: fine-tune! still headbangs radiator; even speed 2 goes very fast 
+// Self-driving car. After boot, it looks around (rotates around its axis) slowly, and if there's something within 1m, it switches to full-speed chase
+// only stopping when there's an obstacle.
+
+// Sadly, the ultrasonic sensor doesn't detect object even at point blank. E.g. going at 45% against a cupboard triggers no proximity.
+// This is likely caused by the ultrasonic waves deflecting from hard surfaces at an angle, while the little that is reflected to the sensor is not enough to trigger response.
+// Ideally, one would get 3-5 of these sensors and brick the front part of the auto with them, but sadly, they each take a considerable time to monitor
+// We could use interrupts to trigger on echo, but we also need a timer to PWM the two L9110 motor controller ports
+
+// eh, I'll just add an RFM69 and make it remote controllable. :)
 
 /*
 Breadboard pin assignments:
@@ -66,24 +74,35 @@ template <typename T> int sgn(T val) {
 
 
 /************************ L9110 */
+// IA(DO) IB(PWM) Motor State 
+// L      L       Off 
+// H      L       Forward 
+// L      H       Reverse 
+// H      H       Off
+
 const byte PIN_MOTOR[4] = {6, 5, 9, 8}; // 2 pins per motor; A is PWM speed, B is direction
 
+// default values are set so that on the first tick, even if nothing happens, motors are set to (0,0)
 int state_motor[2] = {-1, -1};
 int req_motor[2] = {0, 0};
 unsigned long motorTick = 0;
 
-inline byte direction(int speed) {
+byte l_direction(int speed) {
   return speed <= 0 ? LOW : HIGH;
+}
+
+byte l_speed(int speed) {
+  return speed <= 0 ? -speed : 255-speed;
 }
 
 void setSpeed(byte motor, int speed) {
   if (state_motor[motor] == speed) return;
   
-  byte req_speed = abs(speed);
-  byte req_direction = direction(speed);
+  byte req_speed = l_speed(speed);
+  byte req_direction = l_direction(speed);
 
-  if (abs(state_motor[motor]) != req_speed) analogWrite(PIN_MOTOR[motor<<1], req_speed);
-  if (direction(state_motor[motor]) != req_direction) digitalWrite(PIN_MOTOR[(motor<<1)+1], req_direction);
+  if (l_direction(state_motor[motor]) != req_direction) digitalWrite(PIN_MOTOR[(motor<<1)+1], req_direction);
+  if (l_speed(state_motor[motor]) != req_speed) analogWrite(PIN_MOTOR[motor<<1], req_speed);
 
   state_motor[motor] = speed;
 }
@@ -159,7 +178,7 @@ void tick_ping() {
 #define STATE_CRUISING 1
 #define STATE_CHASING 2
 int state = 0;
-int cruise = 2;
+int cruise = 75;  // minimum needed to move the car
 
 void tick_logic() {
   LOG("distance: %d, state: %d, motor: %d/%d %d/%d", distance[lastDistance], state, state_motor[0], req_motor[0], state_motor[1], req_motor[1]);
@@ -192,7 +211,7 @@ boolean check_obstacle_ahead(byte samples, byte min_cm) {
   for (int i = lastDistance, j = 0; j < samples; i = (i - 1) & 0xf, j++) {
     if (distance[i] <= min_cm) {
       LOG("obstacle within %d cm", min_cm);
-      state_led = HIGH;
+      state_led = HIGH; // this is evil, but I need to know when it was triggered
       return true;
     }
   }
@@ -209,7 +228,7 @@ void start_cruising() {
 
 void start_chasing() {
   LOG("starting chasing", 0);
-  drive(128,128);
+  drive(255,255);
   state = STATE_CHASING;
 }
 
