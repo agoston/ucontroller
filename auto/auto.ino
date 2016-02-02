@@ -4,10 +4,16 @@
 // Self-driving car. After boot, it looks around (rotates around its axis) slowly, and if there's something within 1m, it switches to full-speed chase
 // only stopping when there's an obstacle.
 
-// Sadly, the ultrasonic sensor doesn't detect object even at point blank. E.g. going at 45% against a cupboard triggers no proximity.
-// This is likely caused by the ultrasonic waves deflecting from hard surfaces at an angle, while the little that is reflected to the sensor is not enough to trigger response.
-// Ideally, one would get 3-5 of these sensors and brick the front part of the auto with them, but sadly, they each take a considerable time to monitor
-// We could use interrupts to trigger on echo, but we also need a timer to PWM the two L9110 motor controller ports
+// Sadly, the ultrasonic sensor doesn't detect close proximity even at point blank if it is perpendicular to it. E.g. going at 45 degrees against a cupboard triggers no proximity.
+// And since this sensor is at the front of the vehicle, it gets banged head-on all the friggin time.
+// This is likely caused by the ultrasonic waves deflecting from hard surfaces at an angle, with very little of the sound waves reflected to the sensor,
+// they are not enough to trigger response.
+// Ideally, one would get 3-5 of these sensors and brick the front part of the auto with them, but sadly, they each take a considerable time for the monitor response
+// NewPing allows the use of interrupts to trigger on echo, but we also need a timer to PWM the two L9110 motor controller ports
+// Maybe, 1 timer to control 2 PWMs for L9110, and the remaining 2 timers to control 2 sensors would do the trick...
+// Or, I could actually connect 3 sensors in a series, only then we wouldn't know which one pulled the TRIG pin, only that one did
+// Also a possible hack is to remove the housing of the trigger+echo speaker, so that it would cover a wider area, probably at the cost of range - but then again,
+// even the floor might trigger it
 
 // eh, I'll just add an RFM69 and make it remote controllable. :)
 
