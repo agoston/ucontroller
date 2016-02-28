@@ -2,9 +2,9 @@
 //#define DEV
 
 // Self-driving car. After boot, it looks around (rotates around its axis) slowly, and if there's something within 1m, it switches to full-speed chase
-// only stopping when there's an obstacle.
+// only stopping when there's an obstacle very close or there's no obstacle any more within 1m.
 
-// Sadly, the ultrasonic sensor doesn't detect close proximity even at point blank if it is perpendicular to it. E.g. going at 45 degrees against a cupboard triggers no proximity.
+// Sadly, the ultrasonic sensor doesn't detect close proximity even at point blank if it is not perpendicular to it. E.g. going at 45 degrees against a cupboard triggers no proximity.
 // And since this sensor is at the front of the vehicle, it gets banged head-on all the friggin time.
 // This is likely caused by the ultrasonic waves deflecting from hard surfaces at an angle, with very little of the sound waves reflected to the sensor,
 // they are not enough to trigger response.
