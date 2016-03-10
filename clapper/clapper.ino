@@ -1,4 +1,4 @@
-#define DEV
+//#define DEV
 
 #ifdef DEV
 #include <SPI.h>
@@ -33,15 +33,18 @@ char buf[80];
 // power of 2
 #define NUMTS 64
 volatile unsigned long ts[NUMTS];
-volatile u16 its;
+volatile int its;
 
 void setup() {
 #ifdef DEV
 	delay(50); // bootloader listens for firmware update, should not get garbage, wait a bit
 	Serial.begin(9600);
 #endif
-	pinMode(PIN_SND, INPUT);
-  memset((void*)ts, NUMTS, sizeof(long));
+  pinAsOutput(LED_BUILTIN);
+  digitalLow(LED_BUILTIN);
+
+  pinMode(PIN_SND, INPUT);
+  memset((void*)ts, 0, sizeof(ts));
   its = 0;
 
   attachInterrupt(digitalPinToInterrupt(PIN_SND), recordNoise, RISING);
@@ -49,42 +52,41 @@ void setup() {
 
 void recordNoise() {
   unsigned long time = millis();
-  if (time - ts[its] < 50) return;
-  ts[its++] = time;
-  its &= NUMTS-1;
+  if (time - ts[its] < 200ul) return;
+  its = (its+1) & (NUMTS-1);
+  ts[its] = time;
 }
 
-boolean detectClap(u16 &it, u16 ms, u16 e) {
+boolean detectClap(int &it, int ms, int e) {
   unsigned long current = ts[it];
   it = (it-1) & (NUMTS-1);
   unsigned long prev = ts[it];
 
-  LOG("Clap: %d. %uld, %uld", it, current, prev);
+  LOG("Clap: %d. %lu, %lu", it, current, prev);
 
-  int diff = current - prev;
-  if (abs(diff - ms) <= e) return true;
+  unsigned long diff = current - prev;
+  if (diff > (1ul<<15)) return false;
+  
+  if (abs((int)diff - ms) <= e) return true;
   return false;
+}
+
+boolean detectOnClap() {
+  int it = its;
+  return detectClap(it, 250, 50) && detectClap(it, 250, 50);
 }
 
 boolean detectOffClap() {
-  u16 it = its;
-
-  if (detectClap(it, 250, 150) && detectClap(it, 250, 150) && detectClap(it, 250, 150)) {
-    return true;
-  }
-  return false;
+  int it = its;
+  return detectClap(it, 500, 50);
 }
 
 void loop() {
-	// would not actually need this, but fun to play with
-//	LowPower.idle(SLEEP_500MS, ADC_OFF, TIMER2_OFF, TIMER1_OFF, TIMER0_OFF, SPI_OFF, USART0_OFF, TWI_OFF);
-
-  if (detectOffClap()) {
+  if (detectOnClap()) {
     digitalHigh(LED_BUILTIN);
-    delay(50);
+  } else if (detectOffClap()) {
     digitalLow(LED_BUILTIN);
-  } else {
-    delay(50);
   }
-
+  
+  delay(50);
 }
