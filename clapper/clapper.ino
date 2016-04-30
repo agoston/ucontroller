@@ -65,7 +65,7 @@ boolean detectClap(int &it, int ms, int e) {
   LOG("Clap: %d. %lu, %lu", it, current, prev);
 
   unsigned long diff = current - prev;
-  if (diff > (1ul<<15)) return false;
+  if (diff >= (1ul<<15)) return false;
   
   if (abs((int)diff - ms) <= e) return true;
   return false;
@@ -73,20 +73,31 @@ boolean detectClap(int &it, int ms, int e) {
 
 boolean detectOnClap() {
   int it = its;
-  return detectClap(it, 250, 50) && detectClap(it, 250, 50);
+  return detectClap(it, 250, 75) && detectClap(it, 250, 75);
 }
 
 boolean detectOffClap() {
   int it = its;
-  return detectClap(it, 500, 50);
+  return detectClap(it, 500, 100);
 }
 
+unsigned long lastRun = 0;
+
 void loop() {
+  // if there was no new input since last run, skip
+  unsigned long thisRun = ts[its];
+  if (lastRun == thisRun) {
+    delay(50);
+    return;
+  }
+
+  lastRun = thisRun;
+
   if (detectOnClap()) {
     digitalHigh(LED_BUILTIN);
+    delay(50);
   } else if (detectOffClap()) {
     digitalLow(LED_BUILTIN);
+    delay(50);
   }
-  
-  delay(50);
 }
