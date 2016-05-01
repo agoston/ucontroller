@@ -26,7 +26,7 @@ char buf[80];
 #define digitalState(P)((uint8_t)isHigh(P))
 
 // pin for optocoupler
-#define PIN_OC  7
+#define PIN_OC  3
 // pin of sound sensor
 #define PIN_SND 2
 
@@ -42,8 +42,10 @@ void setup() {
 #endif
   pinAsOutput(LED_BUILTIN);
   digitalLow(LED_BUILTIN);
+  pinAsOutput(PIN_OC);
+  digitalLow(PIN_OC);
 
-  pinMode(PIN_SND, INPUT);
+  pinMode(PIN_SND, INPUT);  // can't use macro shortcut here, since we're attaching an interrupt to this pin
   memset((void*)ts, 0, sizeof(ts));
   its = 0;
 
@@ -95,9 +97,11 @@ void loop() {
 
   if (detectOnClap()) {
     digitalHigh(LED_BUILTIN);
+    digitalHigh(PIN_OC);
     delay(50);
   } else if (detectOffClap()) {
     digitalLow(LED_BUILTIN);
+    digitalLow(PIN_OC);
     delay(50);
   }
 }
