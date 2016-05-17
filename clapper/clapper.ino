@@ -31,7 +31,7 @@ char buf[80];
 #define PIN_SND 2
 
 // power of 2
-#define NUMTS 64
+#define NUMTS 16
 volatile unsigned long ts[NUMTS];
 volatile int its;
 
@@ -46,10 +46,15 @@ void setup() {
   digitalLow(PIN_OC);
 
   pinMode(PIN_SND, INPUT);  // can't use macro shortcut here, since we're attaching an interrupt to this pin
+
+  resetTs();
+  
+  attachInterrupt(digitalPinToInterrupt(PIN_SND), recordNoise, RISING);
+}
+
+void resetTs() {
   memset((void*)ts, 0, sizeof(ts));
   its = 0;
-
-  attachInterrupt(digitalPinToInterrupt(PIN_SND), recordNoise, RISING);
 }
 
 void recordNoise() {
@@ -98,10 +103,12 @@ void loop() {
   if (detectOnClap()) {
     digitalHigh(LED_BUILTIN);
     digitalHigh(PIN_OC);
+    resetTs();
     delay(50);
   } else if (detectOffClap()) {
     digitalLow(LED_BUILTIN);
     digitalLow(PIN_OC);
+    resetTs();
     delay(50);
   }
 }
