@@ -3,7 +3,7 @@
 #include <LowPower.h>
 
 #define PIN_PIEZO 2
-#define PIN_LIGHT 2
+#define PIN_LIGHT 7
 
 void setup() {
 #ifdef DEV
@@ -65,18 +65,26 @@ void loop() {
 
 	LOG("light: %u", light);
 
-	boolean curr_light = (light > 750);
+	boolean curr_light = (light > 650);
 
-	if (curr_light && !prev_light) {
-		for (uint8_t i = 0; i < sizeof(melody) / 2; i++) {
-			tone(PIN_PIEZO, melody[i]*OCTAVE_DOWN*OCTAVE_DOWN*OCTAVE_DOWN);
-			delay(duration[i]);
-			noTone(PIN_PIEZO);
-			delay(duration[i]/8);
+	if (curr_light) {
+		digitalHigh(LED_BUILTIN);
+
+		if (prev_light) {
+			delay(200);	// for the led blink to be noticable
+		} else {
+			for (uint8_t i = 0; i < sizeof(melody) / 2; i++) {
+				tone(PIN_PIEZO, melody[i]*OCTAVE_DOWN*OCTAVE_DOWN*OCTAVE_DOWN);
+				delay(duration[i]);
+				noTone(PIN_PIEZO);
+				delay(duration[i]/8);
+			}
 		}
+
+		digitalLow(LED_BUILTIN);
 	}
 
 	prev_light = curr_light;
 
-	LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
+	LowPower.powerDown(SLEEP_1S, ADC_OFF, BOD_OFF);
 }
