@@ -3,8 +3,7 @@
 #include <LowPower.h>
 #include <SPI.h>
 #include <RFM69.h>
-
-#include "agoston.h"
+#include <agoston.h>
 
 // TODO: also make rfm69 sleep
 // TODO: wireless programming support (-> remember to hide encrypt keys!)

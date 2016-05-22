@@ -4,3 +4,6 @@ RemoteSystemsTempFiles/
 .ino.cpp
 .project
 .settings/
+Release
+core
+libraries
