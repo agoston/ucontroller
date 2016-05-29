@@ -1,5 +1,5 @@
 //#define DEV
-#include "agoston.h"
+#include <agoston.h>
 #include <LowPower.h>
 
 #define PIN_PIEZO 2
@@ -10,7 +10,6 @@ void setup() {
 	delay(50); // bootloader listens for firmware update, should not get garbage, wait a bit
 	Serial.begin(115200);
 #endif
-
 }
 
 #define HZ_C6 1046
@@ -61,11 +60,11 @@ void loop() {
 	}
 #endif
 
-	uint16_t light = analogRead(PIN_LIGHT);
+	int light = analogRead(PIN_LIGHT);
 
-	LOG("light: %u", light);
+	LOG("light: %d", light);
 
-	boolean curr_light = (light > 650);
+	boolean curr_light = (light > 200);
 
 	if (curr_light) {
 		digitalHigh(LED_BUILTIN);
@@ -86,5 +85,6 @@ void loop() {
 
 	prev_light = curr_light;
 
-	LowPower.powerDown(SLEEP_1S, ADC_OFF, BOD_OFF);
+//	LowPower.powerDown(SLEEP_30MS, ADC_OFF, BOD_OFF);
+	delay(50);
 }
