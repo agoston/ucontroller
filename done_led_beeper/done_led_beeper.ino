@@ -45,7 +45,7 @@ void setup() {
 uint16_t melody[] = { HZ_A6, HZ_C7, HZ_A6, HZ_C7, HZ_E7, HZ_E7 };
 uint16_t duration[] = {400, 400, 400, 400, 800, 800 };
 
-boolean prev_light = false;
+uint16_t silent = 0;
 
 void loop() {
 #ifdef DEV
@@ -64,27 +64,22 @@ void loop() {
 
 	LOG("light: %d", light);
 
-	boolean curr_light = (light > 200);
-
-	if (curr_light) {
+	if (silent > 0) {
+		silent--;
+	} else if (light > 180) {
 		digitalHigh(LED_BUILTIN);
 
-		if (prev_light) {
-			delay(200);	// for the led blink to be noticable
-		} else {
-			for (uint8_t i = 0; i < sizeof(melody) / 2; i++) {
-				tone(PIN_PIEZO, melody[i]*OCTAVE_DOWN*OCTAVE_DOWN*OCTAVE_DOWN);
-				delay(duration[i]);
-				noTone(PIN_PIEZO);
-				delay(duration[i]/8);
-			}
+		silent = 1200/8;
+		for (uint8_t i = 0; i < sizeof(melody) / 2; i++) {
+			tone(PIN_PIEZO, melody[i]*OCTAVE_DOWN*OCTAVE_DOWN*OCTAVE_DOWN);
+			delay(duration[i]);
+			noTone(PIN_PIEZO);
+			delay(duration[i]/8);
 		}
 
 		digitalLow(LED_BUILTIN);
 	}
 
-	prev_light = curr_light;
-
-//	LowPower.powerDown(SLEEP_30MS, ADC_OFF, BOD_OFF);
-	delay(50);
+	LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
+	delay(20);	// wakey after deep sleep
 }
