@@ -36,6 +36,8 @@ uint8_t carId = 10;
 uint8_t networkId = 117;
 unsigned long lastTick;
 
+
+
 /************************ INIT */
 void setup() {
 #ifdef DEV
@@ -85,7 +87,7 @@ void loop() {
 	// compare joystick state
 
 	// send if changed
-	//radio.send(carId, buf, buflen);
+	radio.send(carId, buf, buflen);
 
 	// FIXME: after X hundred ms, send it anyway -- to make sure car won't power down, thinking remote went idle
 	// FIXME: after no change in joystick for 30s, start powering down for 15s and no radio (power-save mode)
