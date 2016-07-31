@@ -1,3 +1,9 @@
+/* Slows down the 2-week fish feeder by 50% so that it would feed for 3 weeks.
+   Simply disconnect the battery via an optocoupler for 8 hours a day.
+
+   NB, after 50 days, this would fail as millis() would overflow unsigned long.
+*/
+
 //#define DEV
 #include <agoston.h>
 //#include <LowPower.h>
@@ -5,7 +11,8 @@
 // pin for optocoupler
 #define PIN_OC  3
 
-const unsigned long STATE_LENGTH[2] = {16 * 3600ul * 1000ul, 8 * 3600ul * 1000ul};
+const unsigned long STATE_LENGTH[2] = {16ul * 3600ul * 1000ul, 8ul * 3600ul * 1000ul};
+//const unsigned long STATE_LENGTH[2] = {2ul * 3600ul * 1000ul, 1ul * 3600ul * 1000ul};
 unsigned long state_next_at = 0;
 byte state = 0;
 
@@ -16,9 +23,7 @@ void setup() {
 #endif
 
   pinAsOutput(LED_BUILTIN);
-  digitalLow(LED_BUILTIN);
   pinAsOutput(PIN_OC);
-  digitalLow(PIN_OC);
 }
 
 void loop() {
