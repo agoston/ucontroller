@@ -1,0 +1,16 @@
+/* overriding to make it works */
+body:after {
+  content: url("/packages/lightbox2/lib/img/close.png") url("/packages/lightbox2/lib/img/loading.gif") url("/packages/lightbox2/lib/img/prev.png") url("/packages/lightbox2/lib/img/next.png");
+}
+.lb-cancel {
+  background: url("/packages/lightbox2/lib/img/loading.gif") no-repeat;
+}
+.lb-prev:hover {
+  background: url("/packages/lightbox2/lib/img/prev.png") left 48% no-repeat;
+}
+.lb-next:hover {
+  background: url("/packages/lightbox2/lib/img/next.png") right 48% no-repeat;
+}
+.lb-data .lb-close {
+  background: url("/packages/lightbox2/lib/img/close.png") top right no-repeat;
+}

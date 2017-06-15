@@ -1,9 +1,1 @@
-.metadata/
-RemoteSystemsTempFiles/
-.cproject
-.ino.cpp
-.project
-.settings/
-Release
-core
-libraries
+lib

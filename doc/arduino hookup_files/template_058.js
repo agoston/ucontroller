@@ -1,0 +1,10 @@
+(function(){
+Template.__checkName("hardware");
+Template["hardware"] = new Template("Template.hardware", (function() {
+  var view = this;
+  return [ HTML.Raw("<h1>MySensors Hardware</h1>\n		"), HTML.DIV({
+    "class": "well relative"
+  }, "\n			", Spacebars.include(view.lookupTemplate("share")), "\n\n		    ", HTML.Raw('<a href="/hardware/complex.jpg" data-lightbox="image-finding" title="Too much jumper cables?"><img src="/hardware/complex.jpg" style="width:20%;float:right;padding-left:20px"></a>'), "\n				\n			", HTML.Raw("<p>After building a few sensors, you might have grown tired of all the lose dangling jumper wires and weird connectivity problems. Or did you perhaps build your own battery powered sensor but ended up with a flat battery in no time?</p>"), "\n\n			", HTML.Raw("<p>We've been working on a few hardware components to ease up life for all the DIY sensor builders out there. We hope to provide interesting boards solving problems we've encountered during our quest for the perfect sensor kit. We'll start at a slow pace to get things up and running smoothly with our factory partners and resellers.</p>"), "\n\n	\n			", HTML.Raw('<p>All our hardware will of course be open source. This means you can create your own derivate of our work. But remember that the derivate also must be shared the same way with the same license. Also be aware of our <a href="/about/mysensors">trademark policies</a> before you start building MySensors.org labeled boards.</p>'), "  \n			", HTML.Raw("<p>Our hope is to provide competitive prices for all MySensors hardware. We hope you understand that small series (which is our only option to begin with) result in a larger price tag. When you support us and buy MySensors hardware we can increase batch sizes and prices drop! Simple mathematics. ;)</p>"), " \n			", HTML.Raw('<p>Note that some of our the products is still in a planning stage. We happily accept feedback and improvement ideas from the community. That is you! A feedback <a href="http://forum.mysensors.org/category/11/announcements">forum thread</a> will be created for all module revisions. </p>'), "\n\n\n		") ];
+}));
+
+}).call(this);

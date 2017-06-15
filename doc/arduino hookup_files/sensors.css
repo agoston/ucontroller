@@ -1,0 +1,71 @@
+.sketchTemp {
+float: right;
+margin-top: -69px;
+margin-right: -33px;
+background: url(/temp/sketchTemp.png);
+background-size: 50px;
+background-repeat: no-repeat;
+width: 100px;
+height: 96px;
+}
+
+.table-curved {
+	width: 100% !important;
+}
+
+.sketchFreezing {
+	float:right;
+	background: url(/temp/sketchFreezing.png);
+	background-size: 70px;
+	background-repeat: no-repeat;
+	width: 73px;
+	height: 192px;
+}
+
+.sketchLog { 
+	top: -43px;
+	right: 1px;
+	position: absolute;
+	background: url(/sketchLog.png);
+	background-size: 279px;
+	background-repeat: no-repeat;
+	width: 245px;
+	height: 254px;
+}
+
+
+.table-curved {
+	background: white;
+	width:inherit;
+    border-collapse: separate;
+    border: solid #ddd 1px;
+    border-radius: 6px;
+    border-left: 0px;
+    border-top: 0px;
+/*    margin-top:20px;
+    margin-bottom:20px;*/
+}
+.table-curved > thead:first-child > tr:first-child > th {
+    border-bottom: 0px;
+    border-top: solid #ddd 1px;
+}
+.table-curved td, .table-curved th {
+    border-left: 1px solid #ddd;
+    border-top: 1px solid #ddd;
+}
+.table-curved > :first-child > :first-child > :first-child {
+    border-top-left-radius: 6px;
+}
+.table-curved > :first-child > :first-child > :last-child {
+    border-top-right-radius: 6px;
+}
+.table-curved > :last-child > :last-child > :first-child {
+    border-bottom-left-radius: 6px;
+}
+.table-curved > :last-child > :last-child > :last-child {
+    border-bottom-right-radius: 6px;
+}
+
+
+
+

@@ -1,0 +1,48 @@
+/*ol.chapters { padding: 0px; }*/
+
+/** The clever bit (with a little styling too)  **/
+div.toc { counter-reset: chapter;  }
+
+div.toc>ol {  
+	padding-left:0px; 
+} 
+div.toc>ol>ol { 
+	padding-left:30px;
+}
+
+div.toc>ol>ol>ol { 
+	padding-left:30px;
+}
+
+div.toc>ol>li {
+	list-style-type:none;  
+	counter-increment: chapter; 
+	counter-reset: section; 
+	font-family: kg_second_chances_solidRg; 
+	padding-top: 25px;
+	font-size: 20px;
+	padding-bottom: 10px;
+}
+
+div.toc>ol>ol>li { 
+	list-style-type:none;  
+	counter-increment: section; 
+	counter-reset: none; 
+	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	padding-top: 10px;
+	padding-bottom: 5px;
+}
+
+div.toc>ol>ol>ol>li {
+	list-style-type:none; 
+	counter-increment: subsection; 
+	counter-reset: none; 
+	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	padding-top: 10px;
+	padding-bottom: 5px;
+}
+
+div.toc>ol li:before { content: "SECTION " counter(chapter) ": "; display: block; float: left; width: 6em; }
+div.toc>ol ol li:before { font-weight:bold; content: counter(chapter) "." counter(section) "."; width: 2em;}
+div.toc>ol ol ol li:before { font-weight:bold; content: counter(chapter) "." counter(section) "." counter(subsection) "."; width: 3em;}
+

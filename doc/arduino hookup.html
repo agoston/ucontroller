@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" type="text/css" class="__meteor-css__" href="arduino%20hookup_files/lightbox.css">  <link rel="stylesheet" type="text/css" class="__meteor-css__" href="arduino%20hookup_files/lightbox-override.css">  <link rel="stylesheet" type="text/css" class="__meteor-css__" href="arduino%20hookup_files/bootstrap.css">  <link rel="stylesheet" type="text/css" class="__meteor-css__" href="arduino%20hookup_files/googlecode.css">  <link rel="stylesheet" type="text/css" class="__meteor-css__" href="arduino%20hookup_files/index.css">  <link rel="stylesheet" type="text/css" class="__meteor-css__" href="arduino%20hookup_files/index_002.css">  <link rel="stylesheet" type="text/css" class="__meteor-css__" href="arduino%20hookup_files/print.css">  <link rel="stylesheet" type="text/css" class="__meteor-css__" href="arduino%20hookup_files/sensors.css">  <link rel="stylesheet" type="text/css" class="__meteor-css__" href="arduino%20hookup_files/dashboard.css">  <link rel="stylesheet" type="text/css" class="__meteor-css__" href="arduino%20hookup_files/tokens.css">  <link rel="stylesheet" type="text/css" class="__meteor-css__" href="arduino%20hookup_files/coming_soon.css">  <link rel="stylesheet" type="text/css" class="__meteor-css__" href="arduino%20hookup_files/contest.css">  <link rel="stylesheet" type="text/css" class="__meteor-css__" href="arduino%20hookup_files/api.css">  <link rel="stylesheet" type="text/css" class="__meteor-css__" href="arduino%20hookup_files/index_003.css">  <link rel="stylesheet" type="text/css" class="__meteor-css__" href="arduino%20hookup_files/legal.css">  <link rel="stylesheet" type="text/css" class="__meteor-css__" href="arduino%20hookup_files/not_found.css">  <link rel="stylesheet" type="text/css" class="__meteor-css__" href="arduino%20hookup_files/store.css">  <link rel="stylesheet" type="text/css" class="__meteor-css__" href="arduino%20hookup_files/welcome.css">  <link rel="stylesheet" type="text/css" class="__meteor-css__" href="arduino%20hookup_files/bootstrap-switch.css">  <link rel="stylesheet" type="text/css" class="__meteor-css__" href="arduino%20hookup_files/jquery.css">  <link rel="stylesheet" type="text/css" class="__meteor-css__" href="arduino%20hookup_files/layout.css">
+
+
+<script src="arduino%20hookup_files/addthis_widget.js" id="addthis-wjs"></script><script src="arduino%20hookup_files/analytics.js" async=""></script><script type="text/javascript">__meteor_runtime_config__ = JSON.parse(decodeURIComponent("%7B%22meteorRelease%22%3A%22METEOR%401.2.1%22%2C%22PUBLIC_SETTINGS%22%3A%7B%22ga%22%3A%7B%22account%22%3A%22UA-48655524-1%22%2C%22trackInterests%22%3Atrue%7D%7D%2C%22ROOT_URL%22%3A%22http%3A%2F%2Flocalhost%3A3000%22%2C%22ROOT_URL_PATH_PREFIX%22%3A%22%22%2C%22autoupdateVersion%22%3A%225e3f4e73b064d4c7fa0675098feaaf0baa21bbd1%22%2C%22autoupdateVersionRefreshable%22%3A%228ac2e78509490384030d0ff35e6218b03ae7f7ea%22%2C%22autoupdateVersionCordova%22%3A%22none%22%7D"));</script>
+
+  <script type="text/javascript" src="arduino%20hookup_files/underscore.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/meteor.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/base64.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/ejson.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/check.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/babel-compiler.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/ecmascript.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/babel-runtime.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/ecmascript-runtime.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/promise.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/random.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/tracker.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/retry.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/id-map.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/ddp-common.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/reload.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/diff-sequence.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/mongo-id.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/ddp-client.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/ddp.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/ddp-server.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/livedata.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/standard-app-packages.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/arunoda_npm.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/email.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/natestrauser_font-awesome.js"></script><link href="arduino%20hookup_files/font-awesome.css" rel="stylesheet" type="text/css">
+  <script type="text/javascript" src="arduino%20hookup_files/jquery_002.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/mrt_lightbox2.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/mrt_moment.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/callback-hook.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/deps.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/htmljs.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/observe-sequence.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/reactive-var.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/blaze.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/spacebars.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/templating.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/spiderable.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/mrt_jquery-ui.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/mizzao_bootstrap-3.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/meteorhacks_npm.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/datariot_ganalytics.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/mrt_mailchimp.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/ui.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/iron_core.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/iron_dynamic-template.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/iron_layout.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/iron_url.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/iron_middleware-stack.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/iron_location.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/ordered-dict.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/geojson-utils.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/minimongo.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/mongo.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/reactive-dict.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/iron_controller.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/iron_router.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/url.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/http.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/npm-container.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/autoupdate.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/meteor-platform.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/meteorhacks_async.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/webapp.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/logging.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/session.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/launch-screen.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/global-imports.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_065.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_051.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_026.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_022.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_023.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_017.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_015.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_029.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_028.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_024.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_013.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_011.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_021.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_055.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_045.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_003.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_037.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_030.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_043.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_046.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_053.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_049.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_014.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_048.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_041.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_057.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_025.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_054.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_042.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_004.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_002.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_059.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_044.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_032.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_012.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_062.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_035.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_038.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_064.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_040.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_039.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_027.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_007.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_034.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_008.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_056.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_050.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_063.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_033.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_006.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_052.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_061.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_036.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_066.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_058.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_009.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_005.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_019.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_060.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_047.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_031.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_020.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_010.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_016.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/template_018.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/common.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/index_002.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/index.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/dashboard.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/menu.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/tokens.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/store.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/welcome.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/ZeroClipboard.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/bootstrap-switch.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/confirmation.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/highlight.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/jquery.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/autorun.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/layout.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/navbar.js"></script>
+  <script type="text/javascript" src="arduino%20hookup_files/routes.js"></script>
+
+
+
+<meta name="fragment" content="!">
+<title>MySensors - Connecting the Radio to your Arduino</title><meta name="description" content="The NRF24L01+ and RFM69 transceiver communicates with the Arduino board via the SPI interface. It is important to always feed the radios with a stable power sou"><script src="arduino%20hookup_files/embed.js" async="" type="text/javascript"></script></head>
+<body style="padding-top: 88px;">
+
+
+
+<div style="display: none;" id="lightboxOverlay" class="lightboxOverlay"></div><div style="display: none;" id="lightbox" class="lightbox"><div class="lb-outerContainer"><div class="lb-container"><img class="lb-image" src=""><div class="lb-nav"><a class="lb-prev" href=""></a><a class="lb-next" href=""></a></div><div class="lb-loader"><a class="lb-cancel"></a></div></div></div><div class="lb-dataContainer"><div class="lb-data"><div class="lb-details"><span class="lb-caption"></span><span class="lb-number"></span></div><div class="lb-closeContainer"><a class="lb-close"></a></div></div></div></div><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<title>MySensors - Build your own Sensors</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="”shortcut" icon”="" type="”image/x-icon”" href="https://www.mysensors.org/build/%E2%80%9D/favicon.ico%E2%80%9D">
+	<meta name="description" content="The NRF24L01+ and RFM69 transceiver communicates with the Arduino board via the SPI interface. It is important to always feed the radios with a stable power sou"></head>
+	<body>
+	<nav role="navigation" class="navbar navbar-default navbar-fixed-top" id="navbar">
+	 <!-- Brand and toggle get grouped for better mobile display -->
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" href="https://www.mysensors.org/"><!--span class="solid">My</span><span class="sketch">Sensors</span-->
+			<img alt="MySensors" src="arduino%20hookup_files/MySensorsLogo.png"></a>
+		</div>
+
+		<div class="top-tavbar collapse navbar-collapse navbar-ex1-collapse">
+			<ul class="nav nav-justified">
+				<li class="normal-nav"><a href="https://www.mysensors.org/about/"><i class="fa fa-life-bouy fa-fw"></i><br>Getting&nbsp;Started</a></li>
+				<li class="normal-nav"><a href="https://www.mysensors.org/controller/"><i class="fa fa-gamepad fa-fw"></i><br>Controller</a></li>
+				<li class="normal-nav"><a href="https://www.mysensors.org/build/"><i class="fa fa-gears fa-fw"></i><br>Build</a></li>
+				<li class="normal-nav"><a href="https://www.mysensors.org/hardware/"><i class="fa fa-cubes fa-fw"></i><br>Hardware</a></li>
+				<li class="normal-nav"><a href="https://www.mysensors.org/download/"><i class="fa fa-download fa-fw"></i><br>API&nbsp;&amp;&nbsp;Download</a></li>
+				<li class="normal-nav"><a href="http://forum.mysensors.org/"><i class="fa fa-comment fa-fw"></i><br>Forum</a></li>
+				<li class="normal-nav"><a href="https://www.mysensors.org/store/"><i class="fa fa-shopping-cart fa-fw"></i><br>Store</a></li>
+			</ul>
+
+			<!--ul class="nav navbar-nav navbar-right">
+						{{#if currentUser}}
+
+						 <li class="{{cloudActive}}"><A href="{{pathFor 'cloud'}}"><i class="fa fa-cloud fa-fw"></i> {{signedInAs}}</A></li>
+
+						{{else}}
+							{{>topMenu url='/sign-in' icon='cloud' title='My Things' page=page}}
+						{{/if}}
+			</ul-->
+
+		</div>
+	</nav>
+	<div class="page">
+		<div class="row">
+			<div id="wrapper">
+				<div style="top: 68px;" id="sidebar-wrapper">
+					<ul class="nav nav-pills nav-stacked" id="buildnav">
+
+		<li class=""><a href="https://www.mysensors.org/build/connect_radio">Connecting the Radio</a><ul class="fa-ul"><li class="popupMenu"><i class="fa-li fa fa-caret-right"></i><a href="#wiring-the-nrf24l01+-radio">Wiring the NRF24L01+ Radio</a></li><li class="popupMenu"><i class="fa-li fa fa-caret-right"></i><a href="#wiring-the-rfm69-radio">Wiring the RFM69 Radio</a></li><li class="popupMenu"><i class="fa-li fa fa-caret-right"></i><a href="#connecting-a-decoupling-capacitor">Connecting a Decoupling-Capacitor</a></li><li class="popupMenu"><i class="fa-li fa fa-caret-right"></i><a href="#connecting-a-voltage-regulator">Connecting a Voltage Regulator</a></li><li class="popupMenu"><i class="fa-li fa fa-caret-right"></i><a href="#buying-guide">Buying Guide</a></li><li class="popupMenu"><i class="fa-li fa fa-caret-right"></i><a href="#datasheets">Datasheets</a></li></ul></li>
+		<li class=""><a href="https://www.mysensors.org/build/print">3D Printables</a></li>
+		<li class=""><a href="https://www.mysensors.org/build/battery">Battery Powering</a></li>
+		<li class=""><a href="https://www.mysensors.org/build/debug">Troubleshooting</a></li>
+
+
+		<li><h4>Gateways</h4></li>
+		<li class=""><a href="https://www.mysensors.org/build/select_gateway">Selecting Gateway</a></li>
+		<li class=""><a href="https://www.mysensors.org/build/serial_gateway">Serial Gateway</a></li>
+		<li class=""><a href="https://www.mysensors.org/build/esp8266_gateway">ESP8266 Wifi Gateway</a></li>
+		<li class=""><a href="https://www.mysensors.org/build/ethernet_gateway">Ethernet Gateway</a></li>
+		<li class=""><a href="https://www.mysensors.org/build/mqtt_gateway">MQTT Gateway</a></li>
+		<li class=""><a href="https://www.mysensors.org/build/advanced_gateway">Advanced build options</a></li>
+
+		<li><h4>Sensors &amp; Actuators</h4></li>
+		<li class=""><a href="https://www.openhardware.io/explore?search=MySensors">OpenHardware.io</a></li>
+		<li class=""><a href="https://www.mysensors.org/build/binary">Door/Window/Button</a></li>
+		<li class=""><a href="https://www.mysensors.org/build/dimmer">Dimmer (LED)</a></li>
+		<li class=""><a href="https://www.mysensors.org/build/distance">Distance</a></li>
+		<li class=""><a href="https://www.mysensors.org/build/display">Display and Time</a></li>
+		<li class=""><a href="https://www.mysensors.org/build/dust">Dust</a></li>
+		<li class=""><a href="https://www.mysensors.org/build/gas">Gas</a></li>
+		<li class=""><a href="https://www.mysensors.org/build/humidity">Humidity</a></li>
+		<li class=""><a href="https://www.mysensors.org/build/ir">IR Sender/Receiver</a></li>
+		<li class=""><a href="https://www.mysensors.org/build/irrigation">Irrigation Controller</a></li>
+		<li class=""><a href="https://www.mysensors.org/build/light">Light</a></li>
+		<li class=""><a href="https://www.mysensors.org/build/moisture">Moisture</a></li>
+		<li class=""><a href="https://www.mysensors.org/build/motion">Motion</a></li>
+		<li class=""><a href="https://www.mysensors.org/build/pressure">Pressure</a></li>
+		<li class=""><a href="https://www.mysensors.org/build/parking">Parking</a></li>
+		<li class=""><a href="https://www.mysensors.org/build/pulse_power">Pulse Powermeter</a></li>
+		<li class=""><a href="https://www.mysensors.org/build/pulse_water">Pulse Watermeter</a></li>
+		<li class=""><a href="https://www.mysensors.org/build/rain">Rain Gauge</a></li>
+		<li class=""><a href="https://www.mysensors.org/build/relay">Relay</a></li>
+		<li class=""><a href="https://www.mysensors.org/build/rfid">RFID</a></li>
+		<li class=""><a href="https://www.mysensors.org/build/knock">Secret Knock</a></li>
+		<li class=""><a href="https://www.mysensors.org/build/servo">Servo</a></li>
+		<li class=""><a href="https://www.mysensors.org/build/scene_controller">Scene Controller</a></li>
+		<li class=""><a href="https://www.mysensors.org/build/temp">Temperature</a></li>
+		<li class=""><a href="https://www.mysensors.org/build/uv">UV</a></li>
+
+
+
+
+	</ul>
+				</div>
+				<div id="page-content-wrapper">
+					<button type="button" id="menu-toggle" href="#" class="btn btn-primary btn-sm btn-pad"><span class="glyphicon glyphicon-chevron-right"></span> Toggle Menu</button>
+					<div class="col-md-12">
+				<h1>Connecting the Radio to your Arduino</h1>
+				<div class="well">
+
+						 <a href="https://www.mysensors.org/radio/closeup.png" data-lightbox="image-finding" title="NRF24L01+"><img src="arduino%20hookup_files/closeup.png" style="width:200px;float:right;padding-left:20px"></a>
+						<p>The NRF24L01+ and RFM69 transceiver communicates with the 
+Arduino board via the SPI interface. It is important to always feed the 
+radios with a stable power source of <strong>3.3V</strong>.</p>
+						<p>Refer to the notes about using a regulator or a coupling-capacitor below.</p>
+
+
+						<div class="clearfix"></div>
+
+
+						<a class="anchor" id="wiring-the-nrf24l01+-radio"></a><h2>Wiring the NRF24L01+ Radio</h2>
+						<p><strong>NOTE:</strong> The input pins on the NRF24L01+ is 5V 
+tolerant. However, you cannot feed the module with more than 3.3V on 
+VCC. If you use a 5V Arduino you have to use a step-down regulator!</p>
+
+						<div class="row">
+								<div class="col-md-4">
+												<a href="https://www.mysensors.org/radio/APM.png" data-lightbox="image-finding" title="Arduino"><img src="arduino%20hookup_files/APM.png" class="img-responsive"></a>
+								</div>
+							 <div class="col-md-4">
+										<table class="table table-curved">
+												<tr><th>Arduino</th><th>NRF24L01+</th><th>Comment</th></tr>
+												<tr><td>GND</td><td>GND</td><td style="color:black">Black</td></tr>
+												<tr><td style="white-space:nowrap;">5V<i class="fa fa-arrow-right"></i>Reg<br>3.3V</td><td>VCC</td><td style="color:red">Red</td></tr>
+												<tr><td>9</td><td>CE</td><td style="color:orange">Orange</td></tr>
+												<tr><td>10</td><td>CSN/CS</td><td style="color:yellow">Yellow</td></tr>
+												<tr><td>13</td><td>SCK</td><td style="color:green">Green</td></tr>
+												<tr><td>11</td><td>MOSI</td><td style="color:blue">Blue</td></tr>
+												<tr><td>12</td><td>MISO</td><td style="color:violet">Violet</td></tr>
+												<tr><td>2</td><td>IRQ</td><td style="color:gray">Gray</td></tr>
+										</table>
+										<p>Note: The IRQ is currently not used by the MySensors library so it can be left un-connected.</p>
+
+								</div>
+							 <div class="col-md-4">
+										<a href="https://www.mysensors.org/radio/nrfTop.png" data-lightbox="image-finding" title="The output pins of the Radio"><img src="arduino%20hookup_files/nrfTop.png" class="img-responsive"></a><br>
+										<br>
+										<a href="https://www.mysensors.org/vera/gw.jpg" data-lightbox="image-finding" title="Arduino Nano connected to a NRF24L01">
+										<img src="arduino%20hookup_files/gw.jpg" class="img-responsive"> </a>
+								</div>
+						</div>
+
+						<a class="anchor" id="wiring-the-rfm69-radio"></a><h2>Wiring the RFM69 Radio</h2>
+						<p><strong>NOTE:</strong> The NSS, MOSI and SCK are not 5V tolerant on RFM69. You will need to use a <a href="https://www.mysensors.org/store/#accessories">level converter</a> if you're using a 5V Arduino.</p>
+						<div class="row">
+								<div class="col-md-4">
+												<a href="https://www.mysensors.org/radio/APM.png" data-lightbox="image-finding" title="Arduino"><img src="arduino%20hookup_files/APM.png" class="img-responsive"></a>
+								</div>
+							 <div class="col-md-4">
+										<table class="table table-curved">
+												<tr><th>Arduino</th><th>RFM69</th><th>Comment</th></tr>
+												<tr><td>GND</td><td>GND</td><td style="color:black">Black</td></tr>
+												<tr><td>3.3V</td><td>VCC</td><td style="color:red">Red</td></tr>
+												<tr><td>10</td><td>NSS</td><td style="color:yellow">Yellow</td></tr>
+												<tr><td>13</td><td>SCK</td><td style="color:green">Green</td></tr>
+												<tr><td>11</td><td>MOSI</td><td style="color:blue">Blue</td></tr>
+												<tr><td>12</td><td>MISO</td><td style="color:violet">Violet</td></tr>
+												<tr><td>2</td><td>DI00</td><td style="color:gray">Gray</td></tr>
+												<tr><td></td><td>ANA</td>Antenna</tr>
+										</table>
+								</div>
+							 <div class="col-md-4">
+										<a href="https://www.mysensors.org/radio/RFM69.png" data-lightbox="image-finding" title="The output pins of the Radio"><img src="arduino%20hookup_files/RFM69.png" class="img-responsive"></a><br>
+								</div>
+						</div>
+
+
+
+
+						<a class="anchor" id="connecting-a-decoupling-capacitor"></a><h2>Connecting a Decoupling-Capacitor</h2>
+						<p>If you experience bad reception or if transmitted data never 
+reaches destination, try adding a decoupling capacitor of 47µF across 
+the radio's 3.3V and GND. </p>
+						<div class="row">
+								<div class="col-md-4">
+										<table class="table table-curved">
+												<tr><th>Capacitor</th><th>Radio</th><th>Comment</th></tr>
+												<tr><td>- side</td><td>GND</td><td style="color:black">Marked Black</td></tr>
+												<tr><td>+ side</td><td>3.3V</td><td style="color:red">Marked Red</td></tr>
+										</table>
+								</div>
+								<div class="col-md-8">
+												<a href="https://www.mysensors.org/radio/capacitor.png" data-lightbox="image-finding" title="Capacitor"><img src="arduino%20hookup_files/capacitor.png" class="img-responsive"></a>
+												The side with "&lt; - &lt; - "-marking should be connected to GND
+								</div>
+						</div>
+
+						<a class="anchor" id="connecting-a-voltage-regulator"></a><h2>Connecting a Voltage Regulator</h2>
+						<p><strong>NOTE:</strong> If you are using the 5V version of 
+Arduino Pro Mini (that lacks the 3.3V regulated output) you'll have to 
+connect a 5V-&gt;3.3V regulator between the Arduino and Radio.</p>
+						<div class="row">
+								<div class="col-md-4">
+										<table class="table table-curved">
+												<tr><th>Arduino</th><th>Regulator</th><th>Radio</th></tr>
+												<tr><td>5V</td><td>Vin</td><td></td></tr>
+												<tr><td>GND</td><td>GND</td><td>GND</td></tr>
+												<tr><td></td><td>Vout</td><td style="color:red">VCC</td></tr>
+										</table>
+								</div>
+								<div class="col-md-8">
+										<a href="https://www.mysensors.org/radio/662K.png" data-lightbox="image-finding" title="662K regulator"><img src="arduino%20hookup_files/662K.png" style="height:200px"></a>
+										<a href="https://www.mysensors.org/radio/LE33CZ.png" data-lightbox="image-finding" title="LE33CZ regulator"><img src="arduino%20hookup_files/LE33CZ.png" style="height:200px"></a>
+								</div>
+						</div>
+
+
+						<a class="anchor" id="buying-guide"></a><h2>Buying Guide</h2>
+						<div class="clearfix"></div>
+
+	<div id="r_s_radio" class="storeCategory"><div style="padding-left:0px; padding-right:0px" class="row">
+	
+	<div class="col-sm-6 col-lg-6 col-md-6 shopLeftItem">
+	<div class="shopBorder">
+		<div class="shopImageField">
+				<img class="img-rounded shopImage" src="arduino%20hookup_files/T2eC16RwFIYP1cSDHBS94R7vUQ60_1.JPG">
+		</div>
+		<h5 class="shopHeader">10pcs NRF24L01+ 2.4GHz Wireless Transceiver</h5>
+		<p>This is what enables your sensors to communicate wirelessly across a nominal range of 60 meters.</p>
+		<div class="clearShop">
+		
+		
+			<div class="shopStock">
+				 <a href="http://rover.ebay.com/rover/1/711-53200-19255-0/1?icep_ff3=2&amp;pub=5575069610&amp;toolid=10001&amp;campid=5337433187&amp;customid=&amp;icep_item=400594940658&amp;ipn=psmain&amp;icep_vectorid=229466&amp;kwid=902099&amp;mtid=824&amp;kw=lg"><img src="arduino%20hookup_files/ebay.png"></a>
+				 <div class="pull-right">
+					<a href="http://rover.ebay.com/rover/1/711-53200-19255-0/1?icep_ff3=2&amp;pub=5575069610&amp;toolid=10001&amp;campid=5337433187&amp;customid=&amp;icep_item=400594940658&amp;ipn=psmain&amp;icep_vectorid=229466&amp;kwid=902099&amp;mtid=824&amp;kw=lg"><span style="color:green">In stock - $9.99</span></a>&nbsp;
+					<a role="button" href="http://rover.ebay.com/rover/1/711-53200-19255-0/1?icep_ff3=2&amp;pub=5575069610&amp;toolid=10001&amp;campid=5337433187&amp;customid=&amp;icep_item=400594940658&amp;ipn=psmain&amp;icep_vectorid=229466&amp;kwid=902099&amp;mtid=824&amp;kw=lg" class="btn btn-xs btn-primary">&nbsp;&nbsp;<i class="fa fa-shopping-cart"></i> Buy &nbsp;&nbsp;</a>
+				</div>
+			</div>
+		
+		
+			<div class="shopStock">
+				<a href="http://s.click.aliexpress.com/e/jAYrRbiAy"><img src="arduino%20hookup_files/ali.png"></a>
+				<div class="pull-right">
+					<a href="http://s.click.aliexpress.com/e/jAYrRbiAy"><span style="color:green">In stock - $7.75</span></a>&nbsp;
+					<a role="button" href="http://s.click.aliexpress.com/e/jAYrRbiAy" class="btn btn-xs btn-primary">&nbsp;&nbsp;<i class="fa fa-shopping-cart"></i> Buy &nbsp;&nbsp;</a>
+				</div>
+			</div>
+		
+		</div>
+		</div>
+		</div>
+	 
+	<div class="col-sm-6 col-lg-6 col-md-6 shopRightItem">
+	<div class="shopBorder">
+		<div class="shopImageField">
+				<img class="img-rounded shopImage" src="arduino%20hookup_files/_12.JPG">
+		</div>
+		<h5 class="shopHeader">NRF24L01+PA+LNA Antenna version</h5>
+		<p>This radio has an extended range of up to 1000 meters according to 
+spec. Use this if you need to cover a greater distance or area.</p>
+		<div class="clearShop">
+		
+		
+			<div class="shopStock">
+				 <a href="http://rover.ebay.com/rover/1/711-53200-19255-0/1?icep_ff3=2&amp;pub=5575069610&amp;toolid=10001&amp;campid=5337433187&amp;customid=&amp;icep_item=310651702557&amp;ipn=psmain&amp;icep_vectorid=229466&amp;kwid=902099&amp;mtid=824&amp;kw=lg"><img src="arduino%20hookup_files/ebay.png"></a>
+				 <div class="pull-right">
+					<a href="http://rover.ebay.com/rover/1/711-53200-19255-0/1?icep_ff3=2&amp;pub=5575069610&amp;toolid=10001&amp;campid=5337433187&amp;customid=&amp;icep_item=310651702557&amp;ipn=psmain&amp;icep_vectorid=229466&amp;kwid=902099&amp;mtid=824&amp;kw=lg"><span style="color:green">In stock - $3.23</span></a>&nbsp;
+					<a role="button" href="http://rover.ebay.com/rover/1/711-53200-19255-0/1?icep_ff3=2&amp;pub=5575069610&amp;toolid=10001&amp;campid=5337433187&amp;customid=&amp;icep_item=310651702557&amp;ipn=psmain&amp;icep_vectorid=229466&amp;kwid=902099&amp;mtid=824&amp;kw=lg" class="btn btn-xs btn-primary">&nbsp;&nbsp;<i class="fa fa-shopping-cart"></i> Buy &nbsp;&nbsp;</a>
+				</div>
+			</div>
+		
+		
+			<div class="shopStock">
+				<a href="http://s.click.aliexpress.com/e/aiiUZ7mq7"><img src="arduino%20hookup_files/ali.png"></a>
+				<div class="pull-right">
+					<a href="http://s.click.aliexpress.com/e/aiiUZ7mq7"><span style="color:green">In stock - $2.10</span></a>&nbsp;
+					<a role="button" href="http://s.click.aliexpress.com/e/aiiUZ7mq7" class="btn btn-xs btn-primary">&nbsp;&nbsp;<i class="fa fa-shopping-cart"></i> Buy &nbsp;&nbsp;</a>
+				</div>
+			</div>
+		
+		</div>
+		</div>
+		</div>
+	 
+	<div class="col-sm-6 col-lg-6 col-md-6 shopLeftItem">
+	<div class="shopBorder">
+		<div class="shopImageField">
+				<img class="img-rounded shopImage" src="arduino%20hookup_files/T2eC16NykE9s7tvU0eBSEPI7ITUQ60_1.JPG">
+		</div>
+		<h5 class="shopHeader">10pcs LE33ACZ 5V-3.3V Step Down Regulator</h5>
+		<p>Regulator for adjusting the power to the radio when using 5V Arduino Pro Minis. Easy to solder and/or use on a breadboard.</p>
+		<div class="clearShop">
+		
+		
+			<div class="shopStock">
+				 <a href="http://rover.ebay.com/rover/1/711-53200-19255-0/1?icep_ff3=2&amp;pub=5575069610&amp;toolid=10001&amp;campid=5337433187&amp;customid=&amp;icep_item=400691492273&amp;ipn=psmain&amp;icep_vectorid=229466&amp;kwid=902099&amp;mtid=824&amp;kw=lg"><img src="arduino%20hookup_files/ebay.png"></a>
+				 <div class="pull-right">
+					<a href="http://rover.ebay.com/rover/1/711-53200-19255-0/1?icep_ff3=2&amp;pub=5575069610&amp;toolid=10001&amp;campid=5337433187&amp;customid=&amp;icep_item=400691492273&amp;ipn=psmain&amp;icep_vectorid=229466&amp;kwid=902099&amp;mtid=824&amp;kw=lg"><span style="color:green">In stock - $7.95</span></a>&nbsp;
+					<a role="button" href="http://rover.ebay.com/rover/1/711-53200-19255-0/1?icep_ff3=2&amp;pub=5575069610&amp;toolid=10001&amp;campid=5337433187&amp;customid=&amp;icep_item=400691492273&amp;ipn=psmain&amp;icep_vectorid=229466&amp;kwid=902099&amp;mtid=824&amp;kw=lg" class="btn btn-xs btn-primary">&nbsp;&nbsp;<i class="fa fa-shopping-cart"></i> Buy &nbsp;&nbsp;</a>
+				</div>
+			</div>
+		
+		
+			<div class="shopStock">
+				<a href="http://s.click.aliexpress.com/e/AiYVFQniY"><img src="arduino%20hookup_files/ali.png"></a>
+				<div class="pull-right">
+					<a href="http://s.click.aliexpress.com/e/AiYVFQniY"><span style="color:green">In stock - $7.05</span></a>&nbsp;
+					<a role="button" href="http://s.click.aliexpress.com/e/AiYVFQniY" class="btn btn-xs btn-primary">&nbsp;&nbsp;<i class="fa fa-shopping-cart"></i> Buy &nbsp;&nbsp;</a>
+				</div>
+			</div>
+		
+		</div>
+		</div>
+		</div>
+	 
+	<div class="col-sm-6 col-lg-6 col-md-6 shopRightItem">
+	<div class="shopBorder">
+		<div class="shopImageField">
+				<img class="img-rounded shopImage" src="arduino%20hookup_files/_1.JPG">
+		</div>
+		<h5 class="shopHeader">20pcs 662K 5V-3.3V Step Down Regulator</h5>
+		<p>Inexpensive regulator for adjusting the power to the radio when 
+using 5V Arduino Pro Minis. Warning! Very small and hard to solder.</p>
+		<div class="clearShop">
+		
+		
+			<div class="shopStock">
+				 <a href="http://rover.ebay.com/rover/1/711-53200-19255-0/1?icep_ff3=2&amp;pub=5575069610&amp;toolid=10001&amp;campid=5337433187&amp;customid=&amp;icep_item=261943631428&amp;ipn=psmain&amp;icep_vectorid=229466&amp;kwid=902099&amp;mtid=824&amp;kw=lg"><img src="arduino%20hookup_files/ebay.png"></a>
+				 <div class="pull-right">
+					<a href="http://rover.ebay.com/rover/1/711-53200-19255-0/1?icep_ff3=2&amp;pub=5575069610&amp;toolid=10001&amp;campid=5337433187&amp;customid=&amp;icep_item=261943631428&amp;ipn=psmain&amp;icep_vectorid=229466&amp;kwid=902099&amp;mtid=824&amp;kw=lg"><span style="color:green">In stock - $0.99</span></a>&nbsp;
+					<a role="button" href="http://rover.ebay.com/rover/1/711-53200-19255-0/1?icep_ff3=2&amp;pub=5575069610&amp;toolid=10001&amp;campid=5337433187&amp;customid=&amp;icep_item=261943631428&amp;ipn=psmain&amp;icep_vectorid=229466&amp;kwid=902099&amp;mtid=824&amp;kw=lg" class="btn btn-xs btn-primary">&nbsp;&nbsp;<i class="fa fa-shopping-cart"></i> Buy &nbsp;&nbsp;</a>
+				</div>
+			</div>
+		
+		
+			<div class="shopStock">
+				<a href="http://s.click.aliexpress.com/e/maeQFuZbI"><img src="arduino%20hookup_files/ali.png"></a>
+				<div class="pull-right">
+					<a href="http://s.click.aliexpress.com/e/maeQFuZbI"><span style="color:green">In stock - $1.89</span></a>&nbsp;
+					<a role="button" href="http://s.click.aliexpress.com/e/maeQFuZbI" class="btn btn-xs btn-primary">&nbsp;&nbsp;<i class="fa fa-shopping-cart"></i> Buy &nbsp;&nbsp;</a>
+				</div>
+			</div>
+		
+		</div>
+		</div>
+		</div>
+	 
+	<div class="col-sm-6 col-lg-6 col-md-6 shopLeftItem">
+	<div class="shopBorder">
+		<div class="shopImageField">
+				<img class="img-rounded shopImage" src="arduino%20hookup_files/_12_002.JPG">
+		</div>
+		<h5 class="shopHeader">AMS1117 5V-3.3V Step Down Module</h5>
+		<p>Regulator for adjusting the power to the radio when using 5V Arduino Pro Minis. Solder free.</p>
+		<div class="clearShop">
+		
+		
+			<div class="shopStock">
+				 <a href="http://rover.ebay.com/rover/1/711-53200-19255-0/1?icep_ff3=2&amp;pub=5575069610&amp;toolid=10001&amp;campid=5337433187&amp;customid=&amp;icep_item=261172232237&amp;ipn=psmain&amp;icep_vectorid=229466&amp;kwid=902099&amp;mtid=824&amp;kw=lg"><img src="arduino%20hookup_files/ebay.png"></a>
+				 <div class="pull-right">
+					<a href="http://rover.ebay.com/rover/1/711-53200-19255-0/1?icep_ff3=2&amp;pub=5575069610&amp;toolid=10001&amp;campid=5337433187&amp;customid=&amp;icep_item=261172232237&amp;ipn=psmain&amp;icep_vectorid=229466&amp;kwid=902099&amp;mtid=824&amp;kw=lg"><span style="color:green">In stock - $1.99</span></a>&nbsp;
+					<a role="button" href="http://rover.ebay.com/rover/1/711-53200-19255-0/1?icep_ff3=2&amp;pub=5575069610&amp;toolid=10001&amp;campid=5337433187&amp;customid=&amp;icep_item=261172232237&amp;ipn=psmain&amp;icep_vectorid=229466&amp;kwid=902099&amp;mtid=824&amp;kw=lg" class="btn btn-xs btn-primary">&nbsp;&nbsp;<i class="fa fa-shopping-cart"></i> Buy &nbsp;&nbsp;</a>
+				</div>
+			</div>
+		
+		
+			<div class="shopStock">
+				<a href="http://s.click.aliexpress.com/e/JyJMVNbEU"><img src="arduino%20hookup_files/ali.png"></a>
+				<div class="pull-right">
+					<a href="http://s.click.aliexpress.com/e/JyJMVNbEU"><span style="color:green">In stock - $0.46</span></a>&nbsp;
+					<a role="button" href="http://s.click.aliexpress.com/e/JyJMVNbEU" class="btn btn-xs btn-primary">&nbsp;&nbsp;<i class="fa fa-shopping-cart"></i> Buy &nbsp;&nbsp;</a>
+				</div>
+			</div>
+		
+		</div>
+		</div>
+		</div>
+	 
+	<div class="col-sm-6 col-lg-6 col-md-6 shopRightItem">
+	<div class="shopBorder">
+		<div class="shopImageField">
+				<img class="img-rounded shopImage" src="arduino%20hookup_files/_1_003.JPG">
+		</div>
+		<h5 class="shopHeader">NRF24L01+ Socket Adapter Board</h5>
+		<p>Another adapter for Arduino Pro Mini 5V that provide 3.3v regulated power to the radio. Solder free.</p>
+		<div class="clearShop">
+		
+		
+			<div class="shopStock">
+				 <a href="http://rover.ebay.com/rover/1/711-53200-19255-0/1?icep_ff3=2&amp;pub=5575069610&amp;toolid=10001&amp;campid=5337433187&amp;customid=&amp;icep_item=200960749614&amp;ipn=psmain&amp;icep_vectorid=229466&amp;kwid=902099&amp;mtid=824&amp;kw=lg"><img src="arduino%20hookup_files/ebay.png"></a>
+				 <div class="pull-right">
+					<a href="http://rover.ebay.com/rover/1/711-53200-19255-0/1?icep_ff3=2&amp;pub=5575069610&amp;toolid=10001&amp;campid=5337433187&amp;customid=&amp;icep_item=200960749614&amp;ipn=psmain&amp;icep_vectorid=229466&amp;kwid=902099&amp;mtid=824&amp;kw=lg"><span style="color:green">In stock - $0.99</span></a>&nbsp;
+					<a role="button" href="http://rover.ebay.com/rover/1/711-53200-19255-0/1?icep_ff3=2&amp;pub=5575069610&amp;toolid=10001&amp;campid=5337433187&amp;customid=&amp;icep_item=200960749614&amp;ipn=psmain&amp;icep_vectorid=229466&amp;kwid=902099&amp;mtid=824&amp;kw=lg" class="btn btn-xs btn-primary">&nbsp;&nbsp;<i class="fa fa-shopping-cart"></i> Buy &nbsp;&nbsp;</a>
+				</div>
+			</div>
+		
+		
+			<div class="shopStock">
+				<a href="http://s.click.aliexpress.com/e/aYvbAQnqF"><img src="arduino%20hookup_files/ali.png"></a>
+				<div class="pull-right">
+					<a href="http://s.click.aliexpress.com/e/aYvbAQnqF"><span style="color:green">In stock - $0.69</span></a>&nbsp;
+					<a role="button" href="http://s.click.aliexpress.com/e/aYvbAQnqF" class="btn btn-xs btn-primary">&nbsp;&nbsp;<i class="fa fa-shopping-cart"></i> Buy &nbsp;&nbsp;</a>
+				</div>
+			</div>
+		
+		</div>
+		</div>
+		</div>
+	 
+	<div class="col-sm-6 col-lg-6 col-md-6 shopLeftItem">
+	<div class="shopBorder">
+		<div class="shopImageField">
+				<img class="img-rounded shopImage" src="arduino%20hookup_files/KGrHqFq8FGU2FCuQ5BRtvRkD60_1.JPG">
+		</div>
+		<h5 class="shopHeader">100pcs electrolytic capacitors</h5>
+		<p>Assorted values. 0.1uF-100uF. Use capacitors to stabilize power to the radio.</p>
+		<div class="clearShop">
+		
+		
+			<div class="shopStock">
+				 <a href="http://rover.ebay.com/rover/1/711-53200-19255-0/1?icep_ff3=2&amp;pub=5575069610&amp;toolid=10001&amp;campid=5337433187&amp;customid=&amp;icep_item=321142501923&amp;ipn=psmain&amp;icep_vectorid=229466&amp;kwid=902099&amp;mtid=824&amp;kw=lg"><img src="arduino%20hookup_files/ebay.png"></a>
+				 <div class="pull-right">
+					<a href="http://rover.ebay.com/rover/1/711-53200-19255-0/1?icep_ff3=2&amp;pub=5575069610&amp;toolid=10001&amp;campid=5337433187&amp;customid=&amp;icep_item=321142501923&amp;ipn=psmain&amp;icep_vectorid=229466&amp;kwid=902099&amp;mtid=824&amp;kw=lg"><span style="color:green">In stock - $4.28</span></a>&nbsp;
+					<a role="button" href="http://rover.ebay.com/rover/1/711-53200-19255-0/1?icep_ff3=2&amp;pub=5575069610&amp;toolid=10001&amp;campid=5337433187&amp;customid=&amp;icep_item=321142501923&amp;ipn=psmain&amp;icep_vectorid=229466&amp;kwid=902099&amp;mtid=824&amp;kw=lg" class="btn btn-xs btn-primary">&nbsp;&nbsp;<i class="fa fa-shopping-cart"></i> Buy &nbsp;&nbsp;</a>
+				</div>
+			</div>
+		
+		
+			<div class="shopStock">
+				<a href="http://s.click.aliexpress.com/e/66EUJuRjM"><img src="arduino%20hookup_files/ali.png"></a>
+				<div class="pull-right">
+					<a href="http://s.click.aliexpress.com/e/66EUJuRjM"><span style="color:green">In stock - $2.20</span></a>&nbsp;
+					<a role="button" href="http://s.click.aliexpress.com/e/66EUJuRjM" class="btn btn-xs btn-primary">&nbsp;&nbsp;<i class="fa fa-shopping-cart"></i> Buy &nbsp;&nbsp;</a>
+				</div>
+			</div>
+		
+		</div>
+		</div>
+		</div>
+	 
+	<div class="col-sm-6 col-lg-6 col-md-6 shopRightItem">
+	<div class="shopBorder">
+		<div class="shopImageField">
+				<img class="img-rounded shopImage" src="arduino%20hookup_files/KGrHqZrIFHDstUSGBR1uUnt02w60_1.JPG">
+		</div>
+		<h5 class="shopHeader"><span class="shopNewTitle">New! </span>RFM69 433Mhz Transceiver</h5>
+		<p>HopeRF RF69 module. Select frequency band on aliexpress.</p>
+		<div class="clearShop">
+		
+		
+			<div class="shopStock">
+				 <a href="http://rover.ebay.com/rover/1/711-53200-19255-0/1?icep_ff3=2&amp;pub=5575069610&amp;toolid=10001&amp;campid=5337433187&amp;customid=&amp;icep_item=181170697673&amp;ipn=psmain&amp;icep_vectorid=229466&amp;kwid=902099&amp;mtid=824&amp;kw=lg"><img src="arduino%20hookup_files/ebay.png"></a>
+				 <div class="pull-right">
+					<a href="http://rover.ebay.com/rover/1/711-53200-19255-0/1?icep_ff3=2&amp;pub=5575069610&amp;toolid=10001&amp;campid=5337433187&amp;customid=&amp;icep_item=181170697673&amp;ipn=psmain&amp;icep_vectorid=229466&amp;kwid=902099&amp;mtid=824&amp;kw=lg"><span style="color:green">In stock - $3.90</span></a>&nbsp;
+					<a role="button" href="http://rover.ebay.com/rover/1/711-53200-19255-0/1?icep_ff3=2&amp;pub=5575069610&amp;toolid=10001&amp;campid=5337433187&amp;customid=&amp;icep_item=181170697673&amp;ipn=psmain&amp;icep_vectorid=229466&amp;kwid=902099&amp;mtid=824&amp;kw=lg" class="btn btn-xs btn-primary">&nbsp;&nbsp;<i class="fa fa-shopping-cart"></i> Buy &nbsp;&nbsp;</a>
+				</div>
+			</div>
+		
+		
+			<div class="shopStock">
+				<a href="http://s.click.aliexpress.com/e/rneAYfyVN"><img src="arduino%20hookup_files/ali.png"></a>
+				<div class="pull-right">
+					<a href="http://s.click.aliexpress.com/e/rneAYfyVN"><span style="color:green">In stock - $20.00</span></a>&nbsp;
+					<a role="button" href="http://s.click.aliexpress.com/e/rneAYfyVN" class="btn btn-xs btn-primary">&nbsp;&nbsp;<i class="fa fa-shopping-cart"></i> Buy &nbsp;&nbsp;</a>
+				</div>
+			</div>
+		
+		</div>
+		</div>
+		</div>
+	 
+	<div class="col-sm-6 col-lg-6 col-md-6 shopLeftItem">
+	<div class="shopBorder">
+		<div class="shopImageField">
+				<img class="img-rounded shopImage" src="arduino%20hookup_files/KGrHqZrQFJrBJg--DBSfifLjLQ60_1.JPG">
+		</div>
+		<h5 class="shopHeader"><span class="shopNewTitle">New! </span>RFM69 868Mhz Transceiver</h5>
+		<p>HopeRF RF69 module. Select frequency band on aliexpress.</p>
+		<div class="clearShop">
+		
+		
+			<div class="shopStock">
+				 <a href="http://rover.ebay.com/rover/1/711-53200-19255-0/1?icep_ff3=2&amp;pub=5575069610&amp;toolid=10001&amp;campid=5337433187&amp;customid=&amp;icep_item=171567167962&amp;ipn=psmain&amp;icep_vectorid=229466&amp;kwid=902099&amp;mtid=824&amp;kw=lg"><img src="arduino%20hookup_files/ebay.png"></a>
+				 <div class="pull-right">
+					<a href="http://rover.ebay.com/rover/1/711-53200-19255-0/1?icep_ff3=2&amp;pub=5575069610&amp;toolid=10001&amp;campid=5337433187&amp;customid=&amp;icep_item=171567167962&amp;ipn=psmain&amp;icep_vectorid=229466&amp;kwid=902099&amp;mtid=824&amp;kw=lg"><span style="color:green">In stock - $4.25</span></a>&nbsp;
+					<a role="button" href="http://rover.ebay.com/rover/1/711-53200-19255-0/1?icep_ff3=2&amp;pub=5575069610&amp;toolid=10001&amp;campid=5337433187&amp;customid=&amp;icep_item=171567167962&amp;ipn=psmain&amp;icep_vectorid=229466&amp;kwid=902099&amp;mtid=824&amp;kw=lg" class="btn btn-xs btn-primary">&nbsp;&nbsp;<i class="fa fa-shopping-cart"></i> Buy &nbsp;&nbsp;</a>
+				</div>
+			</div>
+		
+		
+			<div class="shopStock">
+				<a href="http://s.click.aliexpress.com/e/rneAYfyVN"><img src="arduino%20hookup_files/ali.png"></a>
+				<div class="pull-right">
+					<a href="http://s.click.aliexpress.com/e/rneAYfyVN"><span style="color:green">In stock - $20.00</span></a>&nbsp;
+					<a role="button" href="http://s.click.aliexpress.com/e/rneAYfyVN" class="btn btn-xs btn-primary">&nbsp;&nbsp;<i class="fa fa-shopping-cart"></i> Buy &nbsp;&nbsp;</a>
+				</div>
+			</div>
+		
+		</div>
+		</div>
+		</div>
+	 
+	<div class="col-sm-6 col-lg-6 col-md-6 shopRightItem">
+	<div class="shopBorder">
+		<div class="shopImageField">
+				<img class="img-rounded shopImage" src="arduino%20hookup_files/_1_002.JPG">
+		</div>
+		<h5 class="shopHeader">Logic Level Shifter</h5>
+		<p>Bi-Directional logic level shifter. 5V to 3v3. 4 Pins.</p>
+		<div class="clearShop">
+		
+		
+			<div class="shopStock">
+				 <a href="http://rover.ebay.com/rover/1/711-53200-19255-0/1?icep_ff3=2&amp;pub=5575069610&amp;toolid=10001&amp;campid=5337433187&amp;customid=&amp;icep_item=181572335264&amp;ipn=psmain&amp;icep_vectorid=229466&amp;kwid=902099&amp;mtid=824&amp;kw=lg"><img src="arduino%20hookup_files/ebay.png"></a>
+				 <div class="pull-right">
+					<a href="http://rover.ebay.com/rover/1/711-53200-19255-0/1?icep_ff3=2&amp;pub=5575069610&amp;toolid=10001&amp;campid=5337433187&amp;customid=&amp;icep_item=181572335264&amp;ipn=psmain&amp;icep_vectorid=229466&amp;kwid=902099&amp;mtid=824&amp;kw=lg"><span style="color:green">In stock - $1.23</span></a>&nbsp;
+					<a role="button" href="http://rover.ebay.com/rover/1/711-53200-19255-0/1?icep_ff3=2&amp;pub=5575069610&amp;toolid=10001&amp;campid=5337433187&amp;customid=&amp;icep_item=181572335264&amp;ipn=psmain&amp;icep_vectorid=229466&amp;kwid=902099&amp;mtid=824&amp;kw=lg" class="btn btn-xs btn-primary">&nbsp;&nbsp;<i class="fa fa-shopping-cart"></i> Buy &nbsp;&nbsp;</a>
+				</div>
+			</div>
+		
+		
+			<div class="shopStock">
+				<a href="http://s.click.aliexpress.com/e/ZZfqjQjey"><img src="arduino%20hookup_files/ali.png"></a>
+				<div class="pull-right">
+					<a href="http://s.click.aliexpress.com/e/ZZfqjQjey"><span style="color:green">In stock - $2.70</span></a>&nbsp;
+					<a role="button" href="http://s.click.aliexpress.com/e/ZZfqjQjey" class="btn btn-xs btn-primary">&nbsp;&nbsp;<i class="fa fa-shopping-cart"></i> Buy &nbsp;&nbsp;</a>
+				</div>
+			</div>
+		
+		</div>
+		</div>
+		</div>
+	 
+	 </div></div>
+
+						<a class="anchor" id="datasheets"></a><h2>Datasheets</h2>
+						<a href="https://www.mysensors.org/radio/antenna.png" data-lightbox="image-finding" title="NRF24L01+ Amplified Antenna Version"><img src="arduino%20hookup_files/antenna.png" style="width:200px;float:right;padding-left:20px; padding-right:20px"></a>
+
+
+						 <a href="https://www.mysensors.org/radio/nRF24L01.jpg" data-lightbox="image-finding" title="NRF24L01+ Pack"><img src="arduino%20hookup_files/nRF24L01.jpg" style="width:200px;float:right;padding-left:20px"></a>
+
+						<a href="https://www.mysensors.org/radio/nRF24L01Plus.pdf">NRF24L01+</a><br>
+						<a href="https://www.mysensors.org/radio/LE33CZ.pdf">LE33CZ Regulator</a><br>
+						<a href="https://www.mysensors.org/radio/662k.pdf">662K Regulator</a><br>
+
+						<br>
+						<br>
+						<br>
+						<br>
+
+				</div>
+		</div>
+					<div class="col-md-12" id="my-disqus">
+	<!-- Begin Disqus universal code -->
+	<div id="disqus_thread"><iframe verticalscrolling="no" horizontalscrolling="no" src="arduino%20hookup_files/a.html" style="width: 1px ! important; min-width: 100% ! important; border: medium none ! important; overflow: hidden ! important; height: 5728px ! important;" title="Disqus" tabindex="0" scrolling="no" allowtransparency="true" name="dsq-app2" id="dsq-app2" frameborder="0" width="100%"></iframe></div>
+
+	<noscript>Please enable JavaScript to enable
+		<a href="http://disqus.com/?ref_noscript">comments</a>.
+	</noscript>
+
+	
+	<!-- End Disqus universal code -->
+</div>
+					<div class="footer "><a href="http://sensnology.com/">Copyright 2015 Sensnology</a> &nbsp; | &nbsp; <a href="https://www.mysensors.org/privacy">Privacy Policy</a> &nbsp; | &nbsp; <a href="https://www.mysensors.org/tos">Terms of Service</a> &nbsp; | &nbsp; <a href="https://www.mysensors.org/about/mysensors">About</a></div>
+
+	<img src="arduino%20hookup_files/1.gif" style="text-decoration: none; border: 0px none; padding: 0px; margin: 0px; display: none ! important;">
+				</div>
+			</div>
+		</div>
+	</div>
+	</body></body></html>

@@ -1,0 +1,238 @@
+/* CSS declarations go here */
+
+body {
+/*background: url('/background.jpg');*/
+}
+
+
+@font-face {
+		font-family: 'kg_second_chances_sketchRg';
+		src: url('/font/kgsecondchancessketch-webfont.eot');
+		src: url('/font/kgsecondchancessketch-webfont.eot?#iefix') format('embedded-opentype'),
+				 url('/font/kgsecondchancessketch-webfont.woff') format('woff'),
+				 url('/font/kgsecondchancessketch-webfont.ttf') format('truetype'),
+				 url('/font/kgsecondchancessketch-webfont.svg#kg_second_chances_sketchRg') format('svg');
+		font-weight: normal;
+		font-style: normal;
+
+}
+
+@font-face {
+		font-family: 'kg_second_chances_solidRg';
+		src: url('/font/kgsecondchancessolid-webfont.eot');
+		src: url('/font/kgsecondchancessolid-webfont.eot?#iefix') format('embedded-opentype'),
+				 url('/font/kgsecondchancessolid-webfont.woff') format('woff'),
+				 url('/font/kgsecondchancessolid-webfont.ttf') format('truetype'),
+				 url('/font/kgsecondchancessolid-webfont.svg#kg_second_chances_solidRg') format('svg');
+		font-weight: normal;
+		font-style: normal;
+
+}
+
+
+
+@media only screen and (max-width : 768px) {
+	.hideSmall {
+		display:none;
+	}
+
+	.btn-lg {
+		font-size:inherit;
+	}
+}
+
+.table-curved td, .table-curved th {
+	padding: 2px;
+}
+
+.navbar-brand > img {
+	margin-top: -4px;
+	height: 46px;
+}
+
+.normal-nav a {
+	color: #777;
+}
+
+.nav > li > a {
+	padding: 10px 5px;
+}
+
+.navbar-toggle {
+	margin-top: 15px;
+	margin-bottom: 15px;
+}
+
+
+pre {
+	padding:0px;
+}
+
+#navbar {
+	font-size: 120%;
+	padding-right: 15px;
+}
+
+
+
+.navbar-collapse {
+	padding-right: 0px;
+}
+
+
+
+.floatLeft {
+	float:left;
+	clear:both;
+	margin:10px;
+}
+
+.floatRight {
+	float:right;
+	margin:10px;
+	margin-top: 0px;
+}
+
+
+.nav-stacked > li > a {
+	padding: 5px 5px;
+}
+
+.relative {
+	position:relative;
+}
+
+.small {
+	font-size:40%;
+}
+
+.page {
+	padding-right: 35px;
+	padding-left: 35px;
+	margin-right: inherit;
+	margin-left: inherit;
+}
+
+.box {
+	padding:10px;
+	border: 1px solid #ddd;
+	border-radius:3px;
+	background: #FDFDFD;
+	display: inline-block;
+	padding-left:20px;
+	padding-right:20px;
+
+}
+
+.instruction {
+	background:#fff;
+	padding-left:20px;
+	padding-right:20px;
+	padding-top:10px;
+	padding-bottom:10px;
+}
+
+.jumbotron {
+	padding: 30px !important;
+}
+
+.navbar-home {
+	color: #428bca !important;
+	font-size: 24px;
+}
+
+
+.sketch {
+	font-family: kg_second_chances_sketchRg;
+}
+
+.solid {
+	font-family: kg_second_chances_solidRg;
+}
+
+h1 {
+	font-family: kg_second_chances_sketchRg;
+	font-size: 3.5em;
+	margin-top: 5px;
+}
+
+h2 {
+	font-family: kg_second_chances_solidRg;
+}
+
+h3 {
+	font-family: kg_second_chances_solidRg;
+}
+
+h4 {
+	font-family: kg_second_chances_solidRg;
+}
+
+h5 {
+	font-family: kg_second_chances_solidRg;
+	color: #000;
+}
+
+.youtube {
+	width:560px;
+	height:315px;
+}
+
+a.anchor{display: block; position: relative; top: -80px; visibility: hidden;}
+
+@media only screen and (max-width : 768px) {
+
+	.youtube {
+		width:250px;
+		height:141px;
+	}
+
+
+	h1 {
+		font-size: 2.5em;
+	}
+
+	h2 {
+		font-size:20px;
+	}
+	.hideSmall {
+		display:none;
+	}
+	
+
+	.btn-lg {
+		font-size: 10pt;
+	  	padding: 5px 10px;
+	}
+
+	.jumbotron p {
+		font-size: 16px;
+	}
+}
+
+
+/*h5 a {
+	font-family: kg_second_chances_solidRg;
+	color: #000;
+}*/
+
+h5 a:hover {
+	color: #000;
+}
+
+
+div.addthis_toolbox {
+	padding-bottom:10px;
+	padding-top:10px;
+}
+
+#footer .logo a {
+	display: none;
+}
+
+
+.footer {
+	text-align: center;
+	padding-top: 20px;
+	padding-bottom:20px;
+}

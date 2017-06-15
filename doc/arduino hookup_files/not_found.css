@@ -1,0 +1,15 @@
+
+
+.sketchError {
+/*	float: right; */
+	bottom:-2px;
+	right:-2px;
+	position:absolute;
+	background: url(/error/sketchError.png);
+	background-size: 100px;
+	background-repeat: no-repeat;
+	width: 100px;
+	height: 162px;
+}
+
+

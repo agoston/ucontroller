@@ -1,0 +1,29 @@
+.apikeyLink, .apikeyLink:hover {
+	text-decoration:none;
+	color:#000;
+}
+
+.apikeyLinkDisabled, .apikeyLinkDisabled:hover {
+	text-decoration:none;
+	color:#ccc;
+}
+
+
+.symbol {
+	color:#428bca;
+}
+
+.symbolDisabled {
+	color:#ccc;
+}
+
+
+.keyFace {
+	font-family: Monaco, Menlo, Consolas, "Courier New", monospace;
+}
+
+
+.apiTable {
+	font-size:1.3em;
+}
+

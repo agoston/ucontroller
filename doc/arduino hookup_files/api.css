@@ -1,0 +1,23 @@
+.scommand {
+	background: white;
+	border: 1px solid black;
+	font-family: "Consolas", "Bitstream Vera Sans Mono", "Courier New", Courier, monospace !important;
+	color:#000;
+	font-size:120%;
+	padding: 4px;
+	margin: 10px;
+	font-weight: bold;
+}
+
+.scommand strong {
+	color:#666;
+}
+
+.lg {
+	font-size:150%;
+}
+
+.api-table td,  .api-table th {
+	vertical-align: top;
+	padding-right:10px;
+}

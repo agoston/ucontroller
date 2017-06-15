@@ -1,0 +1,13 @@
+(function(){
+Template.__checkName("hallOfFame");
+Template["hallOfFame"] = new Template("Template.hallOfFame", (function() {
+  var view = this;
+  return HTML.DIV({
+    "class": "col-md-12"
+  }, "\n\n		", HTML.DIV({
+    "class": " relative well",
+    style: "text-align:center"
+  }, "\n		", HTML.Raw('<h1><span class="glyphicon glyphicon-star"></span> Hall of Fame <span class="glyphicon glyphicon-star"></span> </h1>'), "\n		", HTML.Raw('<div class="row"><div class="col-sm-2"></div><div class="col-sm-8"><p>Thank you all donors! You keep the project servers running and enable us to buy, test and document new fun build projects.</p></div><div class="col-sm-2"></div></div>'), "\n		", HTML.P(HTML.Raw("<br>"), "\n		", Spacebars.include(view.lookupTemplate("donate"))), "\n		", HTML.Raw('<p><br>\n		<h4>$1000+</h4>\n		<small>Get your company logo and link here. You will become an official MySensors sponsor!</small><br>\n		<i style="font-size:200%" class="fa fa-question"></i>\n		<br>\n		<br>\n\n		<h4>$100+</h4>\n		<small>Thanks a lot! This will help us feed our server providers for a full month!!</small><br>\n		<strong>Tim Gordon, Jim Brower, Carsten Thies, PanelHandler, m26872</strong>\n		<br>\n		<br>\n\n		<h4>$50+</h4>\n		<small>Wow, thanks! This helps us with costs to develop new open hardware. </small><br>\n	   <strong>Tix Inc., Henk, Information systems technology inc, Mats Bjesse, ServiceXP<br>\n	   		   Tom Rubel, Roman Miklavcic, Stephan Noller, Magnus Sydoff, Patrick Carney,<br>\n	   		   Damian O\'Sullivan</strong>\n		<br>\n		<br>\n\n		<h4>$20+</h4>\n		<small>Thank you friend! This donation help us trying out new sensors!</small><br>\n		<strong>Glenn Byron, korttoma, bmlsx, Niklas Lind, John Morgan, Andy Swing, <br>\n				John Heacock, Benjamin Nagel, Richard Heslip, Ben Wolfe, Dan S, <br>\n				griffinsaic, Ray Fleischmann, tjay4x4, Christer Viklander, <br>\n				Kenneth Wittner, Ricardo Vendrame, Ronald In \'t Velt, Richard Sjögren,<br>\n				Marcel van den Arend, Mickael Hubert, Andreas Sundberg, Ted Drain,<br>\n				Bjarne Tøndersen, The Light house Villa, Myall Hingee,<br>\n				Heikki Tiittanen, Mickael Hubert, Bart Eversdijk, Gary Griffin,<br>\n		</strong>\n		<br>\n		<br>\n\n		<h4>$10+</h4>\n		<small>Thank you for the support! It means a lot to us!</small><br>\n		<strong>gregl, Zeph, Henrik Sörling, Tomas Forsman, pete1450, Pieter Hensen<br>\n				Doug Richardson, Ad Imhoff, Dwalt, alban bazin, Angel Guerrero<br>\n				Markus Hiller, Marcel de Jong, Magnus Johansson,<br>\n				Marco van \'t Slot, Rabotyagin Aleksey, Daniel Nilsson</strong>\n		<br>\n		<br>\n\n		</p>'), "\n			", HTML.Raw('<div class="sketchComingSoon"></div>'), "\n		"), "\n	");
+}));
+
+}).call(this);

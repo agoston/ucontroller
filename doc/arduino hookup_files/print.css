@@ -1,0 +1,25 @@
+
+.printable, .printable3d {
+	height:150pt;
+	float:left
+}
+
+
+.printable {
+	padding-right:20px
+}
+
+
+
+@media only screen and (max-width : 768px) {
+
+
+.printable, .printable3d {
+	width:100%;
+	padding-right:0px;
+}
+
+
+
+}
+

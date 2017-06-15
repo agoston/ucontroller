@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html class=" js flexbox flexboxlegacy rgba hsla multiplebgs backgroundsize borderimage borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients no-cssreflections csstransforms csstransforms3d csstransitions fontface generatedcontent"><head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Arduino Low Power - How To Run ATmega328P For a Year On Coin Cell Battery</title>
+        <meta name="description" content="">
+        <link rel="stylesheet" type="text/css" href="Arduino%20Low%20Power%20-%20How%20To%20Run%20ATmega328P%20For%20a%20Year%20On%20Coin%20Cell%20Battery_files/style.css">
+        <link rel="stylesheet" type="text/css" href="Arduino%20Low%20Power%20-%20How%20To%20Run%20ATmega328P%20For%20a%20Year%20On%20Coin%20Cell%20Battery_files/prism.css">
+        <meta name="HandheldFriendly" content="True">
+        <meta name="MobileOptimized" content="320">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="shortcut icon" href="http://www.home-automation-community.com/assets/favicon.ico">
+        <link rel="canonical" href="http://www.home-automation-community.com/arduino-low-power-how-to-run-atmega328p-for-a-year-on-coin-cell-battery/">
+    
+    <meta property="og:site_name" content="Home Automation Community">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Arduino Low Power - How To Run ATmega328P For a Year On Coin Cell Battery">
+    <meta property="og:description" content="An Arduino Uno runs less than one day on a 9 V battery because it uses about 45 mA current. Using an Arduino Pro Mini, with a simple modification, the power consumption goes down to 54 μA (0.054 mA)...">
+    <meta property="og:url" content="http://www.home-automation-community.com/arduino-low-power-how-to-run-atmega328p-for-a-year-on-coin-cell-battery/">
+    <meta property="article:published_time" content="2015-02-18T16:07:52.182Z">
+    <meta property="article:modified_time" content="2015-02-25T10:43:39.996Z">
+    <meta property="article:tag" content="Arduino Pro Mini ATmega328P">
+    
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Arduino Low Power - How To Run ATmega328P For a Year On Coin Cell Battery">
+    <meta name="twitter:description" content="An Arduino Uno runs less than one day on a 9 V battery because it uses about 45 mA current. Using an Arduino Pro Mini, with a simple modification, the power consumption goes down to 54 μA (0.054 mA)...">
+    <meta name="twitter:url" content="http://www.home-automation-community.com/arduino-low-power-how-to-run-atmega328p-for-a-year-on-coin-cell-battery/">
+    
+    <div style="display: none;" id="fit-vids-style" class="fit-vids-style">­<style>.fluid-width-video-wrapper{width:100%;position:relative;padding:0;}.fluid-width-video-wrapper iframe,.fluid-width-video-wrapper object,.fluid-width-video-wrapper embed {position:absolute;top:0;left:0;width:100%;height:100%;}</style></div><script src="Arduino%20Low%20Power%20-%20How%20To%20Run%20ATmega328P%20For%20a%20Year%20On%20Coin%20Cell%20Battery_files/analytics.js" async=""></script><script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "publisher": "Home Automation Community",
+    "author": {
+        "@type": "Person",
+        "name": "madcoffee",
+        "url": "http://www.home-automation-community.com/author/madcoffee",
+        "sameAs": null
+    },
+    "headline": "Arduino Low Power - How To Run ATmega328P For a Year On Coin Cell Battery",
+    "url": "http://www.home-automation-community.com/arduino-low-power-how-to-run-atmega328p-for-a-year-on-coin-cell-battery/",
+    "datePublished": "2015-02-18T16:07:52.182Z",
+    "dateModified": "2015-02-25T10:43:39.996Z",
+    "keywords": "Arduino Pro Mini ATmega328P",
+    "description": "An Arduino Uno runs less than one day on a 9 V battery because it uses about 45 mA current. Using an Arduino Pro Mini, with a simple modification, the power consumption goes down to 54 μA (0.054 mA)..."
+}
+    </script>
+
+    <meta name="generator" content="Ghost 0.5">
+    <link rel="alternate" type="application/rss+xml" title="Home Automation Community" href="http://www.home-automation-community.com/rss/">
+        <script type="text/javascript">//<![CDATA[
+            var disqus = {
+                'activate' : false,
+                'shortname' : ''
+            };
+        //]]></script>
+        <script>
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+            ga('create', 'UA-57302162-1', 'auto');
+            ga('send', 'pageview');
+        </script>
+    </head>
+    <body class="post-template tag-arduino-pro-mini-atmega328p language-bash"><!--set prism default language to language-bash-->
+        <div class="site">
+
+            <header class="sidebar-header">
+
+    <div class="first">
+        <span class="header-content-background">
+            <div class="header-content">
+                <a class="blog-title" href="http://www.home-automation-community.com/" title="Home Automation Community">
+                    <img class="cover" src="Arduino%20Low%20Power%20-%20How%20To%20Run%20ATmega328P%20For%20a%20Year%20On%20Coin%20Cell%20Battery_files/logo.png" alt="Home Automation Community" title="Home Automation Community">
+
+                    <span class="byline">How to automate your home and 
+make it a Smart Home by letting Sensors and Actors communicate with 
+single-board computers as Raspberry Pi, Arduino and others.</span>
+                </a>
+                <div class="social-icons">
+                    <a href="http://www.home-automation-community.com/rss/" title="Feed">v</a>
+                </div>
+            </div>
+        </span>
+    </div>
+
+    <div class="second">
+        <a class="expander" title="Show menu">
+        	<div class="expand"><span class="icon"></span>Menu</div>
+        	<div class="collapse"><span class="icon collapse"></span>Collapse</div>
+        </a>
+		<!--div class="cover-wrapper">
+			<img class="cover" src="" alt="" title="" />
+		</div-->
+        <ul class="main-menu">
+                <li class="menu-item">
+                    <a href="http://www.home-automation-community.com/">Home</a>
+                </li>
+                <li class="menu-item">
+                    <a href="http://www.home-automation-community.com/usage-statistics/">Most Popular Articles</a>
+                </li>
+                <li class="menu-item">
+                    <a href="http://www.home-automation-community.com/contact/">Contact &amp; Impressum</a>
+                </li>
+            </ul>
+    </div>
+
+</header>
+<section class="page-content primary" role="main">
+
+
+		<article id="post-17" class="post post tag-arduino-pro-mini-atmega328p" role="article" itemscope="" itemtype="http://schema.org/Article">
+
+			<div class="post-thumbnail">
+		    	<p></p>
+		    </div>
+
+		    <div class="content-wrapper">
+			    <h2 class="post-title">
+			    	Arduino Low Power - How To Run ATmega328P For a Year On Coin Cell Battery
+			    </h2>
+
+			    <div class="post-meta">
+					Posted
+					<span datetime="2015-02-18" itemprop="datePublished">
+						Wednesday, 18 Feb
+					</span>
+						by <a href="http://www.home-automation-community.com/author/madcoffee/">madcoffee</a>
+	                	<div class="post-tags">
+	                		Tags:
+		                    <a href="http://www.home-automation-community.com/tag/arduino-pro-mini-atmega328p/">Arduino Pro Mini ATmega328P</a>
+		                </div>
+				</div>
+
+			    <div class="post-content" itemprop="articleBody">
+
+					<p>An Arduino Uno runs less than one day on a 9 V battery because 
+it uses about 45 mA current. Using an Arduino Pro Mini, with a simple 
+modification, the power consumption goes down to 54 μA (0.054 mA) with 
+the 3.3 V version or 23 μA (0.023 mA) with the 5 V version, in 
+power-down sleep. That is 4 years on a 9 V battery with 1,200 mAh 
+capacity or 2,000 times more efficient than the Arduino Uno. After 
+removing the voltage regulator, the power consumption is only 4.5 μA for
+ the 3.3 V version and 5.8 μA for the 5 V version, in power-down sleep. <br>
+The Pro Mini with the ATmega328P chip can be bought for less than $2 from China (see <a href="http://www.aliexpress.com/premium/atmega328-pro-mini.html?SearchText=atmega328+pro+mini">here</a>). <br>
+This article explains what you should know about the Arduino Pro Mini, 
+how to bring the Pro Mini in a low-power mode, how to disable the power 
+LED, how to remove the voltage regulator, which alternative low 
+quiescent current regulators exist, and how much current you save with 
+each step when using the 3.3 V or 5 V version. <br>
+<img src="Arduino%20Low%20Power%20-%20How%20To%20Run%20ATmega328P%20For%20a%20Year%20On%20Coin%20Cell%20Battery_files/arduino_uno_vs_arduino_pro_mini.jpg" onclick="document.location='/content/images/2015/02/arduino_uno_vs_arduino_pro_mini_large.jpg';"> <br>
+<br></p>
+
+<h4 id="resultsoverview">Results Overview</h4>
+
+<table>  
+    <thead>
+        <tr><th>ATmega328P Pro Mini Version</th><th>PWR Source</th><th>State</th><th>5.0 V @ 16 MHz</th><th>3.3 V @ 8 MHz</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>Unmodified</td>                <td>RAW Pin</td><td>ACT</td><td style="text-align: right">19.9 mA</td><td style="text-align: right">4.74 mA</td></tr>
+        <tr><td>Unmodified</td>                <td>RAW Pin</td><td>PDS</td><td style="text-align: right">3.14 mA</td><td style="text-align: right">0.90 mA</td></tr>
+        <tr><td>No Power LED</td>              <td>RAW Pin</td><td>ACT</td><td style="text-align: right">16.9 mA</td><td style="text-align: right">3.90 mA</td></tr>
+        <tr><td>No Power LED</td>              <td>RAW Pin</td><td>PDS</td><td style="text-align: right">0.0232 mA*</td><td style="text-align: right">0.0541 mA*</td></tr>
+        <tr><td>No Power LED, no Regulator</td><td>VCC Pin</td><td>ACT</td><td style="text-align: right">12.7 mA</td><td style="text-align: right">3.58 mA</td></tr>
+        <tr><td>No Power LED, no Regulator</td><td>VCC Pin</td><td>PDS</td><td style="text-align: right">0.0058 mA</td><td style="text-align: right">0.0045 mA</td></tr>
+    </tbody>
+</table>  
+
+<p>ACT - Active Mode <br>
+PDS - Dower-Down Sleep with Watchdog Timer enabled <br>
+* Here it is surprising that the 5 V version uses less current than the 
+3.3 V version. I cannot explain why, but the numbers were checked twice.
+ <br>
+<br></p>
+
+<h4 id="whatisthearduinopromini">What is the Arduino Pro Mini?</h4>
+
+<p>The Arduino Pro Mini usually has the same microcontroller (MCU) as 
+the Arduino Uno, the Atmel ATMega328P. Because it is the same MCU, the 
+speed and memory size are the same. The Pro Mini also has the same I/O 
+pins as the Uno. <br>
+The major difference between the Arduino Uno and the Pro Mini is their 
+size (see picture above). Further, the Pro Mini does not have a USB Host
+ Connection. <br>
+When you buy a Pro Mini, you can choose between the 3.3 V and the 5 V 
+version. The 5 V version can run at 16 MHz while the 3.3 V version only 
+runs at 8 MHz. There is also a version with an adjustable regulator that
+ support 3.3 V and 5 V via a jumper setting. The version with the 
+adjustable regulator has a much higher power consumption in power down 
+sleep. So it is not well suited for battery powered scenarios. Whether 
+you choose 5 V or 3.3 V will likely depend on what sensors or other 
+modules you want to connect. If all modules use 3.3 V then the 3.3 V 
+version is the better choice. If some modules use 5 V, then the 5 V 
+version might be the better choice. Since I want to use the 3.3 V HopeRF
+ Wireless transceiver modules <em>RFM69H</em> or <em>RFM69HW</em> for an upcoming project, I prefer the 3.3 V version. <br>
+To upload a sketch, you need a FTDI USB to Serial/UART TTL adapter. For 
+the 3.3 V Arduino version it is recommended to use a TTL <em>Level</em> Serial Converter Cable that converts between USB 5 V and Arduino 3.3 V (see <a href="http://arduino.cc/en/Guide/ArduinoProMini">here</a>). Mine uses the <em>CP2102</em>
+ chip and did only cost 2 EUR. The CP2102 has a 3.3 V and a 5 V 
+connection (the 3.3 V output is on one of the sides), the pins are 5 V 
+tolerant and the level is always 3.3 V.  The cable has 5 strands. You 
+connect 5 V or 3.3 V to VCC, GND to GND, RXD to TXO, TXD to RXI and DTR 
+to DTR (can be named GRN). DTR is used by the Arduino software to 
+automatically reset the MCU before an upload. Connect the TTL adapter 
+directly to your PC instead of going through a USB hub. When the direct 
+connection works, then you may test if it still works when using a hub. <br>
+One note about the power supply. You can supply unregulated voltage to 
+the RAW pin. For example from a 9 V battery. The voltage must be at 
+least 0.4 V higher than the board voltage because the regulator drops 
+voltage. The difference between the input voltage and the board voltage 
+is dissipated as heat. The datasheet of the standard regulator, the <em>MIC5205</em>,
+ states that to avoid overheating, you should not use more than 6.23 V 
+input for 3.3 V output when using the maximum load of 150 mA (datasheet 
+is linked in sources). Alternatively, the VCC pin can be used to 
+directly power the board. The voltage that you apply to VCC is the 
+voltage that the MCU and all pins will have. <br>
+There is one thing to be aware of. The Pro Mini usually comes without 
+attached headers. You need to solder the headers yourself. Unless you 
+have spare headers lying round, I would strongly recommend to buy a Pro 
+Mini where the headers are already included and only need to be 
+soldered. I once tried to just use male jumper cables and got errors 
+when uploading a sketch because the holes are too large for the jumper 
+cable to fit tight enough. <br>
+<br></p>
+
+<h4 id="step1powerdownsleeptosaveenergy">Step 1 - Power Down Sleep to Save Energy</h4>
+
+<p>When the ATmega328P is in <em>Active Mode</em>, it will continuously execute several million instructions per second. Further, the <em>On-Board Peripherals</em>
+ Analog to Digital Converter (ADC), Serial Peripheral Interface (SPI), 
+Timer 0,1,2, Two Wire Interface (I2C), USART, Watchdog Timer (WDT), and 
+the Brown-out Detection (BOD) consume power. <br>
+To save power, the ATmega328P MCU supports a number of sleep modes and 
+unused peripherals can be turned off. The sleep modes differ in what 
+parts remain active, by the sleep duration and the time needed to 
+wake-up (wake-up period). The sleep mode and active peripherals can be 
+controlled with the AVR sleep and power libraries or, more concisely, 
+with the excellent <em>Low-Power</em> library from Rocketscream (see <a href="https://github.com/rocketscream/Low-Power">here</a>). <br>
+The Low-Power library is simple to use but very powerful. The statement <code class=" language-bash">LowPower<span class="token punctuation">.</span><span class="token function">powerDown<span class="token punctuation">(</span></span>SLEEP_8S<span class="token punctuation">,</span> ADC_OFF<span class="token punctuation">,</span> BOD_OFF<span class="token punctuation">)</span><span class="token punctuation">;</span></code>
+ puts the MCU in SLEEP_MODE_PWR_DOWN for 16 ms to 8 s, depending on the 
+first argument. It disables the ADC and the BOD. Power-down sleep means 
+that all chip functions are disabled till the next interrupt. Further, 
+the external oscillator is stopped. Only level interrupts on INT1 and 
+INT2, pin change interrupts, TWI/I2C address match, or the WDT, if 
+enabled, can wake the MCU up. So with the single statement, you will 
+minimize energy consumption. For a 3.3 V Pro Mini without power LED and 
+without regulator (see below) that is running the statement, the energy 
+consumption is 4.5 μA. That is very close to what is mentioned in the 
+ATmega328P datasheet for power-down sleep with WDT enabled of 4.2 μA 
+(datasheet linked in sources). Therefore, I am quite confident, that the
+ powerDown function shuts down everything that is reasonably possible. 
+With the statement <code class=" language-bash">LowPower<span class="token punctuation">.</span><span class="token function">powerDown<span class="token punctuation">(</span></span>SLEEP_FOREVER<span class="token punctuation">,</span> ADC_OFF<span class="token punctuation">,</span> BOD_OFF<span class="token punctuation">)</span><span class="token punctuation">;</span></code>, the WDT will be disabled and you would not wake up until an interrupt is triggered. <br>
+To install the library, download it <a href="https://github.com/rocketscream/Low-Power">here</a>, rename the extracted folder to <em>LowPower</em> and save it in your library path as <em>C:\Program Files (x86)\Arduino\libraries</em>. The library contains some examples. See <a href="https://github.com/rocketscream/Low-Power/blob/master/Examples/powerDownWakePeriodic/powerDownWakePeriodic.ino">here</a> for a complete example sketch. See <a href="https://github.com/LowPowerLab/MailboxNotifier">here</a> for the <em>MailboxNotifier</em> wireless application that uses the LowPower library. <br>
+With an unmodified 3.3 V Arduino Pro Mini, you will use only 0.90 mA instead of 4.75 mA when using <em>LowPower.powerDown</em> instead of <em>delay</em>. How to go down to 0.0541 mA is explained in the next section. <br>
+<br></p>
+
+<h4 id="step2disablethepowerledtosavemoreenergy">Step 2 - Disable the Power LED to Save More Energy</h4>
+
+<p>Without the power LED, the 3.3 V Arduino Pro Mini uses about 0.85 mA 
+less, the 5 V version even 3 mA less. However the ATmega328P cannot 
+control the power LED. So, to disable the LED, you need to make a small 
+hardware modification by cutting one of the two tiny traces which 
+connect to the power LED. <br>
+There are two LEDs on the Pro Mini board. The two LEDs are marked with a
+ red square in the following picture. The power LED is marked with an 
+arrow. If you are not sure where the power LED is on your board, then 
+you can just power it and you will see the LED. <br>
+<img src="Arduino%20Low%20Power%20-%20How%20To%20Run%20ATmega328P%20For%20a%20Year%20On%20Coin%20Cell%20Battery_files/arduino_pro_mini_marked.jpg" onclick="document.location='/content/images/2015/02/arduino_pro_mini_marked_large.jpg';"> <br>
+When you found the power LED, then try to locate at least one trace that
+ leads to the LED. In the second picture below, I marked the traces on 
+my board. A high-resolution picture with a lot of light helps to find 
+the traces. <br>
+When you found a trace to the power LED, then you take a knife and break
+ the trace, so that it will not conduct any more. You can see my result 
+in the third picture below. <br>
+<img src="Arduino%20Low%20Power%20-%20How%20To%20Run%20ATmega328P%20For%20a%20Year%20On%20Coin%20Cell%20Battery_files/cutter_knife.jpg" alt="alt">
+<img src="Arduino%20Low%20Power%20-%20How%20To%20Run%20ATmega328P%20For%20a%20Year%20On%20Coin%20Cell%20Battery_files/arduino_pro_mini_led_zoom_marked.jpg" alt="alt">
+<img src="Arduino%20Low%20Power%20-%20How%20To%20Run%20ATmega328P%20For%20a%20Year%20On%20Coin%20Cell%20Battery_files/arduino_pro_mini_led_zoom_after_cut.jpg" alt="alt">
+Granulations, your Pro Mini should now only use about 54 μA (0.054 mA) 
+in power-down mode if it is the 3.3 V version and about 23 μA (0.023 mA)
+ if it is the 5 V version. <br>
+<br></p>
+
+<h4 id="step3replaceorremovethevoltageregulatortominimizeenergyusage">Step 3 - Replace or Remove the Voltage Regulator to Minimize Energy Usage</h4>
+
+<p>All Arduino Pro Mini clones, that I came across, use the same voltage regulator, the <em>MIC5205-KB50/KB33/KBAA</em>. The datasheet of the regulator reveals that the lost current or <em>Ground Pin Current</em>
+ at 50 mA load is typically 0.350 mA and at 0.1 mA load it is 0.080 mA 
+(datasheet linked in sources). So, ignoring the voltage drop, the 
+efficiency at 50 mA load is 99.3 % and at 0.1 mA load it is only 20 %. 
+For 0.0045 mA load at 3.3 V the efficiency is about 10 % because I 
+measured about ten times more current consumption with the regulator 
+than without (see table above). <br>
+Even though the standard voltage regulator is not efficient at low 
+current, it is still good enough to run the 3.3 V Pro Mini on 3 AA 
+Alkaline batteries for more than one year, based on the measured power 
+consumption of 54 μA in power-down sleep and 3.90 mA in active mode. <br>
+If you really want to, you can remove the voltage regulator as follows. 
+Before proceeding, you may want to check if you have the Sparkfun 
+version of the Arduino Pro Mini. In that case you just need to unsolder a
+ jumper (see Schematic on sparkfun.com). <br>
+To remove the voltage regulator, take a gripper tongs and pull it out. 
+You find the regulator at the position shown in the second picture 
+below. The regulator will be destroyed when removing it this way. <br>
+<img src="Arduino%20Low%20Power%20-%20How%20To%20Run%20ATmega328P%20For%20a%20Year%20On%20Coin%20Cell%20Battery_files/gripper_tongs.jpg" alt="alt">
+<img src="Arduino%20Low%20Power%20-%20How%20To%20Run%20ATmega328P%20For%20a%20Year%20On%20Coin%20Cell%20Battery_files/arduino_pro_mini_no_led_no_voltage_regulator_marked.jpg" onclick="document.location='/content/images/2015/02/arduino_pro_mini_no_led_no_voltage_regulator_marked_large.jpg';"> <br>
+Granulations, your Pro Mini should now only use about 4.5 μA (0.0045 mA)
+ in power-down mode if it is the 3.3 V version and about 5.8 μA (0.0058 
+mA) if it is the 5 V version. <br>
+To power the board, without voltage regulator, you need to supply the 
+correct voltage to the VCC pin. The ATmega328P running at 8 MHz can 
+actually support voltage levels between 2.7 V and 5.5 V (see datasheet 
+in sources). However, the voltage on the pins will vary with the input 
+voltage. <br>
+Now you might want to connect a more efficient voltage regulator before 
+the VCC pin. Many people recommend a switching regulator. However a 
+switching regulator is usually not efficient at very low currents. As an
+ example for a switching regulator, see the efficiency chart of the <em>POLOLU 3.3V, 300MA STEP-DOWN VOLTAGE REGULATOR D24V3F3</em>, in the screenshot below. Similarly, the <em>SparkFun 3.3V Step-Up Breakout - NCP1402</em>,
+ also a switching regulator, needs 57 μA at 1.5 V or 24 μA at 3 V to 
+provide 4.5 μA at 3.3 V. That is about 18 % efficiency at 4.5 μA when 
+comparing Watts input to Watts output. <br>
+<img src="Arduino%20Low%20Power%20-%20How%20To%20Run%20ATmega328P%20For%20a%20Year%20On%20Coin%20Cell%20Battery_files/switching_regulator_screenshot.jpg" alt="alt">
+<em>Efficiency of D24V3F3 switching regulator. Screenshot made when visiting <a href="http://robotik-teile.de/Pololu-33V-300mA-Step-Down-Voltage-Regulator-D24V3F3">this</a> url.</em></p>
+
+<p>A regulator that is very efficient at micro amp currents is the Microchip <em>MCP1700</em> or <em>MCP1703</em>. The <em>MCP1700</em> allows up to 6 V input and the <em>MCP1703</em> up to 16 V. Both are available with 3.3 V output (<em>MCP1700-3302E</em>, <em>MCP1703-3302E</em>)
+ or with 5.0 V output (MCP1700-5002E, MCP1703-5002E). The datasheet of 
+the MCP1700 states a quiescent current of only 1.6 μA (datasheet linked 
+in sources). The regulators are used in the ultra-low power Arduino 
+compatible boards from Rocket Scream as can be seen in the Schematic 
+from <a href="http://www.rocketscream.com/blog/product/mini-ultra-8-mhz-arduino-compatible/">here</a> or from LowPowerLap as can be seen <a href="https://lowpowerlab.com/shop/index.php?_route_=Moteino/moteino-r4">here</a>. The regulator costs below 50 cents. You will also need two ceramic capacitors that can be 1 μF or 10 μF. <br>
+<img src="Arduino%20Low%20Power%20-%20How%20To%20Run%20ATmega328P%20For%20a%20Year%20On%20Coin%20Cell%20Battery_files/MCP1700_ground_current_vs_load_current.jpg" alt="alt">
+<em>Efficiency of MCP1700 linear regulator. Screenshot made when visiting <a href="http://ww1.microchip.com/downloads/en/DeviceDoc/20001826C.pdf">this</a> url.</em></p>
+
+<p>With the new regulator, you should be able to power the Pro Mini from one or two coin cells for a year or more. <br>
+<br></p>
+
+<h4 id="furtherlowenergyrelatedthoughts">Further Low-Energy Related Thoughts</h4>
+
+<p>You can find articles that bring the power consumption of the ATmega328P down to 100 nano ampere as <a href="http://www.gammon.com.au/power">Power saving techniques for microprocessors</a>.
+ While it is interesting to read, the measures like disabling the 
+watchdog timer, using the internal oscillator, or running with 4 MHz at 
+1.8 V, are not practical for most applications because used libraries or
+ connected parts may not work with that configuration. <br>
+Instead it may be easier to use a stronger battery or to use a solar panel to harvest energy. <br>
+If you are planning to run on batteries, then you may want to check the 
+battery voltage level to detect the end of battery life. There is one 
+paragraph called "<em>Detecting low voltage</em>" in <a href="http://www.gammon.com.au/power">this</a>
+ article that describes how to read the voltage of the VCC pin by using 
+the ADC converter. If your 3.3 V output voltage regulator outputs only 
+3.2 V or 3.1 V then you would know that the battery must be changed. 
+There is also another method that uses a voltage divider. It can be used
+ to measure the battery voltage directly instead of the board voltage. 
+It is explained <a href="http://lowpowerlab.com/blog/2013/08/27/mailbox-notifier-project-upgrade/">here</a> and <a href="http://jeelabs.org/2013/05/16/measuring-the-battery-without-draining-it/">here</a>. <br>
+You may wonder why one should not buy a ATmega328P board that is already
+ optimized for low power instead of hacking a board like shown here. The
+ reason, why I prefer to hack a $ 2 board is because it is much cheaper.
+ However, if you are willing to spend a little more than $ 10 then you 
+can search for <em>Moteino</em>, <em>Rocket Scream Mini-Ultra</em>, <em>JeeNode/JeeLink</em> <br>
+<br></p>
+
+<h4 id="sourcesandfurtherreadings">Sources and Further Readings</h4>
+
+<p>Low Power Library - A Layer Above sleep.h, power.h, auto-disables Burn-out Detection (BOD) <br>
+<a href="https://github.com/rocketscream/Low-Power">https://github.com/rocketscream/Low-Power</a></p>
+
+<p>avr/sleep.h Library for Low Power Sleep <br>
+<a href="http://playground.arduino.cc/Learning/arduinoSleepCode">http://playground.arduino.cc/Learning/arduinoSleepCode</a></p>
+
+<p>avr/power.h Library to Enable/Disable On-Board Peripherals <br>
+<a href="http://www.atmel.com/webdoc/AVRLibcReferenceManual/group__avr__power.html">http://www.atmel.com/webdoc/AVRLibcReferenceManual/group<strong>avr</strong>power.html</a></p>
+
+<p>Arduino Pro Mini Sugested USB-to-TTL Serial Convertor <br>
+<a href="http://arduino.cc/en/Guide/ArduinoProMini">http://arduino.cc/en/Guide/ArduinoProMini</a></p>
+
+<p>ATmega328P Datasheet <br>
+<a href="http://www.atmel.com/images/Atmel-8271-8-bit-AVR-Microcontroller-ATmega48A-48PA-88A-88PA-168A-168PA-328-328P_datasheet_Complete.pdf">http://www.atmel.com/images/Atmel-8271-8-bit-AVR-Microcontroller-ATmega48A-48PA-88A-88PA-168A-168PA-328-328P<em>datasheet</em>Complete.pdf</a></p>
+
+<p>MCP1700 - Low Quiescent Current (about 2 μA @ 4 V input) / Low 
+Dropout Voltage (LDO), 250 mA output, linear regulator, input 2.3 - 6.0 
+V, output 1.2 - 5.0 V datasheet <br>
+<a href="http://ww1.microchip.com/downloads/en/DeviceDoc/20001826C.pdf">http://ww1.microchip.com/downloads/en/DeviceDoc/20001826C.pdf</a></p>
+
+<p>MCP1703 - Low Quiescent Current (about 2 μA @ 4 V input) / Low 
+Dropout Voltage (LDO), 250 mA output, linear regulator, input 2.7 - 16.0
+ V, output  1.2 - 5.5 V datasheet <br>
+<a href="http://ww1.microchip.com/downloads/en/DeviceDoc/22049f.pdf">http://ww1.microchip.com/downloads/en/DeviceDoc/22049f.pdf</a></p>
+
+<p>Arduino Pro Mini Regulator MIC5205 - KB50 / KB33 / KBAA Datasheet <br>
+<a href="http://www.micrel.com/_PDF/mic5205.pdf">http://www.micrel.com/_PDF/mic5205.pdf</a></p>
+
+<p>Atmega328P Power Reduction Down to 100 nano-amps (100 nA) <br>
+<a href="http://www.gammon.com.au/power">http://www.gammon.com.au/power</a></p>
+
+				</div>
+
+			    <aside class="post-aside">
+
+					<div id="disqus_thread" class="comments"></div>
+					<script type="text/javascript">//<![CDATA[
+						if ( disqus.activate ) {
+						    var disqus_shortname = disqus.shortname;
+							var disqus_identifier = '17';
+
+						    /* * * DON'T EDIT BELOW THIS LINE * * */
+						    (function () {
+								var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+								dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+								(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+							}());
+					    }
+					//]]></script>
+
+			    </aside>
+
+			</div>
+
+		</article>
+
+
+	<div class="site-footer">
+		<div class="footer-text">© Copyright 2014 - 2016 <a href="http://www.home-automation-community.com/contact">anteca GmbH</a>, all rights reserved. Proudly published with Ghost.</div>
+	</div>
+</section>
+
+        </div>
+
+        <script src="Arduino%20Low%20Power%20-%20How%20To%20Run%20ATmega328P%20For%20a%20Year%20On%20Coin%20Cell%20Battery_files/jquery.js"></script>
+
+        <script type="text/javascript" src="Arduino%20Low%20Power%20-%20How%20To%20Run%20ATmega328P%20For%20a%20Year%20On%20Coin%20Cell%20Battery_files/scripts.js"></script>
+        <script type="text/javascript" src="Arduino%20Low%20Power%20-%20How%20To%20Run%20ATmega328P%20For%20a%20Year%20On%20Coin%20Cell%20Battery_files/prism.js"></script>
+    
+    
+</body></html>

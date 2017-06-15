@@ -1,0 +1,172 @@
+
+
+
+#buildnav {
+	margin-right: 20px;
+	margin-top: 20px;
+}
+
+
+#wrapper {
+  padding-left: 250px;
+  /*transition: all 0.4s ease 0s; */
+}
+
+.btn-pad {
+  margin-bottom:10px;
+}
+
+
+
+#sidebar-wrapper {
+	margin-left: -250px;
+	padding-bottom: 10px;
+	left: 275px;
+	width: 230px;
+	position: fixed;
+	bottom: 0px;
+	overflow-y: auto;
+	z-index: 1000;
+	/*transition: all 0.4s ease 0s;*/
+	-webkit-overflow-scrolling: touch;
+	border-right: solid 1px #dfe2e7;
+}
+
+.cloud > #wrapper{
+	padding-left: 170px
+}
+
+.cloud > #sidebar-wrapper{
+  	width:150px;
+}
+
+#sidebar-wrapper::-webkit-scrollbar {
+	width: 15px;
+	height: 15px;
+}
+#sidebar-wrapper::-webkit-scrollbar-thumb {
+	background: #ddd;
+	-webkit-border-radius: 8px;
+	border-radius: 8px;
+	border: solid 4px #fff;
+}
+#sidebar-wrapper:hover::-webkit-scrollbar-thumb {
+	background: #999;
+	-webkit-box-shadow: inset 2px 2px 3px rgba(0,0,0,0.2);
+	box-shadow: inset 2px 2px 3px rgba(0,0,0,0.2);
+}
+
+
+#page-content-wrapper {
+  width: 100%;
+}
+
+#menu-toggle {
+  display: none;
+}
+
+
+@media (max-width:767px) {
+	#wrapper {
+	  padding-left: 0;
+	}
+
+	#sidebar-wrapper {
+	  left: 0;
+	}
+
+	#wrapper.active {
+	  position: relative;
+	  padding-left: 250px;
+	}
+
+	#wrapper.active #sidebar-wrapper {
+	  left: 275px;
+	  width: 230px;
+	  /*transition: all 0.4s ease 0s;*/
+	}
+
+	#menu-toggle {
+	  display: inline-block;
+	}
+
+}
+
+
+
+
+
+iframe.codebender-plugin {
+	border: 0;
+	height: 510px;
+	width: 100%;
+	/*margin: 10px 0 10px; */
+}
+
+/* Smartphones (landscape) ----------- */
+@media only screen
+and (max-width : 321px) {
+
+	iframe.codebender-plugin {
+	border: 0;
+	height: 180px;
+	width: 100%;
+	}
+
+}
+
+/* Smartphones (portrait) ----------- */
+@media only screen
+and (max-width : 320px) {
+
+	iframe.codebender-plugin {
+	border: 0;
+	height: 180px;
+	width: 100%;
+	}
+
+}
+
+/* iPads (landscape) ----------- */
+@media only screen
+and (min-device-width : 768px)
+and (max-device-width : 1000px)
+and (orientation : landscape) {
+
+	iframe.codebender-plugin {
+	border: 0;
+	height: 360px;
+	width: 100%;
+	}
+
+}
+
+/* iPads (portrait) ----------- */
+@media only screen
+and (min-device-width : 768px)
+and (max-device-width : 1024px)
+and (orientation : portrait) {
+	
+	iframe.codebender-plugin {
+	border: 0;
+	height: 360px;
+	width: 100%;
+	}
+	
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

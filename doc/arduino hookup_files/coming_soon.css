@@ -1,0 +1,12 @@
+
+.sketchComingSoon {
+	float: right;
+	bottom: 0px;
+	right: 5px;
+	position: absolute;
+	background: url(/gubbe2.png);
+	background-size: 100px;
+	background-repeat: no-repeat;
+	width: 100px;
+	height: 179px;
+}
