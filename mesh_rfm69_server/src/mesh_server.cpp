@@ -63,13 +63,14 @@ void toggle() {
 }
 
 void runCommand(uint8_t *buf, uint8_t len) {
-	if (memcmp(buf, "t", len)) {
+	Serial.println((char *) buf);
+	if (!memcmp(buf, "t", len)) {
 		toggle();
 	} else {
-		Serial.write('E');
+		Serial.println('E');
 		return;
 	}
-	Serial.write('.');
+	Serial.println('.');
 }
 
 
@@ -77,7 +78,7 @@ void runCommand(uint8_t *buf, uint8_t len) {
 void loop() {
 	while (Serial.available()) {
 		uint8_t input = Serial.read();
-		if (input == '\n') {
+		if (input == ';') {
 			serialbuf[serialidx] = 0;
 			runCommand(serialbuf, serialidx);
 			serialidx = 0;
