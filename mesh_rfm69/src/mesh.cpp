@@ -8,8 +8,6 @@
 #define ACHTERLAMP
 
 #include <Arduino.h>
-
-//#include <LowPower.h>
 #include <SPI.h>
 #include <RFM69.h>
 #include <agoston.h>
@@ -35,40 +33,14 @@ typedef struct __attribute__((packed)) {
 	} payload;
 } Message;
 
+//############################################################################
+#ifdef SERVER
+#define DEV
+uint8_t remoteLed = 0;
 uint8_t serialbuf[16];
 uint8_t serialidx = 0;
 
-/************************ INIT */
-void setup() {
-#if defined(DEV) || defined(SERVER)
-	delay(50); // bootloader listens for firmware update, should not get garbage, wait a bit
-	Serial.begin(115200);
-#endif
-
-	pinMode(LED_BUILTIN, OUTPUT);
-
-	// FIXME: Hard Reset the RFM module -- seemingly unnecessary
-	// pinMode(RFM69_RST, OUTPUT);
-	// digitalWrite(RFM69_RST, HIGH);
-	// delay(100);
-	// digitalWrite(RFM69_RST, LOW);
-	// delay(100);
-
-	// rfm69
-	radio.initialize(RF69_433MHZ, m_self, networkId);
-  radio.setHighPower();
-	radio.setPowerLevel(5);
-  radio.encrypt(null);
-}
-
-void mesh_send(uint8_t to, void *data, uint8_t len) {
-	// TODO: sendWithRetry/sendACK?
-	radio.send(to, data, len);
-}
-
-//############################################################################
-#ifdef SERVER
-uint8_t remoteLed = 0;
+void mesh_init() {}
 
 void toggle() {
  	remoteLed = remoteLed == HIGH ? LOW : HIGH;
@@ -77,18 +49,19 @@ void toggle() {
 	message.type = 0;
 	message.payload.relay1 = remoteLed;
 
-	mesh_send(m_achterlamp, &message, sizeof(message));
+	// TODO: sendWithRetry/sendACK?
+	radio.send(m_achterlamp, &message, sizeof(message));
 }
 
 void runCommand(uint8_t *buf, uint8_t len) {
-	LOG((char *) buf);
+	LOG((char*)buf, 0);
 	if (!memcmp(buf, "t", len)) {
 		toggle();
 	} else {
-		LOG('E');
+		LOG("E", 0);
 		return;
 	}
-	LOG('.');
+	LOG(".", 0);
 }
 
 void loop() {
@@ -112,10 +85,19 @@ void loop() {
 
 //############################################################################
 #ifdef ACHTERLAMP
+// this has to be installed locally; for some reason, linker fails when install globally
+#include <LowPower.h>
+
+#define RELAY_PIN 9
+
+void mesh_init() {
+	pinMode(RELAY_PIN, OUTPUT);
+}
+
 void mesh_receive(uint8_t sender, Message *in, uint8_t len) {
 	if (in->type == 0) {
 		LOG("relay1: %d", in->payload.relay1);
-		digitalWrite(LED_BUILTIN, in->payload.relay1);
+		digitalWrite(RELAY_PIN, in->payload.relay1);
 	} else {
 		LOG("incorrect data type %d", in->type);
 	}
@@ -127,29 +109,37 @@ void loop() {
 		mesh_receive(radio.SENDERID, (Message *)(&radio.DATA), radio.DATALEN);
   }
 
-  delay(50);
+	if (radio.ACKRequested()) radio.sendACK();
+
+	// delay(50);
+	LowPower.idle(SLEEP_500MS, ADC_ON, TIMER2_ON, TIMER1_ON, TIMER0_ON, SPI_ON, USART0_ON, TWI_ON);
 }
 #endif
 
+/************************************************************** INIT */
+void setup() {
+#ifdef DEV
+	delay(50); // bootloader listens for firmware update, should not get garbage, wait a bit
+	Serial.begin(115200);
+#endif
 
-// FIXME: after X hundred ms, send it anyway -- to make sure car won't power down, thinking remote went idle
-// FIXME: after no change in joystick for 30s, start powering down for 15s and no radio (power-save mode)
+	mesh_init();
 
-// power down
-//	LowPower.powerDown(SLEEP_15MS, ADC_OFF, BOD_OFF);
-// FIXME: also power down rfm69
+	// FIXME: Hard Reset the RFM module -- seemingly unnecessary
+	// pinMode(RFM69_RST, OUTPUT);
+	// digitalWrite(RFM69_RST, HIGH);
+	// delay(100);
+	// digitalWrite(RFM69_RST, LOW);
+	// delay(100);
 
-/************************ TICK */
+	// rfm69
+	radio.initialize(RF69_433MHZ, m_self, networkId);
+  radio.setHighPower();
+	radio.setPowerLevel(5);
+  radio.encrypt(null);
+}
 
-//if (radio.receiveDone()) {
-//		LOG(radio.SENDERID);
-//		for (byte i = 0; i < radio.DATALEN; i++)
-//			LOG((char) radio.DATA[i]);
-//
-//		if (radio.DATALEN == 3) {
-//
-//		}
-//}
+
 
 // TODO: ACK
 //	if (radio.ACKRequested()) {
@@ -157,11 +147,7 @@ void loop() {
 //		LOG(" - ACK sent.");
 //	}
 
-// TODO: send
-//	sprintf(sendBuf, "F:%d H:%d P:%s", weatherShield_SI7021.getFahrenheitHundredths(), weatherShield_SI7021.getHumidityPercent(), Pstr);
-//	byte sendLen = strlen(sendBuf);
-//	radio.send(GATEWAYID, sendBuf, sendLen);
-
+// TODO: sendWithRetry
 //	char buff[10];
 //	sprintf(buff,
 //			STATUS == STATUS_CLOSED ? "CLOSED" :
