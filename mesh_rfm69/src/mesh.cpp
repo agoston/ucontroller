@@ -1,11 +1,11 @@
 #define DEV
 
-// #define SERVER
-// #define m_self m_seagoat
+#define SERVER
+#define m_self m_seagoat
 
-#define CLIENT
-#define m_self m_achterlamp
-#define ACHTERLAMP
+// #define CLIENT
+// #define m_self m_achterlamp
+// #define ACHTERLAMP
 
 #include <Arduino.h>
 #include <SPI.h>
@@ -35,28 +35,20 @@ typedef struct __attribute__((packed)) {
 
 //############################################################################
 #ifdef SERVER
-#define DEV
-uint8_t remoteLed = 0;
 uint8_t serialbuf[16];
 uint8_t serialidx = 0;
 
 void mesh_init() {}
 
-void toggle() {
- 	remoteLed = remoteLed == HIGH ? LOW : HIGH;
-
-	Message message;
-	message.type = 0;
-	message.payload.relay1 = remoteLed;
-
-	// TODO: sendWithRetry/sendACK?
-	radio.send(m_achterlamp, &message, sizeof(message));
-}
-
 void runCommand(uint8_t *buf, uint8_t len) {
 	LOG((char*)buf, 0);
-	if (!memcmp(buf, "t", len)) {
-		toggle();
+	if (!memcmp(buf, "relay", 5) && buf[6] == '1') {
+		Message message;
+		message.type = 0;
+		message.payload.relay1 = buf[8] == '0' ? 0 : 1;
+
+		radio.sendWithRetry(m_achterlamp, &message, sizeof(message), 10, 100);
+
 	} else {
 		LOG("E", 0);
 		return;
@@ -65,11 +57,7 @@ void runCommand(uint8_t *buf, uint8_t len) {
 }
 
 void loop() {
-	delay(1000);
-	toggle();
-	if (1==1) return;
-
-	while (Serial.available()) {
+	if (Serial.available()) {
 		uint8_t input = Serial.read();
 		if (input == ';') {
 			serialbuf[serialidx] = 0;
@@ -80,13 +68,14 @@ void loop() {
 			serialidx = (serialidx + 1) & 0xf;
 		}
 	}
+
+	// just for good measure, for now
+	if (radio.ACKRequested()) radio.sendACK();
 }
 #endif
 
 //############################################################################
 #ifdef ACHTERLAMP
-// this has to be installed locally; for some reason, linker fails when install globally
-#include <LowPower.h>
 
 #define RELAY_PIN 9
 
@@ -111,8 +100,7 @@ void loop() {
 
 	if (radio.ACKRequested()) radio.sendACK();
 
-	// delay(50);
-	LowPower.idle(SLEEP_500MS, ADC_ON, TIMER2_ON, TIMER1_ON, TIMER0_ON, SPI_ON, USART0_ON, TWI_ON);
+	delay(50);
 }
 #endif
 
@@ -138,21 +126,3 @@ void setup() {
 	radio.setPowerLevel(5);
   radio.encrypt(null);
 }
-
-
-
-// TODO: ACK
-//	if (radio.ACKRequested()) {
-//		radio.sendACK();
-//		LOG(" - ACK sent.");
-//	}
-
-// TODO: sendWithRetry
-//	char buff[10];
-//	sprintf(buff,
-//			STATUS == STATUS_CLOSED ? "CLOSED" :
-//			STATUS == STATUS_CLOSING ? "CLOSING" :
-//			STATUS == STATUS_OPENING ? "OPENING" :
-//			STATUS == STATUS_OPEN ? "OPEN" : "UNKNOWN");
-//	byte len = strlen(buff);
-//	radio.sendWithRetry(GATEWAYID, buff, len);
