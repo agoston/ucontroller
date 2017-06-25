@@ -1,10 +1,10 @@
 #ifdef DEV
-#include <SPI.h>
-#include <inttypes.h>
-#define LOG(format, args...) snprintf(LOG_BUF,sizeof(LOG_BUF),format,args);Serial.println(LOG_BUF);
+#define LOG(format) Serial.println(format);
+#define LOGP(format, args...) snprintf(LOG_BUF,sizeof(LOG_BUF),format,args);Serial.println(LOG_BUF);
 char LOG_BUF[80];
 #else
-#define LOG(format, args...)
+#define LOG(format)
+#define LOGP(format, args...)
 #endif
 
 #define portOfPin(P)  (((P)>=0&&(P)<8)?&PORTD:(((P)>7&&(P)<14)?&PORTB:&PORTC))

@@ -1,13 +1,11 @@
-#define DEV
+// #define DEV
+// #define SERVER
+// #define m_self m_seagoat
 
-#define SERVER
-#define m_self m_seagoat
+#define CLIENT
+#define m_self m_achterlamp
+#define ACHTERLAMP
 
-// #define CLIENT
-// #define m_self m_achterlamp
-// #define ACHTERLAMP
-
-#include <Arduino.h>
 #include <SPI.h>
 #include <RFM69.h>
 #include <agoston.h>
@@ -41,22 +39,30 @@ uint8_t serialidx = 0;
 void mesh_init() {}
 
 void runCommand(uint8_t *buf, uint8_t len) {
-	LOG((char*)buf, 0);
+	LOG((char*)buf);
 	if (!memcmp(buf, "relay", 5) && buf[6] == '1') {
 		Message message;
 		message.type = 0;
 		message.payload.relay1 = buf[8] == '0' ? 0 : 1;
 
-		radio.sendWithRetry(m_achterlamp, &message, sizeof(message), 10, 100);
+		if (!radio.sendWithRetry(m_achterlamp, &message, sizeof(message), 20, 200)) {
+			LOG("E T");
+		}
 
 	} else {
-		LOG("E", 0);
+		LOG("E");
 		return;
 	}
-	LOG(".", 0);
+	LOG(".");
 }
 
 void loop() {
+  runCommand("relay 1 1", 0);
+	delay(2000);
+	runCommand("relay 1 0", 0);
+	delay (2000);
+	if (1==1) return;
+
 	if (Serial.available()) {
 		uint8_t input = Serial.read();
 		if (input == ';') {
@@ -68,16 +74,14 @@ void loop() {
 			serialidx = (serialidx + 1) & 0xf;
 		}
 	}
-
-	// just for good measure, for now
-	if (radio.ACKRequested()) radio.sendACK();
 }
 #endif
 
 //############################################################################
 #ifdef ACHTERLAMP
+// #include "LowPower.h"
 
-#define RELAY_PIN 9
+#define RELAY_PIN 2
 
 void mesh_init() {
 	pinMode(RELAY_PIN, OUTPUT);
@@ -85,22 +89,21 @@ void mesh_init() {
 
 void mesh_receive(uint8_t sender, Message *in, uint8_t len) {
 	if (in->type == 0) {
-		LOG("relay1: %d", in->payload.relay1);
-		digitalWrite(RELAY_PIN, in->payload.relay1);
+		LOGP("relay1: %d", in->payload.relay1);
+		digitalWrite(RELAY_PIN, in->payload.relay1 == 0 ? LOW : HIGH);
 	} else {
-		LOG("incorrect data type %d", in->type);
+		LOGP("incorrect data type %d", in->type);
 	}
 }
 
 void loop() {
 	if (radio.receiveDone()) {
-    LOG("Sender: %u, Datalen: %u", radio.SENDERID, radio.DATALEN);
+    LOGP("Sender: %d, Datalen: %d", radio.SENDERID, radio.DATALEN);
 		mesh_receive(radio.SENDERID, (Message *)(&radio.DATA), radio.DATALEN);
+		if (radio.ACKRequested()) radio.sendACK();
+		// delay(500);
   }
-
-	if (radio.ACKRequested()) radio.sendACK();
-
-	delay(50);
+	// LowPower.powerDown(SLEEP_1S, ADC_OFF, BOD_OFF);
 }
 #endif
 
@@ -108,7 +111,7 @@ void loop() {
 void setup() {
 #ifdef DEV
 	delay(50); // bootloader listens for firmware update, should not get garbage, wait a bit
-	Serial.begin(115200);
+	Serial.begin(57600);
 #endif
 
 	mesh_init();
