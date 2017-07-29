@@ -1,4 +1,4 @@
-// #define DEV
+#define DEV
 // #define SERVER
 // #define m_self m_seagoat
 
@@ -129,3 +129,19 @@ void setup() {
 	radio.setPowerLevel(5);
   radio.encrypt(null);
 }
+
+// H version stands for High power.
+// C version is pin compatible with RFM12.
+// RFM69 uses SPI so the connections are :
+//
+// Arduino RFM69
+// 10 <-------------------> NSS
+// 11 <-------------------> MOSI
+// 12 <-------------------> MISO
+// 13 <-------------------> SCK
+// DI00 <-------------------> 2
+// GND <-------------------> GND
+// 3.3V
+// ANA : antenna
+//
+// NSS, MOSI and SCK are inputs so you need to adapt level if you use 5V arduino

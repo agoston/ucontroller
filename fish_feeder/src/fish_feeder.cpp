@@ -4,17 +4,18 @@
    NB, after 50 days, this would fail as millis() would overflow unsigned long.
 */
 
-//#define DEV
+// #define DEV
+#include <Arduino.h>
 #include <agoston.h>
 //#include <LowPower.h>
 
 // pin for optocoupler
-#define PIN_OC  3
+#define PIN_OC  12
 
 const unsigned long STATE_LENGTH[2] = {16ul * 3600ul * 1000ul, 8ul * 3600ul * 1000ul};
-//const unsigned long STATE_LENGTH[2] = {2ul * 3600ul * 1000ul, 1ul * 3600ul * 1000ul};
+// const unsigned long STATE_LENGTH[2] = {2ul * 1000ul, 1ul * 1000ul};
 unsigned long state_next_at = 0;
-byte state = 0;
+uint8_t state = 0;
 
 void setup() {
 #ifdef DEV
@@ -28,24 +29,23 @@ void setup() {
 
 void loop() {
 #ifdef DEV
+  uint8_t input = 0;
   if (Serial.available()) {
     input = Serial.read();
-  } else {
-    input = 0;
   }
 
   if (input == 't') {
-    LOG("Serial test...", 0);
+    LOG("Serial test...");
   }
 
   if (input == '1') {
-    LOG("1", NULL);
+    LOG("1");
     digitalHigh(LED_BUILTIN);
     digitalHigh(PIN_OC);
   }
 
   if (input == '2') {
-    LOG("2", NULL);
+    LOG("2");
     digitalLow(LED_BUILTIN);
     digitalLow(PIN_OC);
   }
