@@ -1,10 +1,11 @@
 #define DEV
-// #define SERVER
-// #define m_self m_seagoat
 
-#define CLIENT
-#define m_self m_achterlamp
-#define ACHTERLAMP
+#define SERVER
+#define m_self m_seagoat
+
+// #define CLIENT
+// #define m_self m_achterlamp
+// #define ACHTERLAMP
 
 #include <SPI.h>
 #include <RFM69.h>
@@ -57,11 +58,11 @@ void runCommand(uint8_t *buf, uint8_t len) {
 }
 
 void loop() {
-  runCommand("relay 1 1", 0);
-	delay(2000);
-	runCommand("relay 1 0", 0);
-	delay (2000);
-	if (1==1) return;
+  // runCommand("relay 1 1", 0);
+	// delay(2000);
+	// runCommand("relay 1 0", 0);
+	// delay (2000);
+	// if (1==1) return;
 
 	if (Serial.available()) {
 		uint8_t input = Serial.read();
