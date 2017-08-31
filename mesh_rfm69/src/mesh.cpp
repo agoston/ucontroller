@@ -10,6 +10,7 @@
 #include <SPI.h>
 #include <RFM69.h>
 #include <agoston.h>
+#include "secret.h"
 
 // TODO: also make rfm69 sleep
 // TODO: wireless programming support (-> remember to hide encrypt keys!)
@@ -112,23 +113,15 @@ void loop() {
 void setup() {
 #ifdef DEV
 	delay(50); // bootloader listens for firmware update, should not get garbage, wait a bit
-	Serial.begin(57600);
+	Serial.begin(57600);	// for some reason, platformio fails on higher bitrates
 #endif
 
 	mesh_init();
 
-	// FIXME: Hard Reset the RFM module -- seemingly unnecessary
-	// pinMode(RFM69_RST, OUTPUT);
-	// digitalWrite(RFM69_RST, HIGH);
-	// delay(100);
-	// digitalWrite(RFM69_RST, LOW);
-	// delay(100);
-
-	// rfm69
 	radio.initialize(RF69_433MHZ, m_self, networkId);
   radio.setHighPower();
-	radio.setPowerLevel(5);
-  radio.encrypt(null);
+	radio.setPowerLevel(31);
+	radio.encrypt(ENCRYPT_KEY);
 }
 
 // H version stands for High power.
@@ -140,7 +133,7 @@ void setup() {
 // 11 <-------------------> MOSI
 // 12 <-------------------> MISO
 // 13 <-------------------> SCK
-// DI00 <-------------------> 2
+// DI00 <-------------------> 3
 // GND <-------------------> GND
 // 3.3V
 // ANA : antenna

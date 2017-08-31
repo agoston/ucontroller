@@ -4,6 +4,8 @@
    NB, after 50 days, this would fail as millis() would overflow unsigned long.
 */
 
+// fish feeder's (mostly) white cable goes to bumpy side of AA battery; the grey/black to the other
+
 // #define DEV
 #include <Arduino.h>
 #include <agoston.h>
@@ -22,6 +24,8 @@ void setup() {
   delay(50); // bootloader listens for firmware update, should not get garbage, wait a bit
   Serial.begin(115200);
 #endif
+
+  state_next_at = 24ul*3600ul*1000ul;
 
   pinAsOutput(LED_BUILTIN);
   pinAsOutput(PIN_OC);
