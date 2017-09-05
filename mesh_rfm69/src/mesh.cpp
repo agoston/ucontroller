@@ -1,11 +1,11 @@
-#define DEV
+// #define DEV
 
-#define SERVER
-#define m_self m_seagoat
+// #define SERVER
+// #define m_self m_seagoat
 
-// #define CLIENT
-// #define m_self m_achterlamp
-// #define ACHTERLAMP
+#define CLIENT
+#define m_self m_achterlamp
+#define ACHTERLAMP
 
 #include <SPI.h>
 #include <RFM69.h>
