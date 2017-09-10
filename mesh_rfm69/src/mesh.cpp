@@ -26,11 +26,17 @@
 
 RFM69 radio(NSS_PIN, IRQ_PIN, true, digitalPinToInterrupt(IRQ_PIN));
 
+// network addresses
 const uint8_t networkId = 117;
 const uint8_t m_seagoat = 1;
 const uint8_t m_achterlamp = 2;
 const uint8_t m_peti = 3;
 const uint8_t m_robi = 4;
+
+// message types
+const uint8_t t_relay_req = 1;
+const uint8_t t_temp_req = 2;
+const uint8_t t_temp_res = 3;
 
 typedef struct __attribute__((packed)) {
   uint8_t type;
@@ -49,14 +55,36 @@ void mesh_init() {}
 
 void runCommand(uint8_t *buf, uint8_t len) {
   LOG((char*)buf);
-  if (!memcmp(buf, "relay", 5) && buf[6] == '1') {
-    Message message;
-    message.type = 0;
-    message.payload.relay = buf[8] == '0' ? 0 : 1;
 
-    if (!radio.sendWithRetry(m_achterlamp, &message, sizeof(message), 20, 200)) {
-      LOG("E T");
-    }
+  if (!memcmp(buf, "relay", 5) &&
+    buf[5] == ' ' && buf[6] >= '0' && buf[6] <= '9' &&
+    buf[7] == ' ' && buf[8] >= '0' && buf[8] <= '9') {
+
+      Message message;
+      message.type = t_relay_req;
+      message.payload.relay = buf[8] == '0' ? 0 : 1;
+
+      if (!radio.sendWithRetry(buf[6] - '0', &message, sizeof(message), 20, 200)) {
+        LOG("E T");
+      }
+
+  } else if (!memcmp(buf, "temp", 4) &&
+    buf[5] == ' ' && buf[6] >= '0' && buf[6] <= '9') {
+
+      Message message;
+      message.type = t_temp_req;
+      message.payload.temp = buf[8] == '0' ? 0 : 1;
+
+      if (!radio.sendWithRetry(buf[6] - '0', &message, sizeof(message), 20, 200)) {
+        LOG("E T");
+      } else {
+        Message *response = (Message *)(&radio.DATA);
+        if (response->type != t_temp_res) {
+          LOG("E R");
+        } else {
+          LOGP("R %4.2f", response->payload.temp);
+        }
+      }
 
   } else {
     LOG("E");
@@ -97,7 +125,7 @@ void mesh_init() {
 }
 
 void mesh_receive(uint8_t sender, Message *in, uint8_t len) {
-  if (in->type == 0) {
+  if (in->type == t_relay_req) {
     LOGP("relay: %d", in->payload.relay);
     digitalWrite(RELAY_PIN, in->payload.relay == 0 ? LOW : HIGH);
   } else {
@@ -170,7 +198,7 @@ void mesh_init() {
 }
 
 void mesh_receive(uint8_t sender, Message *in, uint8_t len) {
-  if (in->type == 1) {
+  if (in->type == t_temp_req) {
     temperature.requestTemperatures();
     float temp = temperature.getTempCByIndex(0);
     if (lastSentTemp - temp < 0.1) return;
@@ -178,11 +206,16 @@ void mesh_receive(uint8_t sender, Message *in, uint8_t len) {
     lastSentTemp = temp;
 
     Message message;
-    message.type = 1;
+    message.type = t_temp_res;
     message.payload.temp = temp;
 
     if (radio.ACKRequested()) radio.sendACK(&message, sizeof(message));
     else radio.sendWithRetry(sender, &message, sizeof(message), 20, 200);
+
+  } else if (in->type == t_relay_req) {
+      LOGP("relay: %d", in->payload.relay);
+      relayState = in->payload.relay == 0 ? LOW : HIGH;
+      digitalWrite(RELAY_PIN, relayState);
 
   } else {
     LOGP("incorrect data type %d", in->type);
