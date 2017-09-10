@@ -33,11 +33,11 @@ const uint8_t m_peti = 3;
 const uint8_t m_robi = 4;
 
 typedef struct __attribute__((packed)) {
-	uint8_t type;
-	union {
-		uint8_t relay;
-		float temp;
-	} payload;
+  uint8_t type;
+  union {
+    uint8_t relay;
+    float temp;
+  } payload;
 } Message;
 
 //############################################################################
@@ -48,41 +48,41 @@ uint8_t serialidx = 0;
 void mesh_init() {}
 
 void runCommand(uint8_t *buf, uint8_t len) {
-	LOG((char*)buf);
-	if (!memcmp(buf, "relay", 5) && buf[6] == '1') {
-		Message message;
-		message.type = 0;
-		message.payload.relay = buf[8] == '0' ? 0 : 1;
+  LOG((char*)buf);
+  if (!memcmp(buf, "relay", 5) && buf[6] == '1') {
+    Message message;
+    message.type = 0;
+    message.payload.relay = buf[8] == '0' ? 0 : 1;
 
-		if (!radio.sendWithRetry(m_achterlamp, &message, sizeof(message), 20, 200)) {
-			LOG("E T");
-		}
+    if (!radio.sendWithRetry(m_achterlamp, &message, sizeof(message), 20, 200)) {
+      LOG("E T");
+    }
 
-	} else {
-		LOG("E");
-		return;
-	}
-	LOG(".");
+  } else {
+    LOG("E");
+    return;
+  }
+  LOG(".");
 }
 
 void loop() {
   // runCommand("relay 1 1", 0);
-	// delay(2000);
-	// runCommand("relay 1 0", 0);
-	// delay (2000);
-	// if (1==1) return;
+  // delay(2000);
+  // runCommand("relay 1 0", 0);
+  // delay (2000);
+  // if (1==1) return;
 
-	if (Serial.available()) {
-		uint8_t input = Serial.read();
-		if (input == ';') {
-			serialbuf[serialidx] = 0;
-			runCommand(serialbuf, serialidx);
-			serialidx = 0;
-		} else {
-			serialbuf[serialidx] = input;
-			serialidx = (serialidx + 1) & 0xf;
-		}
-	}
+  if (Serial.available()) {
+    uint8_t input = Serial.read();
+    if (input == ';') {
+      serialbuf[serialidx] = 0;
+      runCommand(serialbuf, serialidx);
+      serialidx = 0;
+    } else {
+      serialbuf[serialidx] = input;
+      serialidx = (serialidx + 1) & 0xf;
+    }
+  }
 }
 #endif
 
@@ -93,26 +93,26 @@ void loop() {
 #define RELAY_PIN 2
 
 void mesh_init() {
-	pinMode(RELAY_PIN, OUTPUT);
+  pinMode(RELAY_PIN, OUTPUT);
 }
 
 void mesh_receive(uint8_t sender, Message *in, uint8_t len) {
-	if (in->type == 0) {
-		LOGP("relay: %d", in->payload.relay);
-		digitalWrite(RELAY_PIN, in->payload.relay == 0 ? LOW : HIGH);
-	} else {
-		LOGP("incorrect data type %d", in->type);
-	}
+  if (in->type == 0) {
+    LOGP("relay: %d", in->payload.relay);
+    digitalWrite(RELAY_PIN, in->payload.relay == 0 ? LOW : HIGH);
+  } else {
+    LOGP("incorrect data type %d", in->type);
+  }
 }
 
 void loop() {
-	if (radio.receiveDone()) {
+  if (radio.receiveDone()) {
     LOGP("Sender: %d, Datalen: %d", radio.SENDERID, radio.DATALEN);
-		mesh_receive(radio.SENDERID, (Message *)(&radio.DATA), radio.DATALEN);
-		if (radio.ACKRequested()) radio.sendACK();
-		// delay(500);
+    mesh_receive(radio.SENDERID, (Message *)(&radio.DATA), radio.DATALEN);
+    if (radio.ACKRequested()) radio.sendACK();
+    // delay(500);
   }
-	// LowPower.powerDown(SLEEP_1S, ADC_OFF, BOD_OFF);
+  // LowPower.powerDown(SLEEP_1S, ADC_OFF, BOD_OFF);
 }
 #endif
 
@@ -129,7 +129,7 @@ void loop() {
 // power of 2
 #define NUMTS 16
 volatile unsigned long ts[NUMTS];
-volatile int its;
+volatile uint8_t its;
 
 float lastSentTemp = 0;
 
@@ -139,11 +139,14 @@ unsigned long lastTemp = 0;
 OneWire oneWire(TEMP_PIN);
 DallasTemperature temperature(&oneWire);
 
+static const uint16_t TOGGLE_CLAP[] = {400, 150, 400, 150, 400, 150};
+uint8_t relayState = LOW;
+
 void resetTs() {
-	noInterrupts();
+  noInterrupts();
   memset((void*)ts, 0, sizeof(ts));
   its = 0;
-	interrupts();
+  interrupts();
 }
 
 void recordNoise() {
@@ -154,81 +157,74 @@ void recordNoise() {
 }
 
 void mesh_init() {
-	pinMode(RELAY_PIN, OUTPUT);
+  pinMode(RELAY_PIN, OUTPUT);
   pinMode(SND_PIN, INPUT);
+
+  digitalWrite(RELAY_PIN, relayState);
 
   resetTs();
   attachInterrupt(digitalPinToInterrupt(SND_PIN), recordNoise, RISING);
 
-	temperature.setResolution(10);	// 0.25°C
-	temperature.begin();
+  temperature.setResolution(10);  // 0.25°C
+  temperature.begin();
 }
 
 void mesh_receive(uint8_t sender, Message *in, uint8_t len) {
-	if (in->type == 1) {
-		temperature.requestTemperatures();
-		float temp = temperature.getTempCByIndex(0);
-		if (lastSentTemp - temp < 0.1) return;
+  if (in->type == 1) {
+    temperature.requestTemperatures();
+    float temp = temperature.getTempCByIndex(0);
+    if (lastSentTemp - temp < 0.1) return;
 
-		lastSentTemp = temp;
+    lastSentTemp = temp;
 
-		Message message;
-		message.type = 0;
-		message.payload.relay1 = buf[8] == '0' ? 0 : 1;
+    Message message;
+    message.type = 1;
+    message.payload.temp = temp;
 
-		if (!radio.sendWithRetry(m_achterlamp, &message, sizeof(message), 20, 200)) {
-			LOG("E T");
-		}
+    if (radio.ACKRequested()) radio.sendACK(&message, sizeof(message));
+    else radio.sendWithRetry(sender, &message, sizeof(message), 20, 200);
 
-	} else {
-		LOGP("incorrect data type %d", in->type);
-	}
+  } else {
+    LOGP("incorrect data type %d", in->type);
+  }
 }
 
-boolean detectClap(int &it, int ms, int e) {
-  unsigned long current = ts[it];
-  it = (it-1) & (NUMTS-1);
-  unsigned long prev = ts[it];
+boolean detectClap(int it, const uint16_t *claps, uint8_t numclaps) {
+  for (uint8_t i = 0; i < numclaps; i++) {
+    unsigned long current = ts[it];
+    it = (it-1) & (NUMTS-1);
+    unsigned long prev = ts[it];
 
-  LOGP("Clap: %d. %lu, %lu", it, current, prev);
+    LOGP("Clap: %d. %lu, %lu", it, current, prev);
 
-  unsigned long diff = current - prev;
-  if (diff >= (1ul<<15)) return false;
+    unsigned long diff = current - prev;
+    if (diff >= (1ul<<15)) return false;
 
-  if (abs((int)diff - ms) <= e) return true;
-  return false;
-}
-
-boolean detectOnClap(int it) {
-  return detectClap(it, 250, 75) && detectClap(it, 250, 75);
-}
-
-boolean detectOffClap(int it) {
-  return detectClap(it, 500, 100);
+    uint16_t reqDiff = claps[i<<1];
+    uint16_t reqError = claps[(i<<1)+1];
+    if (abs((uint16_t)diff - reqDiff) > reqError) return false;
+  }
+  return true;
 }
 
 void loop() {
-	// if there was no new input since last run, skip
-	int it = its;
-	unsigned long thisRun = ts[it];
-	if (lastClap == thisRun) return;
+  // if there was no new input since last run, skip
+  int it = its;
+  unsigned long thisRun = ts[it];
+  if (lastClap == thisRun) return;
 
-	lastClap = thisRun;
+  lastClap = thisRun;
 
-	if (detectOnClap(it)) {
-		// digitalHigh(LED_BUILTIN);
-		// digitalHigh(PIN_OC);
-		resetTs();
-	} else if (detectOffClap(it)) {
-		// digitalLow(LED_BUILTIN);
-		// digitalLow(PIN_OC);
-		resetTs();
-	}
+  if (detectClap(it, TOGGLE_CLAP, sizeof(TOGGLE_CLAP))) {
+    relayState = !relayState;
+    digitalWrite(RELAY_PIN, relayState);
+    resetTs();
+  }
 
-	if (radio.receiveDone()) {
+  if (radio.receiveDone()) {
     LOGP("Sender: %d, Datalen: %d", radio.SENDERID, radio.DATALEN);
-		mesh_receive(radio.SENDERID, (Message *)(&radio.DATA), radio.DATALEN);
-		if (radio.ACKRequested()) radio.sendACK();
+    mesh_receive(radio.SENDERID, (Message *)(&radio.DATA), radio.DATALEN);
+    if (radio.ACKRequested()) radio.sendACK();
   }
 }
 #endif
@@ -236,15 +232,15 @@ void loop() {
 /************************************************************** INIT */
 void setup() {
 #ifdef DEV
-	Serial.begin(57600);	// for some reason, platformio fails on higher bitrates
+  Serial.begin(57600);  // for some reason, platformio fails on higher bitrates
 #endif
 
-	mesh_init();
+  mesh_init();
 
-	radio.initialize(RF69_433MHZ, m_self, networkId);
+  radio.initialize(RF69_433MHZ, m_self, networkId);
   radio.setHighPower();
-	radio.setPowerLevel(31);
-	radio.encrypt(ENCRYPT_KEY);
+  radio.setPowerLevel(31);
+  radio.encrypt(ENCRYPT_KEY);
 }
 
 // H version stands for High power.
