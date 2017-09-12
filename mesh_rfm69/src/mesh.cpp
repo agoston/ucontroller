@@ -3,12 +3,11 @@
 // #define SERVER
 // #define m_self m_seagoat
 
-#define CLIENT
-#define PETI
-#define m_self m_peti
-
 // #define ACHTERLAMP
 // #define m_self m_achterlamp
+
+#define PETI
+#define m_self m_peti
 
 // FIXME: lack of configuration management forces use of ifdef :( blergh
 
@@ -34,9 +33,9 @@ const uint8_t m_peti = 3;
 const uint8_t m_robi = 4;
 
 // message types
-const uint8_t t_relay_req = 1;
-const uint8_t t_temp_req = 2;
-const uint8_t t_temp_res = 3;
+const uint8_t t_relay_req = 0;
+const uint8_t t_temp_req = 1;
+const uint8_t t_temp_res = 2;
 
 typedef struct __attribute__((packed)) {
   uint8_t type;
@@ -66,25 +65,28 @@ void runCommand(uint8_t *buf, uint8_t len) {
 
       if (!radio.sendWithRetry(buf[6] - '0', &message, sizeof(message), 20, 200)) {
         LOG("E T");
+        return;
       }
 
   } else if (!memcmp(buf, "temp", 4) &&
-    buf[5] == ' ' && buf[6] >= '0' && buf[6] <= '9') {
+    buf[4] == ' ' && buf[5] >= '0' && buf[5] <= '9') {
 
       Message message;
       message.type = t_temp_req;
-      message.payload.temp = buf[8] == '0' ? 0 : 1;
 
-      if (!radio.sendWithRetry(buf[6] - '0', &message, sizeof(message), 20, 200)) {
+      if (!radio.sendWithRetry(buf[5] - '0', &message, sizeof(message), 20, 200)) {
         LOG("E T");
-      } else {
-        Message *response = (Message *)(&radio.DATA);
-        if (response->type != t_temp_res) {
-          LOG("E R");
-        } else {
-          LOGP("R %4.2f", response->payload.temp);
-        }
+        return;
       }
+
+      // response comes in ACK packet
+      Message *response = (Message *)(&radio.DATA);
+      if (response->type != t_temp_res) {
+        LOG("E R");
+        return;
+      }
+
+      LOGP("R %4.2f", response->payload.temp);
 
   } else {
     LOG("E");
@@ -168,7 +170,7 @@ OneWire oneWire(TEMP_PIN);
 DallasTemperature temperature(&oneWire);
 
 static const uint16_t TOGGLE_CLAP[] = {400, 150, 400, 150, 400, 150};
-uint8_t relayState = LOW;
+uint8_t relayState = HIGH;  // NB, default state of this relay
 
 void resetTs() {
   noInterrupts();
@@ -225,17 +227,20 @@ void mesh_receive(uint8_t sender, Message *in, uint8_t len) {
 boolean detectClap(int it, const uint16_t *claps, uint8_t numclaps) {
   for (uint8_t i = 0; i < numclaps; i++) {
     unsigned long current = ts[it];
+    if (current == 0) return false;
+
     it = (it-1) & (NUMTS-1);
     unsigned long prev = ts[it];
 
-    LOGP("Clap: %d. %lu, %lu", it, current, prev);
+    long diff = current - prev;
 
-    unsigned long diff = current - prev;
-    if (diff >= (1ul<<15)) return false;
+    LOGP("%d. %d/%d %ld, %ld", it, i, numclaps, current, diff);
 
-    uint16_t reqDiff = claps[i<<1];
-    uint16_t reqError = claps[(i<<1)+1];
-    if (abs((uint16_t)diff - reqDiff) > reqError) return false;
+    if (diff >= (1l<<15)) return false;
+
+    long reqDiff = claps[i<<1];
+    long reqError = claps[(i<<1)+1];
+    if (abs(diff - reqDiff) > reqError) return false;
   }
   return true;
 }
@@ -244,14 +249,13 @@ void loop() {
   // if there was no new input since last run, skip
   int it = its;
   unsigned long thisRun = ts[it];
-  if (lastClap == thisRun) return;
-
-  lastClap = thisRun;
-
-  if (detectClap(it, TOGGLE_CLAP, sizeof(TOGGLE_CLAP))) {
-    relayState = !relayState;
-    digitalWrite(RELAY_PIN, relayState);
-    resetTs();
+  if (lastClap != thisRun) {
+    lastClap = thisRun;
+    if (detectClap(it, TOGGLE_CLAP, sizeof(TOGGLE_CLAP)/sizeof(TOGGLE_CLAP[0])/2)) {
+      relayState = !relayState;
+      digitalWrite(RELAY_PIN, relayState);
+      resetTs();
+    }
   }
 
   if (radio.receiveDone()) {
