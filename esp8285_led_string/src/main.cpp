@@ -1,26 +1,44 @@
+// TODO: user megad egy listat: timestamp + a 4 sarok szinet.
+// feladat: intrapolal 4 sarok kozott, es idoben is atmenetet kepez
+// (bonuszpontokert szinuszos atmenetet)
+
 #include <Arduino.h>
 #include <NeoPixelBus.h>
 
-// uses GPIO3 (for DMA)
+// uses GPIO2 (hardwired)
 NeoPixelBus<NeoGrbFeature, NeoEsp8266AsyncUart800KbpsMethod> strip(60);
 
-RgbColor colors[2];
-uint8_t cind = 0;
+// drawing board:
+// X... ...X
+// .... ....
+// .... ....
+// .... ....
+// .... ....
+// .... ....
+// .... ....
+// X... ...X
 
 void setup() {
   strip.Begin();
   strip.Show();
-
-  colors[0] = RgbColor(128, 0, 0);
-  colors[1] = RgbColor(128, 128, 0);
 }
 
+// TODO: spiraling ledmatrix fill
+// TODO: color waves
+// TODO: background
+
+uint8_t
+
 void loop() {
+  // not to be re-used. format is GRB (like above, NeoGrbFeature suggests)
+  uint8_t *p = strip.Pixels();
+
+
 
   for (int i = 0; i < 60; i++) {
     strip.SetPixelColor(i, colors[cind]);
   }
   strip.Show();
-  cind = (cind + 1) & 1;
-  delay(100);
+
+  delay(500);
 }
