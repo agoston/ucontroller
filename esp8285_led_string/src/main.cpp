@@ -34,7 +34,7 @@ char *reverse(char *s, uint16_t len) {
 }
 
 // img is row-contigious, while led strip is connected in snake pattern
-void translateSnake(uint16_t columns, uint16_t rows, const char *orig_img) {
+void translatePhysicalLayout(uint16_t columns, uint16_t rows, const char *orig_img) {
   // bad baad agoston
   char *img = (char*) orig_img;
 
@@ -99,7 +99,7 @@ void setup() {
   // relax a bit, strip.Show() is sending crap
   delay(100);
 
-  translateSnake(COLUMNS, ROWS, img);
+  translatePhysicalLayout(COLUMNS, ROWS, img);
   ap = translatePixel(COLUMNS, ROWS, LEDS, img);
 }
 
@@ -111,7 +111,7 @@ void loop() {
 
   for (int i = 0; i < LEDS; i++) {
     ap[i].step();
-    ap[i].writeGrb(p);
+    ap[i].writeGrb(p + i*3);
   }
 
   strip.Show();
