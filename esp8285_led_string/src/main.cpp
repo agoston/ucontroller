@@ -1,3 +1,15 @@
+// #define DEV
+
+// TODO: move into esp lib
+#ifdef DEV
+#define LOG(format) Serial.println(format);
+#define LOGP(format, args...) snprintf(LOG_BUF,sizeof(LOG_BUF),format,args);Serial.println(LOG_BUF);
+char LOG_BUF[80];
+#else
+#define LOG(format)
+#define LOGP(format, args...)
+#endif
+
 // TODO: user megad egy listat: timestamp + a 4 sarok szinet.
 // feladat: intrapolal 4 sarok kozott, es idoben is atmenetet kepez
 // (bonuszpontokert szinuszos atmenetet)
@@ -52,48 +64,54 @@ void translatePhysicalLayout(uint16_t columns, uint16_t rows, const char *orig_i
 
 //----------------------------------------------------------------------------------------------------------------
 class AnimPixel {
+public:
   uint16_t r, g, b;
   int16_t dr, dg, db;
   uint8_t minr, ming, minb;
   uint8_t randr, randg, randb;
+  uint8_t newr, newg, newb;
   uint8_t tick;
 
-public:
   void step() {
-    if (tick >= ANIM_TICK) {
-      uint8_t newr = minr + random(randr);
-      uint8_t newg = ming + random(randg);
-      uint8_t newb = minb + random(randb);
+    if (tick == 0) {
+      // reset values (or else fixed point rounding error would accumulate)
+      r = newr << 8;
+      g = newg << 8;
+      b = newb << 8;
 
-      dr = (newr - r) << (8-ANIM_TICK_SHIFT);
-      dg = (newg - g) << (8-ANIM_TICK_SHIFT);
-      db = (newb - b) << (8-ANIM_TICK_SHIFT);
-      tick = 0;
-    } else {
-      tick++;
+      newr = minr + random(randr);
+      newg = ming + random(randg);
+      newb = minb + random(randb);
+
+      dr = ((newr<<8) - r) >> ANIM_TICK_SHIFT;
+      dg = ((newg<<8) - g) >> ANIM_TICK_SHIFT;
+      db = ((newb<<8) - b) >> ANIM_TICK_SHIFT;
+
+      tick = ANIM_TICK;
     }
 
+    tick--;
     r += dr;
     g += dg;
     b += db;
   }
 
   void init(uint8_t pr, uint8_t pg, uint8_t pb, uint8_t maxDelta) {
-    r = pr;
-    g = pg;
-    b = pb;
+    r = pr<<8;
+    g = pg<<8;
+    b = pb<<8;
 
-    uint8_t minr = max(0, r - maxDelta);
-    uint8_t ming = max(0, g - maxDelta);
-    uint8_t minb = max(0, b - maxDelta);
-    uint8_t maxr = min(255, r + maxDelta);
-    uint8_t maxg = min(255, g + maxDelta);
-    uint8_t maxb = min(255, b + maxDelta);
+    minr = max(0, pr - maxDelta);
+    ming = max(0, pg - maxDelta);
+    minb = max(0, pb - maxDelta);
+    uint8_t maxr = min(255, pr + maxDelta);
+    uint8_t maxg = min(255, pg + maxDelta);
+    uint8_t maxb = min(255, pb + maxDelta);
     randr = maxr - minr;
     randg = maxg - ming;
     randb = maxb - minb;
 
-    tick = 255;
+    tick = 0;
   }
 
   void writeGrb(uint8_t *p) {
@@ -112,10 +130,10 @@ AnimPixel *translatePixel(uint16_t columns, uint16_t rows, uint16_t leds, const 
     if (pixel == 'X') continue;
 
     switch (pixel) {
-      case 'y': ap->init(192, 192, 0, 64); break;
+      case 'y': ap->init(192, 192, 0, 32); break;
 
       default:
-      case '.': ap->init(0, 0, 0, 20); break;
+      case '.': ap->init(0, 0, 0, 0); break;
     }
 
     ap++;
@@ -128,6 +146,11 @@ AnimPixel *translatePixel(uint16_t columns, uint16_t rows, uint16_t leds, const 
 AnimPixel *ap;
 
 void setup() {
+  #ifdef DEV
+  	delay(50); // bootloader listens for firmware update, should not get garbage, wait a bit
+  	Serial.begin(9600);
+  #endif
+
   strip.Begin();
   strip.Show();
 
@@ -150,6 +173,7 @@ void loop() {
   }
 
   strip.Show();
+  LOGP("tick: %d. %d (%d) -- minr: %d, randr: %d, newr: %d", ap[0].tick, ap[0].r, (ap[0].r)>>8, ap[0].minr, ap[0].randr, ap[0].newr);
 
   delay(250);
 }
