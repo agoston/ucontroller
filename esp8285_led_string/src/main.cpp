@@ -26,7 +26,8 @@ const uint8_t ANIM_TICK = 8;
 const uint8_t ANIM_TICK_SHIFT = 3;
 
 // uses GPIO2 (hardwired)
-NeoPixelBus<NeoGrbFeature, NeoEsp8266AsyncUart800KbpsMethod> strip(LEDS);
+// NeoPixelBus<NeoGrbFeature, NeoEsp8266AsyncUart800KbpsMethod> strip(LEDS);
+NeoPixelBus<NeoGrbFeature, NeoEsp8266UartWs2813Method> strip(LEDS, 2);
 
 //----------------------------------------------------------------------------------------------------------------
 // TODO: make class of this
@@ -130,7 +131,7 @@ AnimPixel *translatePixel(uint16_t columns, uint16_t rows, uint16_t leds, const 
     if (pixel == 'X') continue;
 
     switch (pixel) {
-      case 'y': ap->init(192, 192, 0, 32); break;
+      case 'y': ap->init(32, 32, 0, 4); break;
 
       default:
       case '.': ap->init(0, 0, 0, 0); break;
@@ -162,18 +163,19 @@ void setup() {
 }
 
 //----------------------------------------------------------------------------------------------------------------
-
 void loop() {
   // not to be re-used. format is GRB (like above, NeoGrbFeature suggests)
-  uint8_t *p = strip.Pixels();
+  // uint8_t *p = strip.Pixels();
 
   for (int i = 0; i < LEDS; i++) {
     ap[i].step();
-    ap[i].writeGrb(p + i*3);
+    // ap[i].writeGrb(p + i*3);
+    strip.SetPixelColor(i, RgbColor(ap[i].r>>8,ap[i].g>>8,ap[i].b>>8));
   }
 
+  // strip.Dirty();
   strip.Show();
-  LOGP("tick: %d. %d (%d) -- minr: %d, randr: %d, newr: %d", ap[0].tick, ap[0].r, (ap[0].r)>>8, ap[0].minr, ap[0].randr, ap[0].newr);
+  // LOGP("tick: %d. %d (%d) -- minr: %d, randr: %d, newr: %d", ap[0].tick, ap[0].r, (ap[0].r)>>8, ap[0].minr, ap[0].randr, ap[0].newr);
 
-  delay(250);
+  delay(ANIM_MS);
 }
