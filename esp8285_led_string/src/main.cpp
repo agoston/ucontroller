@@ -17,6 +17,7 @@ char LOG_BUF[80];
 #include <Arduino.h>
 #include <NeoPixelBus.h>
 #include <ESP8266WiFi.h>
+#include <ESP8266HTTPClient.h>
 #include "secret.h"
 
 const uint8_t ROWS = 8;
@@ -34,14 +35,14 @@ NeoPixelBus<NeoGrbFeature, NeoEsp8266UartWs2813Method> strip(LEDS, 2);
 //----------------------------------------------------------------------------------------------------------------
 // TODO: make class of this
 // TODO: add minecraft importer
-const char *img = "XyyyyyyX"
-                  "y......y"
-                  "y.y..y.y"
-                  "y......y"
-                  "y.y..y.y"
-                  "y..yy..y"
-                  "y......y"
-                  "XyyyyyyX";
+char *img = (char*)"XyyyyyyX"
+                   "y......y"
+                   "y.y..y.y"
+                   "y......y"
+                   "y.y..y.y"
+                   "y..yy..y"
+                   "y......y"
+                   "XyyyyyyX";
 
 char *reverse(char *s, uint16_t len) {
   char *e = s + len - 1;
@@ -56,10 +57,7 @@ char *reverse(char *s, uint16_t len) {
 }
 
 // img is row-contigious, while led strip is connected in snake pattern
-void translatePhysicalLayout(uint16_t columns, uint16_t rows, const char *orig_img) {
-  // bad baad agoston
-  char *img = (char*) orig_img;
-
+void translatePhysicalLayout(uint16_t columns, uint16_t rows, char *img) {
   for (uint16_t i = 1; i < rows; i+=2) {
     reverse(img + i*COLUMNS, COLUMNS);
   }
@@ -146,6 +144,27 @@ AnimPixel *translatePixel(uint16_t columns, uint16_t rows, uint16_t leds, const 
 }
 
 //----------------------------------------------------------------------------------------------------------------
+void update() {
+  HTTPClient http;
+  http.begin("http://seagoat.xs4all.nl/led");
+  int httpCode = http.GET();
+
+  if (httpCode > 0) {
+    if (httpCode == HTTP_CODE_OK) {
+      String payload = http.getString();
+
+      // XXX: cont here
+
+
+    }
+  } else {
+    LOGP("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
+  }
+
+  http.end();
+}
+
+//----------------------------------------------------------------------------------------------------------------
 AnimPixel *ap;
 
 void setup() {
@@ -156,6 +175,7 @@ void setup() {
 
   WiFi.mode(WIFI_STA);
   WiFi.begin(WIFI_SSID, WIFI_PW);
+  WiFi.setAutoReconnect(true);
 
   strip.Begin();
   strip.Show();
