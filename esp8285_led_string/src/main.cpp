@@ -16,6 +16,8 @@ char LOG_BUF[80];
 
 #include <Arduino.h>
 #include <NeoPixelBus.h>
+#include <ESP8266WiFi.h>
+#include "secret.h"
 
 const uint8_t ROWS = 8;
 const uint8_t COLUMNS = 8;
@@ -152,6 +154,9 @@ void setup() {
   	Serial.begin(9600);
   #endif
 
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(WIFI_SSID, WIFI_PW);
+
   strip.Begin();
   strip.Show();
 
@@ -164,16 +169,12 @@ void setup() {
 
 //----------------------------------------------------------------------------------------------------------------
 void loop() {
-  // not to be re-used. format is GRB (like above, NeoGrbFeature suggests)
-  // uint8_t *p = strip.Pixels();
-
   for (int i = 0; i < LEDS; i++) {
     ap[i].step();
     // ap[i].writeGrb(p + i*3);
     strip.SetPixelColor(i, RgbColor(ap[i].r>>8,ap[i].g>>8,ap[i].b>>8));
   }
 
-  // strip.Dirty();
   strip.Show();
   LOGP("tick: %d. %d (%d) -- minr: %d, randr: %d, newr: %d", ap[0].tick, ap[0].r, (ap[0].r)>>8, ap[0].minr, ap[0].randr, ap[0].newr);
 
