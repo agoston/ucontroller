@@ -151,9 +151,18 @@ void update() {
 
   if (httpCode > 0) {
     if (httpCode == HTTP_CODE_OK) {
-      String payload = http.getString();
+      const char *payload = http.getString().c_str();
 
-      // XXX: cont here
+      char ch;
+      uint16_t r, g, b, delta;
+
+// todo: iterate
+      int matched = sscanf(payload, "%c %hu %hu %hu %hu", &ch, &r, &g, &b, &delta);
+      if (matched == 5) {
+        // todo: color spec
+      } else if (matched == 0) {
+        // todo: read img
+      }
 
 
     }
