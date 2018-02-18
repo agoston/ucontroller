@@ -20,6 +20,7 @@ char LOG_BUF[80];
 #include <ESP8266HTTPClient.h>
 #include "secret.h"
 
+const uint8_t SYMBOLS = 20;
 const uint8_t ROWS = 8;
 const uint8_t COLUMNS = 8;
 const uint8_t LEDS = 60;
@@ -27,6 +28,8 @@ const uint8_t LEDS = 60;
 const uint8_t ANIM_MS = 125;
 const uint8_t ANIM_TICK = 8;
 const uint8_t ANIM_TICK_SHIFT = 3;
+
+uint8_t tickUpdate = 8;
 
 // uses GPIO2 (hardwired)
 // NeoPixelBus<NeoGrbFeature, NeoEsp8266AsyncUart800KbpsMethod> strip(LEDS);
@@ -152,25 +155,64 @@ void update() {
   if (httpCode > 0) {
     if (httpCode == HTTP_CODE_OK) {
       const char *payload = http.getString().c_str();
+      char *line = (char*) payload;
+
+      char symbols[SYMBOLS];
+      uint8_t values[SYMBOLS][4];
+      uint8_t symIndex = 0;
 
       char ch;
       uint16_t r, g, b, delta;
 
-// todo: iterate
-      int matched = sscanf(payload, "%c %hu %hu %hu %hu", &ch, &r, &g, &b, &delta);
-      if (matched == 5) {
-        // todo: color spec
-      } else if (matched == 0) {
-        // todo: read img
+      // read color spec
+      for (; line; line = strchr(line, '\n')) {
+        // jump over newline
+        line++;
+        int matched = sscanf(line, "%c %hu %hu %hu %hu", &ch, &r, &g, &b, &delta);
+
+        if (matched == 5) {
+          symbols[symIndex] = ch;
+          values[symIndex][0] = r;
+          values[symIndex][1] = g;
+          values[symIndex][2] = b;
+          values[symIndex][3] = delta;
+          symIndex++;
+
+        } else if (matched == 0) {
+          break;
+
+        } else {
+          LOGP("malformed input: %s", line);
+          goto http_end;
+        }
       }
 
+      // jump over empty line
+      line = strchr(line, '\n');
 
+      // read image
+      for (int i = 0; line && i < ROWS; i++, line = strchr(line, '\n')) {
+        // jump over newline
+        line++;
+        // sanity check
+        char *nextLine = strchr(line, '\n');
+        if (!nextLine || nextLine - line != COLUMNS) {
+          LOGP("malformed input: %s", line);
+          goto http_end;
+        }
+
+        strncpy(img + i * COLUMNS, line, COLUMNS);
+      }
     }
   } else {
-    LOGP("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
+    LOGP("HTTP GET: %s\n", http.errorToString(httpCode).c_str());
   }
 
+  // TODO: refactor/extract into class/use throw? (->check mem usage, shouldn't be high)
+  http_end:
   http.end();
+
+  // TODO: switch wifi client to deep sleep while inactive
 }
 
 //----------------------------------------------------------------------------------------------------------------
@@ -201,11 +243,20 @@ void loop() {
   for (int i = 0; i < LEDS; i++) {
     ap[i].step();
     // ap[i].writeGrb(p + i*3);
+    // TODO: no clue why direct changing pixels won't work, this is ugly
     strip.SetPixelColor(i, RgbColor(ap[i].r>>8,ap[i].g>>8,ap[i].b>>8));
   }
 
   strip.Show();
   LOGP("tick: %d. %d (%d) -- minr: %d, randr: %d, newr: %d", ap[0].tick, ap[0].r, (ap[0].r)>>8, ap[0].minr, ap[0].randr, ap[0].newr);
 
+  // TODO: deep sleep
   delay(ANIM_MS);
+  if (!(tickUpdate--)) {
+    // FIXME: refactor this random mess of params/global variables
+    update();
+    translatePhysicalLayout(COLUMNS, ROWS, img);
+    delete[] ap;
+    ap = translatePixel(COLUMNS, ROWS, LEDS, img);
+  }
 }
