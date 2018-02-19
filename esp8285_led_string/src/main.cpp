@@ -1,4 +1,4 @@
-#define DEV
+// #define DEV
 
 // TODO: user megad egy listat: timestamp + a 4 sarok szinet.
 // feladat: intrapolal 4 sarok kozott, es idoben is atmenetet kepez
@@ -109,6 +109,29 @@ public:
     tick = 0;
   }
 
+  // FIXME: refactor (copypaste from init+tick)
+  void reinit(uint8_t pr, uint8_t pg, uint8_t pb, uint8_t maxDelta) {
+    minr = max(0, pr - maxDelta);
+    ming = max(0, pg - maxDelta);
+    minb = max(0, pb - maxDelta);
+    uint8_t maxr = min(255, pr + maxDelta);
+    uint8_t maxg = min(255, pg + maxDelta);
+    uint8_t maxb = min(255, pb + maxDelta);
+    randr = maxr - minr;
+    randg = maxg - ming;
+    randb = maxb - minb;
+
+    newr = minr + random(randr);
+    newg = ming + random(randg);
+    newb = minb + random(randb);
+
+    dr = ((newr<<8) - r) >> ANIM_TICK_SHIFT;
+    dg = ((newg<<8) - g) >> ANIM_TICK_SHIFT;
+    db = ((newb<<8) - b) >> ANIM_TICK_SHIFT;
+
+    tick = ANIM_TICK;
+  }
+
   void writeGrb(uint8_t *p) {
     *(p++) = g >> 8;
     *(p++) = r >> 8;
@@ -138,8 +161,8 @@ AnimPixel *translatePixel(uint16_t columns, uint16_t rows, uint16_t leds, const 
 }
 
 //----------------------------------------------------------------------------------------------------------------
-void update(const char *payload) {
-  char *line = (char*) payload;
+void update(const char *payload, uint16_t columns, uint16_t rows, AnimPixel *ap) {
+  const char *line = payload;
 
   char symbols[SYMBOLS];
   uint8_t values[SYMBOLS][4];
@@ -149,48 +172,48 @@ void update(const char *payload) {
   uint16_t r, g, b, delta;
 
   // read color spec
-  for (; line; line = strchr(line, '\n')) {
-    // jump over newline
-    line++;
+  for (; line; line = strchr(line, '\n') + 1) {
     int matched = sscanf(line, "%c %hu %hu %hu %hu", &ch, &r, &g, &b, &delta);
 
-    if (matched == 5) {
-      symbols[symIndex] = ch;
-      values[symIndex][0] = r;
-      values[symIndex][1] = g;
-      values[symIndex][2] = b;
-      values[symIndex][3] = delta;
-      symIndex++;
+    if (matched < 5) break;
 
-    } else if (matched == 0) {
-      break;
-
-    } else {
-      LOGP("malformed input: %s", line);
-      return;
-    }
+    LOGP("%d %c %d %d %d %d", symIndex, ch, r, g, b, delta);
+    symbols[symIndex] = ch;
+    values[symIndex][0] = r;
+    values[symIndex][1] = g;
+    values[symIndex][2] = b;
+    values[symIndex][3] = delta;
+    symIndex++;
   }
 
   // jump over empty line
-  line = strchr(line, '\n');
+  line = strchr(line, '\n') + 1;
 
   // read image
-  for (int i = 0; line && i < ROWS; i++, line = strchr(line, '\n')) {
-    // jump over newline
-    line++;
+  for (int i = 0; line && i < rows; i++, line = strchr(line, '\n') + 1) {
     // sanity check
     char *nextLine = strchr(line, '\n');
-    if (!nextLine || nextLine - line != COLUMNS) {
-      LOGP("malformed input: %s", line);
+    if (!nextLine || nextLine - line != columns) {
+      LOGP("malformed imgdef: %s", line);
       return;
     }
 
-    strncpy(img + i * COLUMNS, line, COLUMNS);
+    strncpy(img + i * columns, line, columns);
   }
 
-  // FIXME: update AnimPixel[] using the values[] above
+  translatePhysicalLayout(columns, rows, img);
+
+  LOG(img);
+
   // FIXME: refactor creating AnimPixel[]
-  // FIXME: make smooth transition instead of reinit (new rgb init + tick reset)
+  for (int i = 0; i < columns * rows; i++) {
+    for (int j = 0; j < symIndex; j++) {
+      if (symbols[j] != img[i]) continue;
+
+      ap->reinit(values[j][0], values[j][1], values[j][2], values[j][3]);
+      ap++;
+    }
+  }
 }
 
 //----------------------------------------------------------------------------------------------------------------
@@ -250,14 +273,17 @@ void loop() {
       return;
     }
 
-    const char *payload = http.getString().c_str();
-    LOG(payload);
-    update(payload);
-    LOG("updated image");
+    String string = http.getString();
+    if (string.length() < 25) {
+      LOGP("Input length %d too small", string.length());
+      LOG(string.c_str())
+      http.end();
+      return;
+    }
 
-    translatePhysicalLayout(COLUMNS, ROWS, img);
-    delete[] ap;
-    ap = translatePixel(COLUMNS, ROWS, LEDS, img);
-    tickUpdate = ANIM_TICK * 8;
+    update(string.c_str(), COLUMNS, ROWS, ap);
+
+    http.end();
+    tickUpdate = ANIM_TICK * 60;
   }
 }
