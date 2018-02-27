@@ -10,6 +10,8 @@
 #include <ESP8266HTTPClient.h>
 #include "secret.h"
 #include "log.h"
+#include "AnimPixel.h"
+#include "Image.h"
 
 const uint8_t SYMBOLS = 20;
 const uint8_t ROWS = 8;
@@ -26,142 +28,10 @@ uint16_t tickUpdate = 8;
 // NeoPixelBus<NeoGrbFeature, NeoEsp8266AsyncUart800KbpsMethod> strip(LEDS);
 NeoPixelBus<NeoGrbFeature, NeoEsp8266UartWs2813Method> strip(LEDS, 2);
 
-//----------------------------------------------------------------------------------------------------------------
-// TODO: make class of this
-// TODO: add minecraft importer
-char *img = (char*)"XyyyyyyX"
-                   "y......y"
-                   "y.y..y.y"
-                   "y......y"
-                   "y.y..y.y"
-                   "y..yy..y"
-                   "y......y"
-                   "XyyyyyyX";
-
-char *reverse(char *s, uint16_t len) {
-  char *e = s + len - 1;
-  char temp;
-  while (s < e) {
-    temp = *s;
-    *s = *e;
-    *e = temp;
-    s++;
-    e--;
-  }
-}
-
-// img is row-contigious, while led strip is connected in snake pattern
-void translatePhysicalLayout(uint16_t columns, uint16_t rows, char *img) {
-  for (uint16_t i = 1; i < rows; i+=2) {
-    reverse(img + i*COLUMNS, COLUMNS);
-  }
-}
+Image image;
 
 //----------------------------------------------------------------------------------------------------------------
-class AnimPixel {
-public:
-  uint16_t r, g, b;
-  int16_t dr, dg, db;
-  uint8_t minr, ming, minb;
-  uint8_t randr, randg, randb;
-  uint8_t newr, newg, newb;
-  uint8_t tick;
-
-  void step() {
-    if (tick == 0) {
-      // reset values (or else fixed point rounding error would accumulate)
-      r = newr << 8;
-      g = newg << 8;
-      b = newb << 8;
-
-      newr = minr + random(randr);
-      newg = ming + random(randg);
-      newb = minb + random(randb);
-
-      dr = ((newr<<8) - r) >> ANIM_TICK_SHIFT;
-      dg = ((newg<<8) - g) >> ANIM_TICK_SHIFT;
-      db = ((newb<<8) - b) >> ANIM_TICK_SHIFT;
-
-      tick = ANIM_TICK;
-    }
-
-    tick--;
-    r += dr;
-    g += dg;
-    b += db;
-  }
-
-  void init(uint8_t pr, uint8_t pg, uint8_t pb, uint8_t maxDelta) {
-    r = pr<<8;
-    g = pg<<8;
-    b = pb<<8;
-
-    minr = max(0, pr - maxDelta);
-    ming = max(0, pg - maxDelta);
-    minb = max(0, pb - maxDelta);
-    uint8_t maxr = min(255, pr + maxDelta);
-    uint8_t maxg = min(255, pg + maxDelta);
-    uint8_t maxb = min(255, pb + maxDelta);
-    randr = maxr - minr;
-    randg = maxg - ming;
-    randb = maxb - minb;
-
-    tick = 0;
-  }
-
-  // FIXME: refactor (copypaste from init+tick)
-  void reinit(uint8_t pr, uint8_t pg, uint8_t pb, uint8_t maxDelta) {
-    minr = max(0, pr - maxDelta);
-    ming = max(0, pg - maxDelta);
-    minb = max(0, pb - maxDelta);
-    uint8_t maxr = min(255, pr + maxDelta);
-    uint8_t maxg = min(255, pg + maxDelta);
-    uint8_t maxb = min(255, pb + maxDelta);
-    randr = maxr - minr;
-    randg = maxg - ming;
-    randb = maxb - minb;
-
-    newr = minr + random(randr);
-    newg = ming + random(randg);
-    newb = minb + random(randb);
-
-    dr = ((newr<<8) - r) >> ANIM_TICK_SHIFT;
-    dg = ((newg<<8) - g) >> ANIM_TICK_SHIFT;
-    db = ((newb<<8) - b) >> ANIM_TICK_SHIFT;
-
-    tick = ANIM_TICK;
-  }
-
-  void writeGrb(uint8_t *p) {
-    *(p++) = g >> 8;
-    *(p++) = r >> 8;
-    *(p++) = b >> 8;
-  }
-};
-
-AnimPixel *translatePixel(uint16_t columns, uint16_t rows, uint16_t leds, const char *img) {
-  AnimPixel *res = new AnimPixel[leds];
-
-  AnimPixel *ap = res;
-  for (int i = 0; i < columns * rows; i++) {
-    char pixel = img[i];
-    if (pixel == 'X') continue;
-
-    switch (pixel) {
-      case 'y': ap->init(32, 32, 0, 4); break;
-
-      default:
-      case '.': ap->init(0, 0, 0, 0); break;
-    }
-
-    ap++;
-  }
-
-  return res;
-}
-
-//----------------------------------------------------------------------------------------------------------------
-void update(const char *payload, uint16_t columns, uint16_t rows, AnimPixel *ap) {
+void update(const char *payload) {
   const char *line = payload;
 
   char symbols[SYMBOLS];
@@ -189,31 +59,24 @@ void update(const char *payload, uint16_t columns, uint16_t rows, AnimPixel *ap)
   // jump over empty line
   line = strchr(line, '\n') + 1;
 
+  char img[COLUMNS*ROWS];
+
   // read image
-  for (int i = 0; line && i < rows; i++, line = strchr(line, '\n') + 1) {
+  for (int i = 0; line && i < ROWS; i++, line = strchr(line, '\n') + 1) {
     // sanity check
     char *nextLine = strchr(line, '\n');
-    if (!nextLine || nextLine - line != columns) {
+    if (!nextLine || nextLine - line != COLUMNS) {
       LOGP("malformed imgdef: %s", line);
       return;
     }
 
-    strncpy(img + i * columns, line, columns);
+    strncpy(img + i * COLUMNS, line, COLUMNS);
   }
 
-  translatePhysicalLayout(columns, rows, img);
-
-  LOG(img);
-
-  // FIXME: refactor creating AnimPixel[]
-  for (int i = 0; i < columns * rows; i++) {
-    for (int j = 0; j < symIndex; j++) {
-      if (symbols[j] != img[i]) continue;
-
-      ap->reinit(values[j][0], values[j][1], values[j][2], values[j][3]);
-      ap++;
-    }
-  }
+  image.initColors(symIndex, &symbols[0], &values[0][0]);
+  image.initImg(img);
+  image.translatePhysicalLayout();
+  image.initPixels();
 }
 
 //----------------------------------------------------------------------------------------------------------------
@@ -240,9 +103,6 @@ void setup() {
 
   LOGP("WiFi connected, IP address: %s", WiFi.localIP().toString().c_str());
 
-  translatePhysicalLayout(COLUMNS, ROWS, img);
-  ap = translatePixel(COLUMNS, ROWS, LEDS, img);
-
   // relax a bit, strip.Show() is sending crap
   delay(50);
 }
@@ -250,10 +110,12 @@ void setup() {
 //----------------------------------------------------------------------------------------------------------------
 void loop() {
   for (int i = 0; i < LEDS; i++) {
-    ap[i].step();
+    AnimPixel *ap = &(image.pixels[i]);
+    ap->step();
+
     // ap[i].writeGrb(p + i*3);
     // TODO: no clue why direct changing pixels won't work, this is ugly
-    strip.SetPixelColor(i, RgbColor(ap[i].r>>8,ap[i].g>>8,ap[i].b>>8));
+    strip.SetPixelColor(i, RgbColor(ap->getR(), ap->getG(), ap->getB()));
   }
 
   strip.Show();
@@ -281,7 +143,7 @@ void loop() {
       return;
     }
 
-    update(string.c_str(), COLUMNS, ROWS, ap);
+    update(string.c_str());
 
     http.end();
     tickUpdate = ANIM_TICK * 60;
