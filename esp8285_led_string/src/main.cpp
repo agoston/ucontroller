@@ -80,8 +80,6 @@ void update(const char *payload) {
 }
 
 //----------------------------------------------------------------------------------------------------------------
-AnimPixel *ap;
-
 void setup() {
   strip.Begin();
   for (int i = 0; i < LEDS; i++) strip.SetPixelColor(i, RgbColor(0, 0, 0));
@@ -110,7 +108,7 @@ void setup() {
 //----------------------------------------------------------------------------------------------------------------
 void loop() {
   for (int i = 0; i < LEDS; i++) {
-    AnimPixel *ap = &(image.pixels[i]);
+    AnimPixel *ap = image.pixel(i);
     ap->step();
 
     // ap[i].writeGrb(p + i*3);

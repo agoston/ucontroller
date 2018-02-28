@@ -1,5 +1,13 @@
 #include "Image.h"
 
+Image::Image() {
+  pixels = new AnimPixel[LEDS];
+}
+
+Image::~Image() {
+  delete[] pixels;
+}
+
 void Image::initImg(char *asciiArt) {
   img = asciiArt;
 }
@@ -35,10 +43,12 @@ void Image::initPixels() {
 
   for (int i = 0; i < COLUMNS * ROWS; i++) {
     for (int j = 0; j < num_symbols; j++) {
-      if (symbols[j] != img[i]) continue;
-
-      ap->init(values[j*4], values[j*4+1], values[j*4+2], values[j*4+3]);
-      ap++;
+      if (symbols[j] == img[i]) {
+        ap->init(values[j*4], values[j*4+1], values[j*4+2], values[j*4+3]);
+        ap++;
+        if (ap - pixels >= LEDS) return;
+        break;
+      }
     }
   }
 }
