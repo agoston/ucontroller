@@ -19,17 +19,33 @@ void AnimPixel::step() {
   b += db;
 }
 
+void AnimPixel::init_factor(uint8_t pr, uint8_t pg, uint8_t pb, float factor) {
+  newr = pr;
+  newg = pg;
+  newb = pb;
+
+  minr = pr * (1-factor);
+  ming = pg * (1-factor);
+  minb = pb * (1-factor);
+  uint8_t maxr = min((uint16_t)255, (uint16_t)(pr * (1+factor)));
+  uint8_t maxg = min((uint16_t)255, (uint16_t)(pg * (1+factor)));
+  uint8_t maxb = min((uint16_t)255, (uint16_t)(pb * (1+factor)));
+  randr = maxr - minr;
+  randg = maxg - ming;
+  randb = maxb - minb;
+}
+
 void AnimPixel::init(uint8_t pr, uint8_t pg, uint8_t pb, uint8_t maxDelta) {
   newr = pr;
   newg = pg;
   newb = pb;
 
-  minr = max(0, pr - maxDelta);
-  ming = max(0, pg - maxDelta);
-  minb = max(0, pb - maxDelta);
-  uint8_t maxr = min(255, pr + maxDelta);
-  uint8_t maxg = min(255, pg + maxDelta);
-  uint8_t maxb = min(255, pb + maxDelta);
+  minr = max(0, (int)pr - maxDelta);
+  ming = max(0, (int)pg - maxDelta);
+  minb = max(0, (int)pb - maxDelta);
+  uint8_t maxr = min(255, (int)pr + maxDelta);
+  uint8_t maxg = min(255, (int)pg + maxDelta);
+  uint8_t maxb = min(255, (int)pb + maxDelta);
   randr = maxr - minr;
   randg = maxg - ming;
   randb = maxb - minb;

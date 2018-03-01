@@ -1,4 +1,4 @@
-// #define DEV
+#define DEV
 
 // TODO: user megad egy listat: timestamp + a 4 sarok szinet.
 // feladat: intrapolal 4 sarok kozott, es idoben is atmenetet kepez
@@ -30,8 +30,26 @@ NeoPixelBus<NeoGrbFeature, NeoEsp8266UartWs2813Method> strip(LEDS, 2);
 
 Image image;
 
+// minecraft ledmatrix is missing its corners
+bool deadPixel(uint16_t index) {
+  switch (index) {
+    case 0:
+    case 7:
+    case 56:
+    case 63:
+    return true;
+  }
+  return false;
+}
+
 //----------------------------------------------------------------------------------------------------------------
-void update(const char *payload) {
+void updateBitmap(const char *payload) {
+  LOG("Updating bitmap");
+  image.initBitmap((uint8_t *)payload);
+}
+
+//----------------------------------------------------------------------------------------------------------------
+void updateAsciiArt(const char *payload) {
   const char *line = payload;
 
   char symbols[SYMBOLS];
@@ -73,10 +91,7 @@ void update(const char *payload) {
     strncpy(img + i * COLUMNS, line, COLUMNS);
   }
 
-  image.initColors(symIndex, &symbols[0], &values[0][0]);
-  image.initImg(img);
-  image.translatePhysicalLayout();
-  image.initPixels();
+  image.initAsciiArt(img, symIndex, &symbols[0], &values[0][0]);
 }
 
 //----------------------------------------------------------------------------------------------------------------
@@ -123,6 +138,7 @@ void loop() {
   delay(ANIM_MS);
 
   if (!(tickUpdate--)) {
+    tickUpdate = ANIM_TICK * 5;
     HTTPClient http;
     http.begin("http://seagoat.xs4all.nl/esp/led");
     int httpCode = http.GET();
@@ -141,9 +157,12 @@ void loop() {
       return;
     }
 
-    update(string.c_str());
+    // FIXME: this is kludgy
+    if (string.length() == 192) updateBitmap(string.c_str());
+    else updateAsciiArt(string.c_str());
 
     http.end();
+    // successful update time
     tickUpdate = ANIM_TICK * 60;
   }
 }

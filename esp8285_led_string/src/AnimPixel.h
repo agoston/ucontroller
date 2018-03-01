@@ -11,6 +11,7 @@ class AnimPixel {
 public:
 
   void step();
+  void init_factor(uint8_t pr, uint8_t pg, uint8_t pb, float factor);
   void init(uint8_t pr, uint8_t pg, uint8_t pb, uint8_t maxDelta);
 
   uint8_t getR() {return r>>8;};
