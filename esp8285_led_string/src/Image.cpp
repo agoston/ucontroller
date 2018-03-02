@@ -1,6 +1,6 @@
 #include "Image.h"
 
-#define DEVH
+// #define DEVH
 #include "log.h"
 
 Image::Image() {

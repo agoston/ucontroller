@@ -1,4 +1,4 @@
-#define DEV
+// #define DEV
 
 // TODO: user megad egy listat: timestamp + a 4 sarok szinet.
 // feladat: intrapolal 4 sarok kozott, es idoben is atmenetet kepez
@@ -43,9 +43,11 @@ bool deadPixel(uint16_t index) {
 }
 
 //----------------------------------------------------------------------------------------------------------------
-void updateBitmap(const char *payload) {
+void updateBitmap(WiFiClient *client) {
   LOG("Updating bitmap");
-  image.initBitmap((uint8_t *)payload);
+  uint8_t buf[COLUMNS * ROWS * 3];
+  client->read(buf, sizeof(buf));
+  image.initBitmap(buf);
 }
 
 //----------------------------------------------------------------------------------------------------------------
@@ -149,17 +151,21 @@ void loop() {
       return;
     }
 
-    String string = http.getString();
-    if (string.length() < 25) {
-      LOGP("Input length %d too small", string.length());
-      LOG(string.c_str())
-      http.end();
-      return;
-    }
-
     // FIXME: this is kludgy
-    if (string.length() == 192) updateBitmap(string.c_str());
-    else updateAsciiArt(string.c_str());
+    if (http.getSize() == 192) {
+      updateBitmap(http.getStreamPtr());
+    } else {
+
+      // String string = http.getString();
+      // if (string.length() < 25) {
+      //   LOGP("Input length %d too small", string.length());
+      //   LOG(string.c_str())
+      //   http.end();
+      //   return;
+      // }
+      //
+      // updateAsciiArt(string.c_str());
+    }
 
     http.end();
     // successful update time
