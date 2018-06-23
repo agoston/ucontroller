@@ -13,7 +13,7 @@ Joystick joystick;
 //----------------------------------------------------------------------------------------------------------------
 void setup() {
   #ifdef DEV
-  	delay(50); // bootloader listens for firmware update, should not get garbage, wait a bit
+  	delay(50);
   	Serial.begin(9600);
   #endif
 
