@@ -29,7 +29,7 @@ void setup() {
   //
   // LOGP("WiFi connected, IP address: %s", WiFi.localIP().toString().c_str());
 
-// these pins have no extra shit on them on the wemos d1_mini_lite, like a 12k external pullup resistor
+// these pins have no extra shit on them on the wemos d1_mini_lite, like a led or an 12k external pullup resistor
   pinMode(D1, INPUT_PULLUP);
   pinMode(D2, INPUT_PULLUP);
   pinMode(D5, INPUT_PULLUP);
