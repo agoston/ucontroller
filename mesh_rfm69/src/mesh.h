@@ -34,7 +34,7 @@ void mesh_init();
 /************************************************************** INIT */
 void setup() {
 #ifdef DEV
-  Serial.begin(57600);  // for some reason, platformio fails on higher bitrates
+  Serial.begin(9600);  // for some reason, platformio fails on higher bitrates
 #endif
 
   mesh_init();
