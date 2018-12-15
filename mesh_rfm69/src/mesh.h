@@ -39,7 +39,7 @@ void setup() {
 
   mesh_init();
 
-  radio.initialize(RF69_433MHZ, m_self, networkId);
+  if (!radio.initialize(RF69_433MHZ, m_self, networkId)) LOG("init failed");
   radio.setHighPower();
   radio.setPowerLevel(31);
   radio.encrypt(ENCRYPT_KEY);

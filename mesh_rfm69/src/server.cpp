@@ -6,15 +6,15 @@
 #include <agoston.h>
 #include "mesh.h"
 
-uint8_t serialbuf[16];
+char serialbuf[16];
 uint8_t serialidx = 0;
 
 void mesh_init() {}
 
-void runCommand(uint8_t *buf, uint8_t len) {
-  LOG((char*)buf);
+void runCommand(const char *buf, uint8_t len) {
+  LOGP("%s", buf);
 
-  if (!memcmp(buf, "relay", 5) &&
+  if (len >= 9 && !memcmp(buf, "relay", 5) &&
     buf[5] == ' ' && buf[6] >= '0' && buf[6] <= '9' &&
     buf[7] == ' ' && buf[8] >= '0' && buf[8] <= '9') {
 
@@ -27,7 +27,7 @@ void runCommand(uint8_t *buf, uint8_t len) {
         return;
       }
 
-  } else if (!memcmp(buf, "temp", 4) &&
+  } else if (len >= 6 && !memcmp(buf, "temp", 4) &&
     buf[4] == ' ' && buf[5] >= '0' && buf[5] <= '9') {
 
       Message message;
@@ -55,14 +55,14 @@ void runCommand(uint8_t *buf, uint8_t len) {
 }
 
 void loop() {
-  // runCommand("relay 1 1", 0);
+  // runCommand("relay 2 1", 9);
   // delay(2000);
-  // runCommand("relay 1 0", 0);
+  // runCommand("relay 2 0", 9);
   // delay (2000);
   // if (1==1) return;
 
   if (Serial.available()) {
-    uint8_t input = Serial.read();
+    char input = Serial.read();
     if (input == ';') {
       serialbuf[serialidx] = 0;
       runCommand(serialbuf, serialidx);

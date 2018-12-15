@@ -1,4 +1,4 @@
-#define DEV
+// #define DEV
 #define m_self m_achterlamp
 
 #include <SPI.h>
