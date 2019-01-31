@@ -2,17 +2,20 @@
 
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
+#include <TM1637Display.h>
 #include <WiFiUdp.h>
+#include <ezTime.h>
+
 #include "common.h"
 #include "log.h"
 #include "secret.h"
 
-#include <coredecls.h>  // settimeofday_cb()
-#include <sys/time.h>   // struct timeval
-#include <time.h>       // time() ctime()
-
+// FIXME: adjust pins when wired
+TM1637Display timeDisplay(D1, D2);
 WiFiUDP udp;
 Packet packet;
+Timezone timezone;
+
 unsigned long lastRun = 0;
 
 const uint8_t REMOTES[] = {R_PETI, R_ROBI, R_LENA};
@@ -23,6 +26,11 @@ void setup() {
   delay(50);
   Serial.begin(9600);
 #endif
+
+  // see https://github.com/ropg/ezTime; avoids an extra network lookup
+  // timezone.Location("Europe/Amsterdam");
+  timezone.setPosix("CET-1CEST,M3.4.0/2,M10.4.0/3");
+  setServer("0.europe.pool.ntp.org");
 
   lastRun = millis();
 
@@ -43,9 +51,19 @@ void setup() {
 
   udp.begin(HEAD_PORT);
 
-  // FIXME: reinitialize this, depending on skew, esp8266 timer is not dependable
-  configTime(3600, 3600, "0.europe.pool.ntp.org");
+  // FIXME: dim for night
+  timeDisplay.setBrightness(0x0f);
+}
 
+//----------------------------------------------------------------------------------------------------------------
+void displayTime(uint8_t hours, uint8_t mins) {
+  uint8_t data[] = {
+    (uint8_t)(hours / 10),
+    (uint8_t)(hours % 10),
+    (uint8_t)(mins / 10),
+    (uint8_t)(mins % 10)
+  };
+  timeDisplay.setSegments(data);
 }
 
 //----------------------------------------------------------------------------------------------------------------
@@ -56,7 +74,8 @@ boolean receive() {
   LOGP("packet received, length=%d", cb);
 
   // We've received a packet, read the data from it
-  if (udp.read((unsigned char *)&packet, sizeof(packet)) != sizeof(packet)) return false;
+  if (udp.read((unsigned char *)&packet, sizeof(packet)) != sizeof(packet))
+    return false;
   // extra bytes at end of packet are discarded silently
 
   return true;
@@ -64,8 +83,13 @@ boolean receive() {
 
 //----------------------------------------------------------------------------------------------------------------
 void loop() {
-  timeval tv;
-  gettimeofday(&tv, NULL);
+  events();
 
-  // show
+  uint8_t hours = timezone.hour();
+  uint8_t mins = timezone.minute();
+  uint8_t secs = timezone.second();
+
+  LOGP("%d:%d:%d", hours, mins, secs);
+  displayTime(hours, mins);
+  delay(400);
 }
