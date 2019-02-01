@@ -5,12 +5,13 @@
 #include <TM1637Display.h>
 #include <WiFiUdp.h>
 #include <ezTime.h>
+#include <OneWire.h>
+#include <DallasTemperature.h>
 
 #include "common.h"
 #include "log.h"
 #include "secret.h"
 
-// FIXME: adjust pins when wired
 TM1637Display timeDisplay(D1, D2);
 WiFiUDP udp;
 Packet packet;
@@ -58,10 +59,10 @@ void setup() {
 //----------------------------------------------------------------------------------------------------------------
 void displayTime(uint8_t hours, uint8_t mins) {
   uint8_t data[] = {
-    (uint8_t)(hours / 10),
-    (uint8_t)(hours % 10),
-    (uint8_t)(mins / 10),
-    (uint8_t)(mins % 10)
+    timeDisplay.encodeDigit(hours / 10),
+    timeDisplay.encodeDigit(hours % 10),
+    timeDisplay.encodeDigit(mins / 10),
+    timeDisplay.encodeDigit(mins % 10)
   };
   timeDisplay.setSegments(data);
 }
