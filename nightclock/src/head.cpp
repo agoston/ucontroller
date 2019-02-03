@@ -12,7 +12,13 @@
 #include "log.h"
 #include "secret.h"
 
+// D1 & D2 are 'clean', direct connections on the d1 lite
 TM1637Display timeDisplay(D1, D2);
+
+// D3 & D4 have an integrated 3.3V 12Kohm pullup on the d1 lite, quite handy now :)
+OneWire oneWire(D3);
+DallasTemperature sensors(&oneWire);
+
 WiFiUDP udp;
 Packet packet;
 Timezone timezone;
@@ -54,6 +60,9 @@ void setup() {
 
   // FIXME: dim for night
   timeDisplay.setBrightness(0x0f);
+
+  // fire up DS18B20 temp. sensor
+  sensors.begin();
 }
 
 //----------------------------------------------------------------------------------------------------------------
@@ -92,5 +101,13 @@ void loop() {
 
   LOGP("%d:%d:%d", hours, mins, secs);
   displayTime(hours, mins);
-  delay(400);
+
+  sensors.requestTemperatures();
+  float tempC = sensors.getTempCByIndex(0);
+  if (tempC != DEVICE_DISCONNECTED_C) {
+    LOGP("Temperature is: %f", tempC);
+  }
+
+  // FIXME: deep sleep?
+  delay(500);
 }
