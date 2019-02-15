@@ -31,7 +31,7 @@ Events::~Events() {
 }
 
 void Events::add(VoidFunction function, unsigned long ttl) {
-  for (int i = 0; i < eventNum; i++) {
+  for (unsigned int i = 0; i < eventNum; i++) {
     if (functions[i]) continue;
 
     functions[i] = function;
@@ -42,7 +42,7 @@ void Events::add(VoidFunction function, unsigned long ttl) {
 }
 
 void Events::run(unsigned long now) {
-  for (int i = 0; i < eventNum; i++) {
+  for (unsigned int i = 0; i < eventNum; i++) {
     if (functions[i]) continue;
     if (ttls[i] > now) continue;
 

@@ -28,11 +28,16 @@ float tempLast = 22;
 
 WiFiUDP udp;
 Packet packet;
+
 Timezone timezone;
 
 Events events(4);
 
 const uint8_t REMOTES[] = {R_PETI, R_ROBI, R_LENA};
+
+// Button on D4 to display temperature instead
+volatile bool buttonPressed = false;
+unsigned long buttonPressTtl = 0;
 
 //----------------------------------------------------------------------------------------------------------------
 void handleTemp();
@@ -51,6 +56,16 @@ void handleTemp() {
   if (tempC != DEVICE_DISCONNECTED_C) tempLast = tempC;
 
   events.add(requestTemp, millis() + TEMP_REFRESH_MSEC);
+}
+
+//----------------------------------------------------------------------------------------------------------------
+void handleButton() {
+  if (digitalRead(D4) == HIGH) {
+    buttonPressed = false;
+    buttonPressTtl = millis() + 3000;
+  } else {
+    buttonPressed = true;
+  }
 }
 
 //----------------------------------------------------------------------------------------------------------------
@@ -95,6 +110,7 @@ void setup() {
 
   // button on D4 (has external pullup for some reason on d1 mini lite)
   pinMode(D4, INPUT);
+  attachInterrupt(D4, handleButton, CHANGE);
 }
 
 //----------------------------------------------------------------------------------------------------------------
@@ -106,6 +122,15 @@ void displayTime(uint8_t hours, uint8_t mins) {
     timeDisplay.encodeDigit(mins % 10)
   };
   timeDisplay.setSegments(data);
+}
+
+// FIXME: wire this to bitton
+// FIXME: how the hell do the dots work? seems friggin' complex
+void displayTemp(float tempC) {
+  uint8_t tempInt = (uint8_t)tempC;
+  uint8_t tempFrac = (uint8_t)((tempC - tempInt)*100);
+  // haha
+  displayTime(tempInt, tempFrac);
 }
 
 //----------------------------------------------------------------------------------------------------------------
@@ -141,7 +166,11 @@ void loop() {
   LOGP("Time: %d:%d:%d", hours, mins, secs);
 
   // this takes cca. 3ms per segment, roughly 15ms overall with overhead
-  displayTime(hours, mins);
+  if (buttonPressed || (buttonPressTtl < now)) {
+    displayTemp(tempLast);
+  } else {
+    displayTime(hours, mins);
+  }
 
   // FIXME: deep sleep?
   delay(500);
