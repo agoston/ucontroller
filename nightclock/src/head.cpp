@@ -4,12 +4,16 @@
 #include <ESP8266WiFi.h>
 #include <TM1637Display.h>
 #include <WiFiUdp.h>
-#include <ezTime.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
 
+// crappy library pollutes global variables into default namespace via 'using namspace ezt' :(
+#define EZTIME_EZT_NAMESPACE
+#include <ezTime.h>
+
 #include "common.h"
 #include "log.h"
+#include "events.h"
 #include "secret.h"
 
 // D1 & D2 are 'clean', direct connections on the d1 lite
@@ -18,14 +22,36 @@ TM1637Display timeDisplay(D1, D2);
 // D3 & D4 have an integrated 3.3V 12Kohm pullup on the d1 lite, quite handy now :)
 OneWire oneWire(D3);
 DallasTemperature sensors(&oneWire);
+int16_t tempDelay;
+float tempLast = 22;
+#define TEMP_REFRESH_MSEC 15000
 
 WiFiUDP udp;
 Packet packet;
 Timezone timezone;
 
-unsigned long lastRun = 0;
+Events events(4);
 
 const uint8_t REMOTES[] = {R_PETI, R_ROBI, R_LENA};
+
+//----------------------------------------------------------------------------------------------------------------
+void handleTemp();
+void requestTemp() {
+  // takes a few ms
+  LOG("Request temperatures")
+  sensors.requestTemperatures();
+  events.add(handleTemp, millis() + tempDelay);
+}
+
+void handleTemp() {
+  // takes a few ms
+  float tempC = sensors.getTempCByIndex(0);
+  LOGP("Temp: %f", tempC);
+
+  if (tempC != DEVICE_DISCONNECTED_C) tempLast = tempC;
+
+  events.add(requestTemp, millis() + TEMP_REFRESH_MSEC);
+}
 
 //----------------------------------------------------------------------------------------------------------------
 void setup() {
@@ -37,9 +63,7 @@ void setup() {
   // see https://github.com/ropg/ezTime; avoids an extra network lookup
   // timezone.Location("Europe/Amsterdam");
   timezone.setPosix("CET-1CEST,M3.4.0/2,M10.4.0/3");
-  setServer("0.europe.pool.ntp.org");
-
-  lastRun = millis();
+  ezt::setServer("0.europe.pool.ntp.org");
 
   // since there is a single radio in esp8266, when connecting to an remote AP,
   // it will change the wifi channel for the clients of this AP too. clients of
@@ -61,8 +85,16 @@ void setup() {
   // FIXME: dim for night
   timeDisplay.setBrightness(0x0f);
 
-  // fire up DS18B20 temp. sensor
+  // DS18B20 temp. sensor. default resolution is already below .1 degrees, which is fine
   sensors.begin();
+  sensors.setWaitForConversion(true);
+  // depending on resolution, it takes longer to determine temperature
+  tempDelay = sensors.millisToWaitForConversion(sensors.getResolution());
+  // kick off event handler here too
+  requestTemp();
+
+  // button on D4 (has external pullup for some reason on d1 mini lite)
+  pinMode(D4, INPUT);
 }
 
 //----------------------------------------------------------------------------------------------------------------
@@ -77,7 +109,7 @@ void displayTime(uint8_t hours, uint8_t mins) {
 }
 
 //----------------------------------------------------------------------------------------------------------------
-boolean receive() {
+boolean receiveUdp() {
   int cb = udp.parsePacket();
   if (!cb) return false;
 
@@ -93,20 +125,23 @@ boolean receive() {
 
 //----------------------------------------------------------------------------------------------------------------
 void loop() {
-  events();
+  unsigned long now = millis();
+
+  // NTP client event handler heartbeat.
+  // this can take up 1500ms if there's an NTP update necessary (and it times out)
+  ezt::events();
+
+  // our own event handler heartbeat
+  events.run(now);
 
   uint8_t hours = timezone.hour();
   uint8_t mins = timezone.minute();
   uint8_t secs = timezone.second();
 
-  LOGP("%d:%d:%d", hours, mins, secs);
-  displayTime(hours, mins);
+  LOGP("Time: %d:%d:%d", hours, mins, secs);
 
-  sensors.requestTemperatures();
-  float tempC = sensors.getTempCByIndex(0);
-  if (tempC != DEVICE_DISCONNECTED_C) {
-    LOGP("Temperature is: %f", tempC);
-  }
+  // this takes cca. 3ms per segment, roughly 15ms overall with overhead
+  displayTime(hours, mins);
 
   // FIXME: deep sleep?
   delay(500);

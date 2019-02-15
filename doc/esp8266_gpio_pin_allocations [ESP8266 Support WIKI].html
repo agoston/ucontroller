@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html dir="ltr" class="js desktop" lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <title>esp8266_gpio_pin_allocations [ESP8266 Support WIKI]</title>
+    <script>(function(H){H.className=H.className.replace(/\bno-js\b/,'js')})(document.documentElement)</script>
+    <meta name="generator" content="DokuWiki">
+<meta name="robots" content="index,follow">
+<meta name="keywords" content="esp8266_gpio_pin_allocations">
+<link rel="search" type="application/opensearchdescription+xml" href="https://www.esp8266.com/wiki/lib/exe/opensearch.php" title="ESP8266 Support WIKI">
+<link rel="start" href="https://www.esp8266.com/wiki/">
+<link rel="contents" href="https://www.esp8266.com/wiki/doku.php?id=esp8266_gpio_pin_allocations&amp;do=index" title="Sitemap">
+<link rel="alternate" type="application/rss+xml" title="Recent changes" href="https://www.esp8266.com/wiki/feed.php">
+<link rel="alternate" type="application/rss+xml" title="Current namespace" href="https://www.esp8266.com/wiki/feed.php?mode=list&amp;ns=">
+<link rel="alternate" type="text/html" title="Plain HTML" href="https://www.esp8266.com/wiki/doku.php?do=export_xhtml&amp;id=esp8266_gpio_pin_allocations">
+<link rel="alternate" type="text/plain" title="Wiki Markup" href="https://www.esp8266.com/wiki/doku.php?do=export_raw&amp;id=esp8266_gpio_pin_allocations">
+<link rel="canonical" href="https://www.esp8266.com/wiki/doku.php?id=esp8266_gpio_pin_allocations">
+<link rel="stylesheet" type="text/css" href="esp8266_gpio_pin_allocations%20[ESP8266%20Support%20WIKI]_files/css.css">
+<script type="text/javascript">/*<![CDATA[*/var NS='';var JSINFO = {"id":"esp8266_gpio_pin_allocations","namespace":""};
+/*!]]>*/</script>
+<script type="text/javascript" charset="utf-8" src="esp8266_gpio_pin_allocations%20[ESP8266%20Support%20WIKI]_files/js.js"></script>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="shortcut icon" href="https://www.esp8266.com/wiki/lib/tpl/esp8266/images/favicon.ico">
+<link rel="apple-touch-icon" href="https://www.esp8266.com/wiki/lib/tpl/esp8266/images/apple-touch-icon.png">
+    </head>
+
+<body>
+    <!--[if lte IE 7 ]><div id="IE7"><![endif]--><!--[if IE 8 ]><div id="IE8"><![endif]-->
+    <div id="dokuwiki__site"><div id="dokuwiki__top" class="site dokuwiki mode_show tpl_esp8266     ">
+
+        
+<!-- ********** HEADER ********** -->
+<div id="dokuwiki__header"><div class="pad group">
+
+    
+    <div class="headings group">
+        <h1><a href="https://www.esp8266.com/wiki/doku.php?id=start" accesskey="h" title="[H]"><img src="esp8266_gpio_pin_allocations%20[ESP8266%20Support%20WIKI]_files/logo.png" alt="ESP8266 Support WIKI" width="255" height="110"></a></h1>
+            </div>
+
+    <div class="tools group">
+        <!-- USER TOOLS -->
+                    <div id="dokuwiki__usertools">
+                <h3 class="a11y">User Tools</h3>
+                <ul>
+                    <li><a href="https://www.esp8266.com/wiki/doku.php?id=esp8266_gpio_pin_allocations&amp;do=register" class="action register" rel="nofollow" title="Register">Register</a></li><li><a href="https://www.esp8266.com/wiki/doku.php?id=esp8266_gpio_pin_allocations&amp;do=login&amp;sectok=04b1016a7db8b30fbc25e98c2aac5b27" class="action login" rel="nofollow" title="Login">Login</a></li>                </ul>
+                <ul>
+                                    </ul>
+            </div>
+        
+        <!-- SITE TOOLS -->
+        <div id="dokuwiki__sitetools">
+            <h3 class="a11y">Site Tools</h3>
+            <form action="/wiki/doku.php?id=start" accept-charset="utf-8" class="search" id="dw__search" method="get" role="search"><div class="no"><input type="hidden" name="do" value="search"><input type="text" id="qsearch__in" accesskey="f" name="id" class="edit" title="[F]"><input type="submit" value="Search" class="button" title="Search"><div id="qsearch__out" class="ajax_qsearch JSpopup"></div></div></form>            <div class="mobileTools">
+                <form action="/wiki/doku.php" method="get" accept-charset="utf-8"><div class="no"><input type="hidden" name="id" value="esp8266_gpio_pin_allocations"><select name="do" class="edit quickselect" title="Tools"><option value="" selected="selected">Tools</option><optgroup label="Page Tools"><option value="edit">Show pagesource</option><option value="revisions">Old revisions</option><option value="backlink">Backlinks</option></optgroup><optgroup label="Site Tools"><option value="recent">Recent changes</option><option value="media">Media Manager</option><option value="index">Sitemap</option></optgroup><optgroup label="User Tools"><option value="login">Login</option><option value="register">Register</option></optgroup></select><input type="submit" value="&gt;" style="display: none;"></div></form>            </div>
+            <ul>
+                <li><a href="https://www.esp8266.com/wiki/doku.php?id=esp8266_gpio_pin_allocations&amp;do=recent" class="action recent" accesskey="r" rel="nofollow" title="Recent changes [R]">Recent changes</a></li><li><a href="https://www.esp8266.com/wiki/doku.php?id=esp8266_gpio_pin_allocations&amp;do=media&amp;ns=" class="action media" rel="nofollow" title="Media Manager">Media Manager</a></li><li><a href="https://www.esp8266.com/wiki/doku.php?id=esp8266_gpio_pin_allocations&amp;do=index" class="action index" accesskey="x" rel="nofollow" title="Sitemap [X]">Sitemap</a></li>            </ul>
+        </div>
+
+    </div>
+
+    <!-- BREADCRUMBS -->
+            <div class="breadcrumbs">
+                            <div class="youarehere"><span class="bchead">You are here: </span><span class="home"><bdi><a href="https://www.esp8266.com/wiki/doku.php?id=start" class="wikilink1" title="start">start</a></bdi></span> » <bdi><span class="curid"><a href="https://www.esp8266.com/wiki/doku.php?id=esp8266_gpio_pin_allocations" class="wikilink1" title="esp8266_gpio_pin_allocations">esp8266_gpio_pin_allocations</a></span></bdi></div>
+                                </div>
+    
+    
+    <hr class="a11y">
+</div></div><!-- /header -->
+
+        <div class="wrapper group">
+
+            
+            <!-- ********** CONTENT ********** -->
+            <div id="dokuwiki__content"><div class="pad group">
+
+                <div class="pageId"><span>esp8266_gpio_pin_allocations</span></div>
+
+                <div class="page group">
+                                                            <!-- wikipage start -->
+                    <!-- TOC START -->
+<div id="dw__toc">
+<h3 class="toggle open" style="cursor: pointer;"><strong><span>−</span></strong>Table of Contents</h3>
+<div style="">
+
+<ul class="toc" aria-expanded="true" style="">
+<li class="level1"><div class="li"><a href="#basic_wiring_functions">Basic Wiring functions</a></div>
+<ul class="toc">
+<li class="level2"><div class="li"><a href="#analog_adc">Analog ADC</a></div>
+<ul class="toc">
+<li class="level3"><div class="li"><a href="#interrupts">Interrupts</a></div></li>
+<li class="level3"><div class="li"><a href="#pwm">PWM</a></div></li>
+</ul>
+</li>
+<li class="level2"><div class="li"><a href="#pin_functions">Pin Functions</a></div></li>
+<li class="level2"><div class="li"><a href="#uart_pins">UART pins</a></div></li>
+<li class="level2"><div class="li"><a href="#led_pin">LED Pin</a></div></li>
+<li class="level2"><div class="li"><a href="#maximum_current">Maximum Current</a></div></li>
+</ul></li>
+</ul>
+<br aria-expanded="true" style="display: inline;"><div aria-expanded="true" style=""><script async="" src="esp8266_gpio_pin_allocations%20[ESP8266%20Support%20WIKI]_files/adsbygoogle.js"></script>
+<!-- tower -->
+<ins class="adsbygoogle" style="display:inline-block;width:300px;height:600px" data-ad-client="ca-pub-8874076224787930" data-ad-slot="4377319203"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script></div><div aria-expanded="true" style=""><script async="" src="esp8266_gpio_pin_allocations%20[ESP8266%20Support%20WIKI]_files/adsbygoogle.js"></script>
+<!-- wiki-ad -->
+<ins class="adsbygoogle" style="display:inline-block;width:336px;height:280px" data-ad-client="ca-pub-8874076224787930" data-ad-slot="5714451604"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script></div><div aria-expanded="true" style=""><script async="" src="esp8266_gpio_pin_allocations%20[ESP8266%20Support%20WIKI]_files/adsbygoogle.js"></script>
+<!-- wiki-ad -->
+<ins class="adsbygoogle" style="display:inline-block;width:336px;height:280px" data-ad-client="ca-pub-8874076224787930" data-ad-slot="5714451604"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script></div></div>
+</div>
+<!-- TOC END -->
+
+<h1 class="sectionedit1" id="basic_wiring_functions">Basic Wiring functions</h1>
+<script async="" src="esp8266_gpio_pin_allocations%20[ESP8266%20Support%20WIKI]_files/adsbygoogle.js"></script>
+<!-- wiki -->
+<ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-8874076224787930" data-ad-slot="7029198000"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script><script async="" src="esp8266_gpio_pin_allocations%20[ESP8266%20Support%20WIKI]_files/adsbygoogle.js"></script>
+<!-- wiki -->
+<ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-8874076224787930" data-ad-slot="7029198000"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script><div class="level1">
+
+<p>
+pinMode(), digitalRead(), digitalWrite(), analogWrite() work as usual.
+</p>
+
+<p>
+Pin numbers correspond directly to the esp8266 GPIO pin numbers. To read GPIO2, call digitalRead(2);
+</p>
+
+<p>
+All digital IO pins are protected from over-voltage with a snap-back circuit connected between
+the pad and ground. The snap back voltage is typically about 6V, and the holding voltage is 5.8V.
+This provides protection from over-voltages and ESD. The output devices are also protected
+from reversed voltages with diodes.
+</p>
+
+<p>
+At startup, pins are configured as INPUT.<br>
+
+GPIO0-GPIO15 can be INPUT, OUTPUT, or INPUT_PULLUP.<br>
+
+GPIO16 can be INPUT, OUTPUT, or INPUT_PULLDOWN_16. It is also XPD for deepSleep() (perhaps via a small capacitor.)<br>
+
+Note that GPIO6-GPIO11 are typically used to interface with the flash 
+memory ICs on most esp8266 modules, so these pins should not generally 
+be used.
+</p>
+
+<p>
+analogRead(A0) reads the value of the ADC channel connected to the TOUT pin.
+</p>
+
+</div>
+
+<h2 class="sectionedit2" id="analog_adc">Analog ADC</h2>
+<div class="level2">
+
+<p>
+ESP8266EX also integrates a generic purpose 10-bit analog ADC. The ADC range is from 0V to
+1.0V. It is typically used to measure the voltages from the sensor or battery status. The ADC
+cannot be used when the chip is transmitting. Otherwise the voltage may be inaccurate. (From Expressif datasheet CH 8.5)
+</p>
+
+<p>
+<a href="https://www.esp8266.com/wiki/lib/exe/detail.php?id=esp8266_gpio_pin_allocations&amp;media=essp8266_adc.png" class="media" title="essp8266_adc.png"><img src="esp8266_gpio_pin_allocations%20[ESP8266%20Support%20WIKI]_files/fetch_002.png" class="media" alt=""></a><br>
+
+</p>
+
+</div>
+
+<h3 class="sectionedit3" id="interrupts">Interrupts</h3>
+<div class="level3">
+
+<p>
+Pin interrupts are supported through attachInterrupt(), 
+detachInterrupt() functions. Interrupts may be attached to any GPIO pin 
+except GPIO16, but since GPIO6-GPIO11 are typically used to interface 
+with the flash memory ICs on most esp8266 modules, applying interrupts 
+to these pins are likely to cause problems. Standard Arduino interrupt 
+types are supported: CHANGE, RISING, FALLING.
+</p>
+
+</div>
+
+<h3 class="sectionedit4" id="pwm">PWM</h3>
+<div class="level3">
+
+<p>
+analogWrite(pin, value) enables software PWM on the given pin. PWM may 
+be used on pins 0 to 15. Call analogWrite(pin, 0) to disable PWM on the 
+pin. Value may be in range from 0 to 1023.
+0 to 255 is normal on an Arduino board, as it's an 8 bit register,  but 
+ESP8266 uses software PWM so 1023 is full duty cycle.
+</p>
+
+</div>
+
+<h2 class="sectionedit5" id="pin_functions">Pin Functions</h2>
+<div class="level2">
+
+<p>
+The most usable pin functions are mapped to the macro SPECIAL, so 
+calling pinMode(pin, SPECIAL) will switch that pin to  UART RX/TX on 
+pins 1 - 3, HSPI for pins 12-15 and CLK functions for pins 0, 4 and 5.
+</p>
+
+<p>
+ SPECIAL maps to:
+</p>
+<ul>
+<li class="level1"><div class="li"> 0. CLK_OUT</div>
+</li>
+<li class="level1"><div class="li"> 1. TX0</div>
+</li>
+<li class="level1"><div class="li"> 2. TX1</div>
+</li>
+<li class="level1"><div class="li"> 3. RX0</div>
+</li>
+<li class="level1"><div class="li"> 4. CLK_XTAL</div>
+</li>
+<li class="level1"><div class="li"> 5. CLK_RTC</div>
+</li>
+<li class="level1"><div class="li"> 12. SPI_MISO</div>
+</li>
+<li class="level1"><div class="li"> 13. SPI_MOSI</div>
+</li>
+<li class="level1"><div class="li"> 14. SPI_CLK</div>
+</li>
+<li class="level1"><div class="li"> 15. SPI_SS</div>
+</li>
+</ul>
+
+<p>
+You can activate any “FUNCTION<em>” with pinMode(pin, FUNCTION</em>1) for example.
+</p>
+
+<p>
+Note: Func number 1-5 in Expressif table corresponds to FUNCTION 0-4 in SDK<br>
+
+<a href="http://bbs.espressif.com/download/file.php?id=442" class="urlextern" title="http://bbs.espressif.com/download/file.php?id=442" rel="nofollow">http://bbs.espressif.com/download/file.php?id=442</a>
+</p>
+
+<p>
+<a href="https://www.esp8266.com/wiki/lib/exe/detail.php?id=esp8266_gpio_pin_allocations&amp;media=pin_functions.png" class="media" title="pin_functions.png"><img src="esp8266_gpio_pin_allocations%20[ESP8266%20Support%20WIKI]_files/fetch.png" class="media" alt=""></a>
+</p>
+
+<p>
+ESP8266 has three modes of operation: SDIO mode, UART mode and FLASH 
+mode. These are obtained by pulling three pins either high or low at 
+bootup: GPIO15, GPIO0, GPIO2  according to this table:
+</p>
+
+<p>
+0 Low<br>
+
+1 High<br>
+
+x floating
+</p>
+<div class="table sectionedit6"><table class="inline">
+	<thead>
+	<tr class="row0">
+		<th class="col0 centeralign">  MODE            </th><th class="col1 leftalign">GPIO15             </th><th class="col2 leftalign">GPIO0           </th><th class="col3 leftalign">GPIO2  </th>
+	</tr>
+	</thead>
+	<tbody><tr class="row1">
+		<th class="col0 leftalign">SDIO  (BootSDCard)          </th><td class="col1 leftalign"> 1                 </td><td class="col2 leftalign"> x              </td><td class="col3 leftalign"> x       </td>
+	</tr>
+	<tr class="row2">
+		<th class="col0 leftalign">UART  (UploadCode)          </th><td class="col1 leftalign"> 0                 </td><td class="col2 leftalign"> 0              </td><td class="col3 leftalign"> x or 1  </td>
+	</tr>
+	<tr class="row3">
+		<th class="col0">FLASH (NormalRunning) </th><td class="col1 leftalign"> 0                 </td><td class="col2 leftalign"> 1              </td><td class="col3 leftalign"> x or 1  </td>
+	</tr>
+</tbody></table></div>
+
+<p>
+<em class="u">Notes</em> :-  GPIO2 It is considered safer to pull it 
+high with a resistor on boot rather than leave it floating to avoid 
+possible chip damage if pin is pulled high by your program but also see <a href="http://www.esp8266.com/viewtopic.php?f=6&amp;t=3862&amp;p=22524#p22524" class="urlextern" title="http://www.esp8266.com/viewtopic.php?f=6&amp;t=3862&amp;p=22524#p22524" rel="nofollow">http://www.esp8266.com/viewtopic.php?f=6&amp;t=3862&amp;p=22524#p22524</a>.  GPIO1 (UART TX) also has an effect on boot  if pulled low; it will not boot in this case.
+</p>
+
+<p>
+FLASH mode is when running the program. Take GPIO0 high or float  or it will stall on first reset, intentional or not.
+</p>
+
+<p>
+UART mode is how the code is uploaded to the chip and GPIO0 and GPIO15 must be low on boot to enter this mode.
+</p>
+
+<p>
+SDIO mode is where the chip boots from an SD card. I don't think this is available to us yet.
+</p>
+
+</div>
+
+<h2 class="sectionedit7" id="uart_pins">UART pins</h2>
+<div class="level2">
+
+<p>
+Note that there's a special switch to swap UART0 RX/TX with UART0 CTS/RTS which is what system<em>uart</em>swap does and is explained in <a href="http://bbs.espressif.com/viewtopic.php?f=7&amp;t=22&amp;p=54&amp;hilit=system_uart_swap#p54" class="urlextern" title="http://bbs.espressif.com/viewtopic.php?f=7&amp;t=22&amp;p=54&amp;hilit=system_uart_swap#p54" rel="nofollow">http://bbs.espressif.com/viewtopic.php?f=7&amp;t=22&amp;p=54&amp;hilit=system_uart_swap#p54</a>:
+</p>
+<pre class="code c++"><span class="co2">#define FUNC_U0CTS    4</span>
+<span class="co2">#define FUNC_U0RTS    4</span>
+&nbsp;
+<span class="kw4">void</span> user_init<span class="br0">(</span><span class="kw4">void</span><span class="br0">)</span> <span class="br0">{</span>
+PIN_FUNC_SELECT<span class="br0">(</span>PERIPHS_IO_MUX_MTCK_U<span class="sy0">,</span> FUNC_U0CTS<span class="br0">)</span><span class="sy0">;</span><span class="co1">//CONFIG MTCK PIN FUNC TO U0CTS</span>
+PIN_FUNC_SELECT<span class="br0">(</span>PERIPHS_IO_MUX_MTDO_U<span class="sy0">,</span> FUNC_U0RTS<span class="br0">)</span><span class="sy0">;</span><span class="co1">//CONFIG MTDO PIN FUNC TO U0RTS</span>
+SET_PERI_REG_MASK<span class="br0">(</span><span class="nu12">0x3ff00028</span> <span class="sy0">,</span> BIT2<span class="br0">)</span><span class="sy0">;</span><span class="co1">//SWAP PIN : U0TXD&lt;==&gt;U0RTS(MTDO) , U0RXD&lt;==&gt;U0CTS(MTCK)</span>
+......
+<span class="br0">}</span></pre>
+
+<p>
+Original func:<br>
+
+U0TXD⇒pin:U0TXD<br>
+
+U0RXD⇒pin:U0RXD<br>
+
+U0CTS⇒pin:MTCK<br>
+
+U0RTS⇒pin:MTDO<br>
+
+</p>
+
+<p>
+After pin swap:<br>
+
+U0TXD⇒pin:MTDO<br>
+
+U0RXD⇒pin:MTCK<br>
+
+U0CTS⇒pin:U0RXD<br>
+
+U0RTS⇒pin:U0TXD
+</p>
+
+<p>
+This allows the MTDO and MTCK to be connected to a microcontroller as 
+UART tx/rx. The bootup info will be output via U0TXD pin, but after 
+start-up, the UART0 will output data via MTDO and receive via MTCK.
+</p>
+
+<p>
+kolban asserts: “The device writes to UART1 by itself in certain circumstances.
+First, when you flash the device, the data received is apparently also written to the TX pin of UART1 (GPIO2).
+Second, the 'debug' code in the device writes its output to UART1.”
+</p>
+
+<p>
+If anyone has a reference for this please post it on the thread <a href="http://www.esp8266.com/viewtopic.php?f=6&amp;t=3862&amp;p=22524#p22524" class="urlextern" title="http://www.esp8266.com/viewtopic.php?f=6&amp;t=3862&amp;p=22524#p22524" rel="nofollow">http://www.esp8266.com/viewtopic.php?f=6&amp;t=3862&amp;p=22524#p22524</a>
+</p>
+
+</div>
+
+<h2 class="sectionedit8" id="led_pin">LED Pin</h2>
+<div class="level2">
+
+<p>
+GPIO1, which is also TX, is wired to the blue LED on many devices.  Note
+ that the LED is active low (connected to Vcc and sinks through the chip
+ to ground) so setting a logical value of 0 will light it up.  Since 
+GPIO1 is also the TX pin, you won't be able to blink the LED and perform
+ Serial communications at the same time unless you switch TX/RX pins.<br>
+Note that if this pin is pulled LOW on power up, the ESP will not boot. 
+(The normal LED is from Vcc to IO1, an LED from GND to IO1 is enough to 
+prevent boot)
+</p>
+
+</div>
+
+<h2 class="sectionedit9" id="maximum_current">Maximum Current</h2>
+<div class="level2">
+
+<p>
+When using a GPIO as output (i.e. to drive something such as an LED) it 
+is important to note that the maximum output current is 12mA. (I<sub>MAX</sub>=12mA
+ per Espressif datasheet)
+ If you try and output more current than that, you run the risk of 
+damaging the device.  Since many LEDs are able to draw 20mA you should 
+adjust your current limiting resistor to be 12mA or less.  Using <a href="https://en.wikipedia.org/wiki/LED_circuit" class="urlextern" title="https://en.wikipedia.org/wiki/LED_circuit" rel="nofollow">https://en.wikipedia.org/wiki/LED_circuit</a> - R=(Vout-Vled)/I so (3.3V-1.8Vred) at 12mA = 125Ω min for a red LED.
+</p>
+
+</div>
+
+                    <!-- wikipage stop -->
+                                    </div>
+
+                <div class="docInfo"><bdi>esp8266_gpio_pin_allocations.txt</bdi> · Last modified: 2017/11/10 02:18 by <bdi>ekriirke</bdi></div>
+
+                            </div></div><!-- /content -->
+
+            <hr class="a11y">
+
+            <!-- PAGE ACTIONS -->
+            <div id="dokuwiki__pagetools">
+                <h3 class="a11y">Page Tools</h3>
+                <div class="tools">
+                    <ul>
+                        <li><a href="https://www.esp8266.com/wiki/doku.php?id=esp8266_gpio_pin_allocations&amp;do=edit" class="action source" accesskey="v" rel="nofollow" title="Show pagesource [V]"><span>Show pagesource</span></a></li><li><a href="https://www.esp8266.com/wiki/doku.php?id=esp8266_gpio_pin_allocations&amp;do=revisions" class="action revs" accesskey="o" rel="nofollow" title="Old revisions [O]"><span>Old revisions</span></a></li><li><a href="https://www.esp8266.com/wiki/doku.php?id=esp8266_gpio_pin_allocations&amp;do=backlink" class="action backlink" rel="nofollow" title="Backlinks"><span>Backlinks</span></a></li><li><a href="#dokuwiki__top" class="action top" accesskey="t" rel="nofollow" title="Back to top [T]"><span>Back to top</span></a></li>                    </ul>
+                </div>
+            </div>
+        </div><!-- /wrapper -->
+
+        
+<!-- ********** FOOTER ********** -->
+<div id="dokuwiki__footer"><div class="pad">
+    
+    <div class="buttons">
+            </div>
+</div></div><!-- /footer -->
+
+    </div></div><!-- /site -->
+
+    <div class="no"><img src="esp8266_gpio_pin_allocations%20[ESP8266%20Support%20WIKI]_files/indexer.gif" alt="" width="2" height="1"></div>
+    <div id="screen__mode" class="no"></div>    <!--[if ( lte IE 7 | IE 8 ) ]></div><![endif]-->
+
+
+</body></html>
