@@ -20,9 +20,9 @@ class Events {
 
 // this is so tiny I didn't want to bother extracting into a .cpp with build config for multiple files
 Events::Events(unsigned int eventNum) {
-  functions = new VoidFunction[eventNum];
-  ttls = new unsigned long[eventNum];
-  eventNum = eventNum;
+  this->functions = new VoidFunction[eventNum]();
+  this->ttls = new unsigned long[eventNum];
+  this->eventNum = eventNum;
 }
 
 Events::~Events() {
@@ -38,12 +38,12 @@ void Events::add(VoidFunction function, unsigned long ttl) {
     ttls[i] = ttl;
     return;
   }
-  // FIXME: error
+  LOG("ERR Events::add(): full");
 }
 
 void Events::run(unsigned long now) {
   for (unsigned int i = 0; i < eventNum; i++) {
-    if (functions[i]) continue;
+    if (!functions[i]) continue;
     if (ttls[i] > now) continue;
 
     functions[i]();

@@ -22,9 +22,9 @@ TM1637Display timeDisplay(D1, D2);
 // D3 & D4 have an integrated 3.3V 12Kohm pullup on the d1 lite, quite handy now :)
 OneWire oneWire(D3);
 DallasTemperature sensors(&oneWire);
-int16_t tempDelay;
+int16_t tempDelayMs;
 float tempLast = 22;
-#define TEMP_REFRESH_MSEC 15000
+#define TEMP_REFRESH_MSEC 5000
 
 WiFiUDP udp;
 Packet packet;
@@ -45,7 +45,7 @@ void requestTemp() {
   // takes a few ms
   LOG("Request temperatures")
   sensors.requestTemperatures();
-  events.add(handleTemp, millis() + tempDelay);
+  events.add(handleTemp, millis() + tempDelayMs);
 }
 
 void handleTemp() {
@@ -61,9 +61,11 @@ void handleTemp() {
 //----------------------------------------------------------------------------------------------------------------
 void handleButton() {
   if (digitalRead(D4) == HIGH) {
+    LOG("ButtonPress: false");
     buttonPressed = false;
     buttonPressTtl = millis() + 3000;
   } else {
+    LOG("ButtonPress: true");
     buttonPressed = true;
   }
 }
@@ -104,7 +106,7 @@ void setup() {
   sensors.begin();
   sensors.setWaitForConversion(true);
   // depending on resolution, it takes longer to determine temperature
-  tempDelay = sensors.millisToWaitForConversion(sensors.getResolution());
+  tempDelayMs = sensors.millisToWaitForConversion(sensors.getResolution());
   // kick off event handler here too
   requestTemp();
 
@@ -124,8 +126,6 @@ void displayTime(uint8_t hours, uint8_t mins) {
   timeDisplay.setSegments(data);
 }
 
-// FIXME: wire this to bitton
-// FIXME: how the hell do the dots work? seems friggin' complex
 void displayTemp(float tempC) {
   uint8_t tempInt = (uint8_t)tempC;
   uint8_t tempFrac = (uint8_t)((tempC - tempInt)*100);
@@ -166,7 +166,7 @@ void loop() {
   LOGP("Time: %d:%d:%d", hours, mins, secs);
 
   // this takes cca. 3ms per segment, roughly 15ms overall with overhead
-  if (buttonPressed || (buttonPressTtl < now)) {
+  if (buttonPressed || (buttonPressTtl > now)) {
     displayTemp(tempLast);
   } else {
     displayTime(hours, mins);
