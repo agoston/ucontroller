@@ -1,5 +1,5 @@
-#ifndef __LOG_H
-#define __LOG_H
+#ifndef __FEATURES_LOG_H
+#define __FEATURES_LOG_H
 
 // FIXME: use Serial.printf() instead (there is one! woohooo!)
 

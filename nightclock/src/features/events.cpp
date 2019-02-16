@@ -1,24 +1,5 @@
-#ifndef __EVENTS_H
-#define __EVENTS_H
+#include "events.h"
 
-#include <Arduino.h>
-typedef void (*VoidFunction)();
-
-class Events {
- private:
-  VoidFunction *functions;
-  unsigned long *ttls;
-  unsigned int eventNum;
-
- public:
-  Events(unsigned int eventNum);
-  ~Events();
-
-  void add(VoidFunction function, unsigned long ttl);
-  void run(unsigned long now);
-};
-
-// this is so tiny I didn't want to bother extracting into a .cpp with build config for multiple files
 Events::Events(unsigned int eventNum) {
   this->functions = new VoidFunction[eventNum]();
   this->ttls = new unsigned long[eventNum];
@@ -50,5 +31,3 @@ void Events::run(unsigned long now) {
     functions[i] = NULL;
   }
 }
-
-#endif

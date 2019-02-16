@@ -1,3 +1,8 @@
+#ifndef __FEATURES_MESH_H
+#define __FEATURES_MESH_H
+
+#include <Arduino.h>
+
 const uint16_t REMOTE_PORT = 1080;
 const uint16_t HEAD_PORT = 1080;
 
@@ -13,3 +18,5 @@ typedef struct __attribute__((packed)) {
 #define R_PETI 2
 #define R_ROBI 3
 #define R_LENA 4
+
+#endif

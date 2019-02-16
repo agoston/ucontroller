@@ -11,10 +11,11 @@
 #define EZTIME_EZT_NAMESPACE
 #include <ezTime.h>
 
-#include "common.h"
-#include "log.h"
-#include "events.h"
 #include "secret.h"
+
+#include <features/log.h>
+#include <features/events.h>
+#include <features/mesh.h>
 
 // D1 & D2 are 'clean', direct connections on the d1 lite
 TM1637Display timeDisplay(D1, D2);
