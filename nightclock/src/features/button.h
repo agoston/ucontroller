@@ -5,6 +5,41 @@
 #include "log.h"
 #include <Arduino.h>
 
+class Button : public Feature {
+    private:
+    uint8_t pin;
+    uint16_t pressTtl;
+    
+    // these are changed from the ISR
+    volatile bool isrButtonPressed = false;
+    volatile unsigned long isrButtonPressTtl = 0;
+
+    public:
+    Button(uint8_t pin, uint16_t pressTtl = 3000) : pin(pin), pressTtl(pressTtl) {};
+
+    void setup();
+    void loop() {}
+
+    void handleButton() {
+        if (digitalRead(pin) == HIGH) {
+            LOGP("ButtonRelease %d", pin);
+            isrButtonPressed = false;
+            isrButtonPressTtl = millis() + pressTtl;
+        } else {
+            LOGP("ButtonPress %d", pin);
+            isrButtonPressed = true;
+        }
+    }
+
+    bool buttonPressed() {
+        return isrButtonPressed;
+    }
+
+    bool buttonPressedOrTtl(unsigned long now) {
+        return isrButtonPressed || now < isrButtonPressTtl;
+    }
+};
+
 // need a trampoline for attachInterrupt(); it expects function pointer without class reference
 // I've only did d0-d8 here as that's how many data pins there are on the  d1 lite
 namespace FeaturesButton {
@@ -45,111 +80,47 @@ Button *button_d8 = NULL;
 void handle_button_d8() {if (button_d8) button_d8->handleButton();}
 #endif
 
-void (*trampoline(uint8_t pin))() {
+typedef void (*VoidFunction)();
+
+VoidFunction trampoline(uint8_t pin, Button *button) {
     switch (pin) {
 #ifdef BUTTON_ON_D0        
-        case 0: return  handle_button_d0;
+        case D0: button_d0 = button; return handle_button_d0;
 #endif
 #ifdef BUTTON_ON_D1
-        case 1: return  handle_button_d1;
+        case D1: button_d1 = button; return handle_button_d1;
 #endif
 #ifdef BUTTON_ON_D2
-        case 2: return  handle_button_d2;
+        case D2: button_d2 = button; return handle_button_d2;
 #endif
 #ifdef BUTTON_ON_D3
-        case 3: return  handle_button_d3;
+        case D3: button_d3 = button; return handle_button_d3;
 #endif
 #ifdef BUTTON_ON_D4
-        case 4: return  handle_button_d4;
+        case D4: button_d4 = button; return handle_button_d4;
 #endif
 #ifdef BUTTON_ON_D5
-        case 5: return  handle_button_d5;
+        case D5: button_d5 = button; return handle_button_d5;
 #endif
 #ifdef BUTTON_ON_D6
-        case 6: return  handle_button_d6;
+        case D6: button_d6 = button; return handle_button_d6;
 #endif
 #ifdef BUTTON_ON_D7
-        case 7: return  handle_button_d7;
+        case D7: button_d7 = button; return handle_button_d7;
 #endif
 #ifdef BUTTON_ON_D8
-        case 8: return  handle_button_d8;
+        case D8: button_d8 = button; return handle_button_d8;
 #endif
         default: 
             LOG("ERR: pin undefined for trampoline");
             return NULL;
     }
 }
+}   // end namespace
+
+void Button::setup() {
+    pinMode(pin, INPUT);
+    attachInterrupt(digitalPinToInterrupt(pin), FeaturesButton::trampoline(pin, this), CHANGE);
 }
-
-class Button : public Feature {
-    private:
-    uint8_t pin;
-    uint16_t pressTtl;
-    
-    // these are changed from the ISR
-    volatile bool isrButtonPressed = false;
-    volatile unsigned long isrButtonPressTtl = 0;
-
-    public:
-    Button(uint8_t pin, uint16_t pressTtl = 3000) : pin(pin), pressTtl(pressTtl) {};
-
-    void setup() {
-        switch (pin) {
-#ifdef BUTTON_ON_D0
-            case 0: button_d0 = this; break;
-#endif
-#ifdef BUTTON_ON_D1
-            case 1: button_d1 = this; break;
-#endif
-#ifdef BUTTON_ON_D2
-            case 2: button_d2 = this; break;
-#endif
-#ifdef BUTTON_ON_D3
-            case 3: button_d3 = this; break;
-#endif
-#ifdef BUTTON_ON_D4
-            case 4: button_d4 = this; break;
-#endif
-#ifdef BUTTON_ON_D5
-            case 5: button_d5 = this; break;
-#endif
-#ifdef BUTTON_ON_D6
-            case 6: button_d6 = this; break;
-#endif
-#ifdef BUTTON_ON_D7
-            case 7: button_d7 = this; break;
-#endif
-#ifdef BUTTON_ON_D8
-            case 8: button_d8 = this; break;
-#endif
-            default: 
-                LOG("ERR: pin undefined for trampoline");
-        }
-        pinMode(pin, INPUT);
-        attachInterrupt(digitalPinToInterrupt(pin), FeaturesButton::trampoline(pin), CHANGE);
-    }
-
-    void loop() {
-    }
-
-    void handleButton() {
-        if (digitalRead(pin) == HIGH) {
-            LOGP("ButtonRelease %d", pin);
-            isrButtonPressed = false;
-            isrButtonPressTtl = millis() + pressTtl;
-        } else {
-            LOGP("ButtonPress %d", pin);
-            isrButtonPressed = true;
-        }
-    }
-
-    bool buttonPressed() {
-        return isrButtonPressed;
-    }
-
-    bool buttonPressedOrTtl(unsigned long now) {
-        return isrButtonPressed || now < isrButtonPressTtl;
-    }
-};
 
 #endif
