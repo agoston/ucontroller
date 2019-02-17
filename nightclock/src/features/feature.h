@@ -4,8 +4,8 @@
 // keep it simple
 class Feature {
  public:
- virtual void setup();
- virtual void loop();
+ virtual void setup() {};
+ virtual void loop() {};
 };
 
 #endif
