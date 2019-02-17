@@ -2,7 +2,7 @@
 
 #include <Arduino.h>
 
-// FIXME: check if we could extract sending/receiving over wifi also into a feature
+// FIXME: check if we could extract sending/receiving over wifi also into a features/mesh.h
 #include <ESP8266WiFi.h>
 #include <WiFiUdp.h>
 
@@ -20,7 +20,9 @@ Display display(D1, D2);
 // D3 has  an integrated 3.3V 12Kohm pullup on the d1 lite, which works perfectly with ds18b20
 Temperature temperature(D3);
 // D4 has an integrated 3.3V 12Kohm pullup on the d1 lite. it also is connected to the buildin led, so pressing the buttin lights it up.
+#define BUTTON_ON_D4
 Button button(D4);
+// sync time from NTP
 NtpClient ntpClient;
 
 Feature features[] {display, temperature, button, ntpClient};
