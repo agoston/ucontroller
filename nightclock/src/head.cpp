@@ -7,15 +7,12 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 
-// crappy library pollutes global variables into default namespace via 'using namspace ezt' :(
-#define EZTIME_EZT_NAMESPACE
-#include <ezTime.h>
-
 #include "secret.h"
 
 #include <features/log.h>
 #include <features/events.h>
 #include <features/mesh.h>
+#include <features/ntpclient.h>
 
 // D1 & D2 are 'clean', direct connections on the d1 lite
 TM1637Display timeDisplay(D1, D2);
@@ -30,7 +27,7 @@ float tempLast = 22;
 WiFiUDP udp;
 Packet packet;
 
-Timezone timezone;
+NtpClient ntpClient;
 
 Events events(4);
 
@@ -77,11 +74,6 @@ void setup() {
   delay(50);
   Serial.begin(9600);
 #endif
-
-  // see https://github.com/ropg/ezTime; avoids an extra network lookup
-  // timezone.Location("Europe/Amsterdam");
-  timezone.setPosix("CET-1CEST,M3.4.0/2,M10.4.0/3");
-  ezt::setServer("0.europe.pool.ntp.org");
 
   // since there is a single radio in esp8266, when connecting to an remote AP,
   // it will change the wifi channel for the clients of this AP too. clients of
@@ -153,16 +145,12 @@ boolean receiveUdp() {
 void loop() {
   unsigned long now = millis();
 
-  // NTP client event handler heartbeat.
-  // this can take up 1500ms if there's an NTP update necessary (and it times out)
-  ezt::events();
-
   // our own event handler heartbeat
   events.run(now);
 
-  uint8_t hours = timezone.hour();
-  uint8_t mins = timezone.minute();
-  uint8_t secs = timezone.second();
+  uint8_t hours = ntpClient.hour();
+  uint8_t mins = ntpClient.minute();
+  uint8_t secs = ntpClient.second();
 
   LOGP("Time: %d:%d:%d", hours, mins, secs);
 
