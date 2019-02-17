@@ -35,6 +35,8 @@ class Temperature : public Feature {
         if (ttlHandleTemp < now) handleTemp();
     }
 
+    // ds18b20 works rather slow (up to 750ms per measurement for maximum precision).
+    // here we request measurement, ds18b20 goes on the measures, puts result in its tiny buffer called 'scratchpad'
     void requestTemp() {
         // takes a few ms
         LOG("Request temperatures")
@@ -44,6 +46,7 @@ class Temperature : public Feature {
         ttlRequestTemp = now + tempRefreshMs;
     }
 
+    // when required timespan passed, we read the latch to grab the measurement from the scratchpad
     void handleTemp() {
         // takes a few ms
         float tempC = sensors.getTempCByIndex(0);
