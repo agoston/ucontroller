@@ -45,7 +45,6 @@ Button *button_d8 = NULL;
 void handle_button_d8() {if (button_d8) button_d8->handleButton();}
 #endif
 
-
 void (*trampoline(uint8_t pin))() {
     switch (pin) {
 #ifdef BUTTON_ON_D0        
@@ -95,6 +94,40 @@ class Button : public Feature {
     Button(uint8_t pin, uint16_t pressTtl = 3000) : pin(pin), pressTtl(pressTtl) {};
 
     void setup() {
+        switch (pin) {
+#ifdef BUTTON_ON_D0
+            case 0: button_d0 = this; break;
+#endif
+#ifdef BUTTON_ON_D1
+            case 1: button_d1 = this; break;
+#endif
+#ifdef BUTTON_ON_D1
+            case 1: button_d1 = this; break;
+#endif
+#ifdef BUTTON_ON_D2
+            case 2: button_d2 = this; break;
+#endif
+#ifdef BUTTON_ON_D3
+            case 3: button_d3 = this; break;
+#endif
+#ifdef BUTTON_ON_D4
+            case 4: button_d4 = this; break;
+#endif
+#ifdef BUTTON_ON_D5
+            case 5: button_d5 = this; break;
+#endif
+#ifdef BUTTON_ON_D6
+            case 6: button_d6 = this; break;
+#endif
+#ifdef BUTTON_ON_D7
+            case 7: button_d7 = this; break;
+#endif
+#ifdef BUTTON_ON_D8
+            case 8: button_d8 = this; break;
+#endif
+            default: 
+                LOG("ERR: pin undefined for trampoline");
+        }
         pinMode(pin, INPUT);
         attachInterrupt(digitalPinToInterrupt(pin), FeaturesButton::trampoline(pin), CHANGE);
     }
