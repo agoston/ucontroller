@@ -2,7 +2,6 @@
 
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
-#include <TM1637Display.h>
 #include <WiFiUdp.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
@@ -13,9 +12,10 @@
 #include <features/events.h>
 #include <features/mesh.h>
 #include <features/ntpclient.h>
+#include <features/display.h>
 
 // D1 & D2 are 'clean', direct connections on the d1 lite
-TM1637Display timeDisplay(D1, D2);
+Display display(D1, D2);
 
 // D3 & D4 have an integrated 3.3V 12Kohm pullup on the d1 lite, quite handy now :)
 OneWire oneWire(D3);
@@ -92,9 +92,6 @@ void setup() {
 
   udp.begin(HEAD_PORT);
 
-  // FIXME: dim for night
-  timeDisplay.setBrightness(0x0f);
-
   // DS18B20 temp. sensor. default resolution is already below .1 degrees, which is fine
   sensors.begin();
   sensors.setWaitForConversion(true);
@@ -106,24 +103,6 @@ void setup() {
   // button on D4 (has external pullup for some reason on d1 mini lite)
   pinMode(D4, INPUT);
   attachInterrupt(D4, handleButton, CHANGE);
-}
-
-//----------------------------------------------------------------------------------------------------------------
-void displayTime(uint8_t hours, uint8_t mins) {
-  uint8_t data[] = {
-    timeDisplay.encodeDigit(hours / 10),
-    timeDisplay.encodeDigit(hours % 10),
-    timeDisplay.encodeDigit(mins / 10),
-    timeDisplay.encodeDigit(mins % 10)
-  };
-  timeDisplay.setSegments(data);
-}
-
-void displayTemp(float tempC) {
-  uint8_t tempInt = (uint8_t)tempC;
-  uint8_t tempFrac = (uint8_t)((tempC - tempInt)*100);
-  // haha
-  displayTime(tempInt, tempFrac);
 }
 
 //----------------------------------------------------------------------------------------------------------------
@@ -156,9 +135,9 @@ void loop() {
 
   // this takes cca. 3ms per segment, roughly 15ms overall with overhead
   if (buttonPressed || (buttonPressTtl > now)) {
-    displayTemp(tempLast);
+    display.temp(tempLast);
   } else {
-    displayTime(hours, mins);
+    display.time(hours, mins);
   }
 
   // FIXME: deep sleep?
