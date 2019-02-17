@@ -101,9 +101,6 @@ class Button : public Feature {
 #ifdef BUTTON_ON_D1
             case 1: button_d1 = this; break;
 #endif
-#ifdef BUTTON_ON_D1
-            case 1: button_d1 = this; break;
-#endif
 #ifdef BUTTON_ON_D2
             case 2: button_d2 = this; break;
 #endif
