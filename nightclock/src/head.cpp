@@ -2,7 +2,6 @@
 
 #include <Arduino.h>
 
-// FIXME: check if we could extract sending/receiving over wifi also into a features/mesh.h
 #include <ESP8266WiFi.h>
 #include <WiFiUdp.h>
 
@@ -24,11 +23,10 @@ Temperature temperature(D3);
 Button button(D4);
 // sync time from NTP
 NtpClient ntpClient;
+// send/receive UDP packets
+Mesh mesh(HEAD_PORT);
 
-Feature features[] {display, temperature, button, ntpClient};
-
-WiFiUDP udp;
-Packet packet;
+Feature features[] {display, temperature, button, ntpClient, mesh};
 
 //----------------------------------------------------------------------------------------------------------------
 void setup() {
@@ -53,23 +51,7 @@ void setup() {
   // upstream internet access for NTP sync
   WiFi.begin(NTP_SSID, NTP_PW);
 
-  udp.begin(HEAD_PORT);
-
   for (uint16_t i = 0; i < sizeof(features)/sizeof(features[0]); i++) features[i].setup();
-}
-
-//----------------------------------------------------------------------------------------------------------------
-boolean receiveUdp() {
-  int cb = udp.parsePacket();
-  if (!cb) return false;
-
-  LOGP("packet received, length=%d", cb);
-
-  // We've received a packet, read the data from it
-  if (udp.read((unsigned char *)&packet, sizeof(packet)) != sizeof(packet)) return false;
-  // extra bytes at end of packet are discarded silently
-
-  return true;
 }
 
 //----------------------------------------------------------------------------------------------------------------
