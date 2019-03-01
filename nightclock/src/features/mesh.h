@@ -40,7 +40,7 @@ class Mesh : public Feature {
     int cb = udp.parsePacket();
     if (!cb) return false;
 
-    LOGP("packet received, length=%d", cb);
+    LOGP("packet received, length=%d\n", cb);
 
     // We've received a packet, read the data from it
     if (udp.read((unsigned char *)&packet, sizeof(packet)) != sizeof(packet)) return false;

@@ -2,6 +2,7 @@
 #define __FEATURES_DISPLAY_H
 
 #include "feature.h"
+#include "log.h"
 #include <TM1637Display.h>
 
 class Display : public Feature {
@@ -12,6 +13,7 @@ class Display : public Feature {
     Display(uint8_t pinClk, uint8_t pinDIO) : timeDisplay(pinClk, pinDIO) {};
 
     void setup() {
+        LOG("display setup\n")
         // FIXME: dim for night
         timeDisplay.setBrightness(0x0f);
     }

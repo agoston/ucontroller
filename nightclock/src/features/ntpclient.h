@@ -15,6 +15,8 @@ class NtpClient : public Feature {
     NtpClient() {}
 
     void setup() {
+        // LOG("ntpclient setup\n")
+
         // see https://github.com/ropg/ezTime; avoids an extra network lookup
         // timezone.Location("Europe/Amsterdam");
         timezone.setPosix("CET-1CEST,M3.4.0/2,M10.4.0/3");
@@ -22,6 +24,7 @@ class NtpClient : public Feature {
     }
 
     void loop() {
+        // LOG("ntpclient loop\n")
         // NTP client event handler heartbeat.
         // this can take up 1500ms if there's an NTP update necessary (and it times out)
         ezt::events();

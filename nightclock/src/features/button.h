@@ -18,15 +18,15 @@ class Button : public Feature {
     Button(uint8_t pin, uint16_t pressTtl = 3000) : pin(pin), pressTtl(pressTtl) {};
 
     void setup();
-    void loop() {}
+    void loop() {};
 
     void handleButton() {
         if (digitalRead(pin) == HIGH) {
-            LOGP("ButtonRelease %d", pin);
+            LOGP("ButtonRelease %d\n", pin);
             isrButtonPressed = false;
             isrButtonPressTtl = millis() + pressTtl;
         } else {
-            LOGP("ButtonPress %d", pin);
+            LOGP("ButtonPress %d\n", pin);
             isrButtonPressed = true;
         }
     }
@@ -112,7 +112,7 @@ VoidFunction trampoline(uint8_t pin, Button *button) {
         case D8: button_d8 = button; return handle_button_d8;
 #endif
         default: 
-            LOG("ERR: pin undefined for trampoline");
+            LOG("ERR: pin undefined for trampoline\n");
             return NULL;
     }
 }

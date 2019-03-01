@@ -14,6 +14,11 @@
 #include <features/temperature.h>
 #include <features/button.h>
 
+// FIXME: brightness
+// FIXME: kabel lotyog
+// FIXME: gomb nem muxik
+
+
 // D1 & D2 are 'clean', direct connections on the d1 lite
 Display display(D1, D2);
 // D3 has  an integrated 3.3V 12Kohm pullup on the d1 lite, which works perfectly with ds18b20
@@ -26,7 +31,7 @@ NtpClient ntpClient;
 // send/receive UDP packets
 Mesh mesh(HEAD_PORT);
 
-Feature features[] {display, temperature, button, ntpClient, mesh};
+Feature *features[] {&display, &temperature, &button, &ntpClient, &mesh};
 
 //----------------------------------------------------------------------------------------------------------------
 void setup() {
@@ -43,20 +48,20 @@ void setup() {
   // disable SSID broadcast
   boolean result = WiFi.softAP(WIFI_SSID, WIFI_PW, 1, 1, 4);
   if (!result) {
-    LOG("softAP failed")
+    LOG("softAP failed\n")
   } else {
-    LOG("softAP on");
+    LOG("softAP on\n");
   }
 
   // upstream internet access for NTP sync
   WiFi.begin(NTP_SSID, NTP_PW);
 
-  for (uint16_t i = 0; i < sizeof(features)/sizeof(features[0]); i++) features[i].setup();
+  for (uint16_t i = 0; i < sizeof(features)/sizeof(features[0]); i++) features[i]->setup();
 }
 
 //----------------------------------------------------------------------------------------------------------------
 void loop() {
-  for (uint16_t i = 0; i < sizeof(features)/sizeof(features[0]); i++) features[i].loop();
+  for (uint16_t i = 0; i < sizeof(features)/sizeof(features[0]); i++) features[i]->loop();
 
   unsigned long now = millis();
 
@@ -64,7 +69,7 @@ void loop() {
   uint8_t mins = ntpClient.minute();
   uint8_t secs = ntpClient.second();
 
-  LOGP("Time: %d:%d:%d", hours, mins, secs);
+  LOGP("Time: %d:%d:%d\n", hours, mins, secs);
 
   // this takes cca. 3ms per segment, roughly 15ms overall with overhead
   if (button.buttonPressedOrTtl(now)) {

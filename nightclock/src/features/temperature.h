@@ -39,7 +39,7 @@ class Temperature : public Feature {
     // here we request measurement, ds18b20 goes on the measures, puts result in its tiny buffer called 'scratchpad'
     void requestTemp() {
         // takes a few ms
-        LOG("Request temperatures")
+        LOG("Request temperatures\n")
         sensors.requestTemperatures();
         unsigned long now = millis();
         ttlHandleTemp = now + tempDelayMs;
@@ -50,7 +50,7 @@ class Temperature : public Feature {
     void handleTemp() {
         // takes a few ms
         float tempC = sensors.getTempCByIndex(0);
-        LOGP("Temp: %f", tempC);
+        LOGP("Temp: %f\n", tempC);
 
         if (tempC != DEVICE_DISCONNECTED_C) tempLast = tempC;
     }

@@ -2,7 +2,7 @@
 #define __FEATURES_LOG_H
 
 #if defined(DEV)
-#define LOG(format) Serial.println(format);
+#define LOG(format) Serial.print(format);
 #define LOGP(format, args...) Serial.printf(format, args);
 #else
 #define LOG(format)
