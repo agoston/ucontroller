@@ -13,9 +13,6 @@ class Display : public Feature {
     Display(uint8_t pinClk, uint8_t pinDIO) : timeDisplay(pinClk, pinDIO) {};
 
     void setup() {
-        LOG("display setup\n")
-        // FIXME: dim for night
-        timeDisplay.setBrightness(0x0f);
     }
 
     void loop() {
@@ -29,6 +26,14 @@ class Display : public Feature {
             timeDisplay.encodeDigit(mins % 10)
         };
         timeDisplay.setSegments(data);
+
+        if (hours >= 23 || hours < 7) {
+            timeDisplay.setBrightness(2);
+        } else if (hours >= 22 || hours < 8) {
+            timeDisplay.setBrightness(4);
+        } else {
+            timeDisplay.setBrightness(7);
+        }
     }
 
     void temp(float tempC) {

@@ -12,19 +12,15 @@
 #include <features/ntpclient.h>
 #include <features/display.h>
 #include <features/temperature.h>
+
+#define BUTTON_ON_D4
 #include <features/button.h>
-
-// FIXME: brightness
-// FIXME: kabel lotyog
-// FIXME: gomb nem muxik
-
 
 // D1 & D2 are 'clean', direct connections on the d1 lite
 Display display(D1, D2);
 // D3 has  an integrated 3.3V 12Kohm pullup on the d1 lite, which works perfectly with ds18b20
 Temperature temperature(D3);
 // D4 has an integrated 3.3V 12Kohm pullup on the d1 lite. it also is connected to the buildin led, so pressing the buttin lights it up.
-#define BUTTON_ON_D4
 Button button(D4);
 // sync time from NTP
 NtpClient ntpClient;
