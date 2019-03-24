@@ -19,7 +19,7 @@ class NtpClient : public Feature {
 
         // see https://github.com/ropg/ezTime; avoids an extra network lookup
         // timezone.Location("Europe/Amsterdam");
-        timezone.setPosix("CET-1CEST,M3.4.0/2,M10.4.0/3");
+        timezone.setPosix("CET-1CEST,M3.5.0/2,M10.5.0/3");
         ezt::setServer("0.europe.pool.ntp.org");
     }
 
