@@ -71,6 +71,7 @@ void loop() {
   if (button.buttonPressedOrTtl(now)) {
     display.temp(temperature.temperature());
   } else {
+    display.brightness(hours, mins);
     display.time(hours, mins);
   }
 

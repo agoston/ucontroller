@@ -26,13 +26,17 @@ class Display : public Feature {
             timeDisplay.encodeDigit(mins % 10)
         };
         timeDisplay.setSegments(data);
+    }
 
+    void brightness(uint8_t hours, uint8_t mins) {
         if (hours >= 23 || hours < 7) {
-            timeDisplay.setBrightness(2);
+            timeDisplay.setBrightness(1);
         } else if (hours >= 22 || hours < 8) {
-            timeDisplay.setBrightness(4);
+            timeDisplay.setBrightness(2);
+        } else if (hours >= 21 || hours < 9) {
+            timeDisplay.setBrightness(3);
         } else {
-            timeDisplay.setBrightness(7);
+            timeDisplay.setBrightness(5);
         }
     }
 
