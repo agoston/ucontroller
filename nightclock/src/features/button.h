@@ -41,7 +41,7 @@ class Button : public Feature {
 };
 
 // need a trampoline for attachInterrupt(); it expects function pointer without class reference
-// I've only did d0-d8 here as that's how many data pins there are on the  d1 lite
+// I've only did d0-d8 here as that's how many data pins there are on the d1 lite
 namespace FeaturesButton {
 #ifdef BUTTON_ON_D0
 Button *button_d0 = NULL;

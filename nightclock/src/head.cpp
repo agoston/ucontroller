@@ -75,7 +75,7 @@ void loop() {
     display.time(hours, mins);
   }
 
-  // can't use deep sleep here, as it would turn off the modem, which defeat the purpose of a udp server.
+  // can't use deep sleep here, as it would turn off the modem, which defeats the purpose of a udp server.
   // however, the esp-arduino lib does an actual yield() on delay(), so consumption is kept to a minimum.
   delay(250);
 }
