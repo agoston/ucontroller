@@ -45,39 +45,39 @@ class Button : public Feature {
 namespace FeaturesButton {
 #ifdef BUTTON_ON_D0
 Button *button_d0 = NULL;
-void handle_button_d0() {if (button_d0) button_d0->handleButton();}
+ICACHE_RAM_ATTR void handle_button_d0() {if (button_d0) button_d0->handleButton();}
 #endif
 #ifdef BUTTON_ON_D1
 Button *button_d1 = NULL;
-void handle_button_d1() {if (button_d1) button_d1->handleButton();}
+ICACHE_RAM_ATTR void handle_button_d1() {if (button_d1) button_d1->handleButton();}
 #endif
 #ifdef BUTTON_ON_D2
 Button *button_d2 = NULL;
-void handle_button_d2() {if (button_d2) button_d2->handleButton();}
+ICACHE_RAM_ATTR void handle_button_d2() {if (button_d2) button_d2->handleButton();}
 #endif
 #ifdef BUTTON_ON_D3
 Button *button_d3 = NULL;
-void handle_button_d3() {if (button_d3) button_d3->handleButton();}
+ICACHE_RAM_ATTR void handle_button_d3() {if (button_d3) button_d3->handleButton();}
 #endif
 #ifdef BUTTON_ON_D4
 Button *button_d4 = NULL;
-void handle_button_d4() {if (button_d4) button_d4->handleButton();}
+ICACHE_RAM_ATTR void handle_button_d4() {if (button_d4) button_d4->handleButton();}
 #endif
 #ifdef BUTTON_ON_D5
 Button *button_d5 = NULL;
-void handle_button_d5() {if (button_d5) button_d5->handleButton();}
+ICACHE_RAM_ATTR void handle_button_d5() {if (button_d5) button_d5->handleButton();}
 #endif
 #ifdef BUTTON_ON_D6
 Button *button_d6 = NULL;
-void handle_button_d6() {if (button_d6) button_d6->handleButton();}
+ICACHE_RAM_ATTR void handle_button_d6() {if (button_d6) button_d6->handleButton();}
 #endif
 #ifdef BUTTON_ON_D7
 Button *button_d7 = NULL;
-void handle_button_d7() {if (button_d7) button_d7->handleButton();}
+ICACHE_RAM_ATTR void handle_button_d7() {if (button_d7) button_d7->handleButton();}
 #endif
 #ifdef BUTTON_ON_D8
 Button *button_d8 = NULL;
-void handle_button_d8() {if (button_d8) button_d8->handleButton();}
+ICACHE_RAM_ATTR void handle_button_d8() {if (button_d8) button_d8->handleButton();}
 #endif
 
 typedef void (*VoidFunction)();

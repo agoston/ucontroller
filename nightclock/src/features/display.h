@@ -13,6 +13,7 @@ class Display : public Feature {
     Display(uint8_t pinClk, uint8_t pinDIO) : timeDisplay(pinClk, pinDIO) {};
 
     void setup() {
+        timeDisplay.setBrightness(7);
     }
 
     void loop() {

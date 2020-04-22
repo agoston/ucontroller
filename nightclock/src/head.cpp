@@ -1,4 +1,4 @@
-#define DEV
+// #define DEV
 
 #include <Arduino.h>
 
@@ -71,7 +71,8 @@ void loop() {
   if (button.buttonPressedOrTtl(now)) {
     display.temp(temperature.temperature());
   } else {
-    display.brightness(hours, mins);
+    // my el-cheapo TM1637 gives a beep when display brightness is PWM'ed
+    // display.brightness(hours, mins);
     display.time(hours, mins);
   }
 
