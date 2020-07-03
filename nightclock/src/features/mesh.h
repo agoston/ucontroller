@@ -2,6 +2,7 @@
 #define __FEATURES_MESH_H
 
 #include <Arduino.h>
+#include <WiFiUdp.h>
 #include "feature.h"
 
 const uint16_t REMOTE_PORT = 1080;

@@ -30,9 +30,12 @@ class NtpClient : public Feature {
         ezt::events();
     }
 
-    uint8_t hour() {return timezone.hour();} 
-    uint8_t minute() {return timezone.minute();} 
-    uint8_t second() {return timezone.second();} 
+    uint8_t month() { return timezone.month(); }
+    uint8_t day() { return timezone.day(); }
+
+    uint8_t hour() { return timezone.hour(); }
+    uint8_t minute() { return timezone.minute(); }
+    uint8_t second() { return timezone.second(); }
 };
 
 #endif
