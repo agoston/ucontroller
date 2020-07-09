@@ -29,8 +29,8 @@ class Schedule : public Feature {
 
    public:
     Schedule(NtpClient *ntpClient) : ntpClient(ntpClient){};
-    Schedule(const Schedule *const other) {operator=(other);}
-    virtual ~Schedule() { cleanup(); }
+    Schedule(const Schedule *const other) { operator=(other); }
+    ~Schedule() { cleanup(); }
 
     void cleanup() {
         for (ScheduledTime *t = root; t != NULL;) {
@@ -39,6 +39,12 @@ class Schedule : public Feature {
             t = n;
         }
         root = NULL;
+    }
+
+    int size() {
+        int ret = 0;
+        for (ScheduledTime *t = root; t != NULL; t = t->next) ret++;
+        return ret;
     }
 
     Schedule *operator=(const Schedule *const other) {
@@ -97,7 +103,7 @@ class Schedule : public Feature {
             if (month != s->month || day != s->day) continue;
 
             // found today; is it time?
-            if (hours < root->hours && minutes < root->minutes) return;
+            if (hours < s->hours || (hours == s->hours && minutes < s->minutes)) return;
 
             // match! run
             s->callback(s->arg);

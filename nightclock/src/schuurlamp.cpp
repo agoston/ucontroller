@@ -1,4 +1,4 @@
-#define DEV
+// #define DEV
 
 #include <Arduino.h>
 #include <ESP8266HTTPClient.h>
@@ -12,7 +12,7 @@
 #include "secret.h"
 
 // relay
-Relay relay(D0);
+Relay relay(D5);
 // sync time from NTP
 NtpClient ntpClient;
 // scheduling
@@ -33,16 +33,20 @@ void setup() {
     Serial.begin(9600);
 #endif
 
+    // builtin led connected to pullup, so its states are inverted
+    pinMode(LED_BUILTIN, OUTPUT);
+    digitalWrite(LED_BUILTIN, HIGH);
+
     // upstream internet access for NTP sync
     WiFi.mode(WIFI_STA);
     WiFi.begin(NTP_SSID, NTP_PW);
-    LOG("Waiting for wireless")
+    LOG("Waiting for wireless\n")
 
     // dhcp starts now in background (unless static IP)
     while (WiFi.status() != WL_CONNECTED) {
         delay(50);
     }
-    LOGP("Got IP: %s", WiFi.localIP().toString().c_str())
+    LOGP("Got IP: %s\n", WiFi.localIP().toString().c_str())
 
     // enter into light sleep between DTIM updates, ~1mA consumption
     WiFi.setSleepMode(WIFI_LIGHT_SLEEP);
@@ -82,11 +86,11 @@ Schedule *fetchSchedule() {
                 uint8_t endHour = line.substring(13, 15).toInt();
                 uint8_t endMin = line.substring(16, 18).toInt();
 
-                ret->schedule(month, day, beginHour, beginMin, &trampolineOn, &relay);
-                ret->schedule(month, day, endHour, endMin, &trampolineOff, &relay);
+                ret->schedule(month, day, beginHour, beginMin, &trampolineOff, &relay);
+                ret->schedule(month, day, endHour, endMin, &trampolineOn, &relay);
             }
         } else {
-            LOGP("HTTP status code %d", httpCode);
+            LOGP("HTTP status code %d\n", httpCode);
         }
 
         httpClient.end();
@@ -99,18 +103,26 @@ Schedule *fetchSchedule() {
 void loop() {
     for (uint16_t i = 0; i < sizeof(features) / sizeof(features[0]); i++) features[i]->loop();
 
-    LOGP("TIME: %d:%d:%d", ntpClient.hour(), ntpClient.minute(), ntpClient.second())
+    LOGP("TIME: %d.%d %d:%d:%d\n", ntpClient.month(), ntpClient.day(), ntpClient.hour(), ntpClient.minute(), ntpClient.second())
 
     // re-fetch schedule once a day
     if (lastFetchMonth != ntpClient.month() || lastFetchDay != ntpClient.day()) {
-        // fetchSchedule();
-        // if (Schedule *fresh = fetchSchedule()) {
-        //     schedule = fresh;
-            // lastFetchMonth = ntpClient.month();
-            // lastFetchDay = ntpClient.day();
-        // }
+        if (Schedule *fresh = fetchSchedule()) {
+            LOGP("Read %d scheduled entries\n", fresh->size())
+            
+            // let poor operator know we're good to go!
+            for (int i = 0; i < 4; i++) {
+                digitalWrite(LED_BUILTIN, LOW);
+                delay(100);
+                digitalWrite(LED_BUILTIN, HIGH);
+                delay(100);
+            }
+
+            schedule = fresh;
+            lastFetchMonth = ntpClient.month();
+            lastFetchDay = ntpClient.day();
+        }
     }
 
-    delay(1500);
-    // delay(15000);
+    delay(15000);
 }
