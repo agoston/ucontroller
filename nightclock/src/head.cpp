@@ -35,6 +35,7 @@ void setup() {
   Serial.begin(9600);
 #endif
 
+  WiFi.hostname("ESP-head");
   // since there is a single radio in esp8266, when connecting to an remote AP,
   // it will change the wifi channel for the clients of this AP too. clients of
   // this AP can follow that, but e.g. tcp connections might get interrupted.
@@ -70,8 +71,7 @@ void loop() {
   if (button.buttonPressedOrTtl(now)) {
     display.temp(temperature.temperature());
   } else {
-    // my el-cheapo TM1637 gives a beep when display brightness is PWM'ed
-    // display.brightness(hours, mins);
+    display.brightness(hours, mins);
     display.time(hours, mins);
   }
 

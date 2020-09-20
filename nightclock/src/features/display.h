@@ -31,11 +31,11 @@ class Display : public Feature {
 
     void brightness(uint8_t hours, uint8_t mins) {
         if (hours >= 23 || hours < 7) {
-            timeDisplay.setBrightness(1);
+            timeDisplay.setBrightness(0);
         } else if (hours >= 22 || hours < 8) {
-            timeDisplay.setBrightness(2);
+            timeDisplay.setBrightness(1);
         } else if (hours >= 21 || hours < 9) {
-            timeDisplay.setBrightness(3);
+            timeDisplay.setBrightness(2);
         } else {
             timeDisplay.setBrightness(5);
         }

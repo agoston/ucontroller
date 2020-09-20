@@ -1,4 +1,4 @@
-// #define DEV
+#define DEV
 
 #include <Arduino.h>
 #include <ESP8266HTTPClient.h>
@@ -11,7 +11,7 @@
 
 #include "secret.h"
 
-// relay
+// relay on D5/GPIO14 (shared with SPI and JTAG pins!)
 Relay relay(D5);
 // sync time from NTP
 NtpClient ntpClient;
@@ -38,6 +38,7 @@ void setup() {
     digitalWrite(LED_BUILTIN, HIGH);
 
     // upstream internet access for NTP sync
+    WiFi.hostname("ESP-schuurlamp");
     WiFi.mode(WIFI_STA);
     WiFi.begin(NTP_SSID, NTP_PW);
     LOG("Waiting for wireless\n")
@@ -124,5 +125,7 @@ void loop() {
         }
     }
 
+    // FIXME: when starting up, turn on/off depending on schedule (e.g. now when starting up, it's always off, even during night)
+    // FIXME: make a manual override (http server? or maybe a switch too, or both)
     delay(15000);
 }
