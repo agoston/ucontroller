@@ -1,30 +1,31 @@
 #ifndef __FEATURES_BUTTON_H
 #define __FEATURES_BUTTON_H
 
-#include "feature.h"
-#include "log.h"
 #include <Arduino.h>
 
+#include "feature.h"
+#include "log.h"
+
 class Button : public Feature {
-    private:
+   private:
     uint8_t pin;
     uint16_t pressTtl;
-    
+
     // these are changed from the ISR
     volatile bool isrButtonPressed = false;
     volatile unsigned long isrButtonPressTtl = 0;
 
-    public:
-    Button(uint8_t pin, uint16_t pressTtl = 3000) : pin(pin), pressTtl(pressTtl) {};
+   public:
+    Button(uint8_t pin, uint16_t pressTtl = 3000) : pin(pin), pressTtl(pressTtl){};
 
     void setup();
-    void loop() {};
+    void loop(){};
 
     void handleButton() {
         if (digitalRead(pin) == HIGH) {
             LOGP("ButtonRelease %d\n", pin);
             isrButtonPressed = false;
-            isrButtonPressTtl = millis() + pressTtl;
+            isrButtonPressTtl = millis();
         } else {
             LOGP("ButtonPress %d\n", pin);
             isrButtonPressed = true;
@@ -36,7 +37,11 @@ class Button : public Feature {
     }
 
     bool buttonPressedOrTtl(unsigned long now) {
-        return isrButtonPressed || now < isrButtonPressTtl;
+        return isrButtonPressed || now < isrButtonPressTtl + pressTtl;
+    }
+
+    unsigned long lastButtonPress() {
+        return isrButtonPressTtl;
     }
 };
 
@@ -45,78 +50,114 @@ class Button : public Feature {
 namespace FeaturesButton {
 #ifdef BUTTON_ON_D0
 Button *button_d0 = NULL;
-ICACHE_RAM_ATTR void handle_button_d0() {if (button_d0) button_d0->handleButton();}
+ICACHE_RAM_ATTR void handle_button_d0() {
+    if (button_d0) button_d0->handleButton();
+}
 #endif
 #ifdef BUTTON_ON_D1
 Button *button_d1 = NULL;
-ICACHE_RAM_ATTR void handle_button_d1() {if (button_d1) button_d1->handleButton();}
+ICACHE_RAM_ATTR void handle_button_d1() {
+    if (button_d1) button_d1->handleButton();
+}
 #endif
 #ifdef BUTTON_ON_D2
 Button *button_d2 = NULL;
-ICACHE_RAM_ATTR void handle_button_d2() {if (button_d2) button_d2->handleButton();}
+ICACHE_RAM_ATTR void handle_button_d2() {
+    if (button_d2) button_d2->handleButton();
+}
 #endif
 #ifdef BUTTON_ON_D3
 Button *button_d3 = NULL;
-ICACHE_RAM_ATTR void handle_button_d3() {if (button_d3) button_d3->handleButton();}
+ICACHE_RAM_ATTR void handle_button_d3() {
+    if (button_d3) button_d3->handleButton();
+}
 #endif
 #ifdef BUTTON_ON_D4
 Button *button_d4 = NULL;
-ICACHE_RAM_ATTR void handle_button_d4() {if (button_d4) button_d4->handleButton();}
+ICACHE_RAM_ATTR void handle_button_d4() {
+    if (button_d4) button_d4->handleButton();
+}
 #endif
 #ifdef BUTTON_ON_D5
 Button *button_d5 = NULL;
-ICACHE_RAM_ATTR void handle_button_d5() {if (button_d5) button_d5->handleButton();}
+ICACHE_RAM_ATTR void handle_button_d5() {
+    if (button_d5) button_d5->handleButton();
+}
 #endif
 #ifdef BUTTON_ON_D6
 Button *button_d6 = NULL;
-ICACHE_RAM_ATTR void handle_button_d6() {if (button_d6) button_d6->handleButton();}
+ICACHE_RAM_ATTR void handle_button_d6() {
+    if (button_d6) button_d6->handleButton();
+}
 #endif
 #ifdef BUTTON_ON_D7
 Button *button_d7 = NULL;
-ICACHE_RAM_ATTR void handle_button_d7() {if (button_d7) button_d7->handleButton();}
+ICACHE_RAM_ATTR void handle_button_d7() {
+    if (button_d7) button_d7->handleButton();
+}
 #endif
 #ifdef BUTTON_ON_D8
 Button *button_d8 = NULL;
-ICACHE_RAM_ATTR void handle_button_d8() {if (button_d8) button_d8->handleButton();}
+ICACHE_RAM_ATTR void handle_button_d8() {
+    if (button_d8) button_d8->handleButton();
+}
 #endif
 
 typedef void (*VoidFunction)();
 
 VoidFunction trampoline(uint8_t pin, Button *button) {
     switch (pin) {
-#ifdef BUTTON_ON_D0        
-        case D0: button_d0 = button; return handle_button_d0;
+#ifdef BUTTON_ON_D0
+        case D0:
+            button_d0 = button;
+            return handle_button_d0;
 #endif
 #ifdef BUTTON_ON_D1
-        case D1: button_d1 = button; return handle_button_d1;
+        case D1:
+            button_d1 = button;
+            return handle_button_d1;
 #endif
 #ifdef BUTTON_ON_D2
-        case D2: button_d2 = button; return handle_button_d2;
+        case D2:
+            button_d2 = button;
+            return handle_button_d2;
 #endif
 #ifdef BUTTON_ON_D3
-        case D3: button_d3 = button; return handle_button_d3;
+        case D3:
+            button_d3 = button;
+            return handle_button_d3;
 #endif
 #ifdef BUTTON_ON_D4
-        case D4: button_d4 = button; return handle_button_d4;
+        case D4:
+            button_d4 = button;
+            return handle_button_d4;
 #endif
 #ifdef BUTTON_ON_D5
-        case D5: button_d5 = button; return handle_button_d5;
+        case D5:
+            button_d5 = button;
+            return handle_button_d5;
 #endif
 #ifdef BUTTON_ON_D6
-        case D6: button_d6 = button; return handle_button_d6;
+        case D6:
+            button_d6 = button;
+            return handle_button_d6;
 #endif
 #ifdef BUTTON_ON_D7
-        case D7: button_d7 = button; return handle_button_d7;
+        case D7:
+            button_d7 = button;
+            return handle_button_d7;
 #endif
 #ifdef BUTTON_ON_D8
-        case D8: button_d8 = button; return handle_button_d8;
+        case D8:
+            button_d8 = button;
+            return handle_button_d8;
 #endif
-        default: 
+        default:
             LOG("ERR: pin undefined for trampoline\n");
             return NULL;
     }
 }
-}   // end namespace
+}  // namespace FeaturesButton
 
 void Button::setup() {
     pinMode(pin, INPUT);

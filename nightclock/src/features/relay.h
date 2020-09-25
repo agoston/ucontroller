@@ -8,6 +8,7 @@
 class Relay : public Feature {
     private:
     uint8_t relayPin;
+    uint8_t state = LOW;
 
     public:
     Relay(uint8_t relayPin) : relayPin(relayPin) {};
@@ -22,11 +23,26 @@ class Relay : public Feature {
 
     void on() {
         digitalWrite(relayPin, HIGH);
+        state = HIGH;
     }
 
     void off() {
         digitalWrite(relayPin, LOW);
+        state = LOW;
+    }
+
+    void toggle() {
+        if (state == HIGH) off();
+        else on();
     }
 };
+
+void trampolineRelayOn(void *relay) {
+    ((Relay *)relay)->on();
+}
+
+void trampolineRelayOff(void *relay) {
+    ((Relay *)relay)->off();
+}
 
 #endif

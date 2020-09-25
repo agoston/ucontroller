@@ -1,4 +1,4 @@
-#define DEV
+// #define DEV
 
 #include <Arduino.h>
 #include <ESP8266HTTPClient.h>
@@ -10,6 +10,9 @@
 #include <features/remoteschedule.h>
 #include <features/schedule.h>
 
+#define BUTTON_ON_D4
+#include <features/button.h>
+
 #include "secret.h"
 
 WiFiClient tcpClient;
@@ -19,12 +22,16 @@ HTTPClient httpClient;
 Relay relay(D5);
 // sync time from NTP
 NtpClient ntpClient;
+// D4 has an integrated 3.3V 12Kohm pullup on the d1 lite. it also is connected to the buildin led, so pressing the buttin lights it up.
+Button button(D4);
 // control schedule remotely
 Schedule schedule(&ntpClient);
 SwitchingCallback switchingCallback(&trampolineRelayOff, &trampolineRelayOn, &relay);
-RemoteSchedule remoteSchedule(&schedule, &tcpClient, &httpClient, BASEURL "/schuurlamp/schedule", &switchingCallback);
+RemoteSchedule remoteSchedule(&schedule, &tcpClient, &httpClient, BASEURL "/voorlamp/schedule", &switchingCallback);
 
-Feature *features[]{&relay, &ntpClient, &schedule, &remoteSchedule};
+Feature *features[]{&relay, &ntpClient, &schedule, &remoteSchedule, &button};
+
+unsigned long lastButtonPress = 0;
 
 //----------------------------------------------------------------------------------------------------------------
 void setup() {
@@ -38,7 +45,7 @@ void setup() {
     digitalWrite(LED_BUILTIN, HIGH);
 
     // upstream internet access for NTP sync
-    WiFi.hostname("ESP-schuurlamp");
+    WiFi.hostname("ESP-voorlamp");
     WiFi.mode(WIFI_STA);
     WiFi.begin(NTP_SSID, NTP_PW);
     LOG("Waiting for wireless\n")
@@ -59,7 +66,13 @@ void setup() {
 void loop() {
     for (uint16_t i = 0; i < sizeof(features) / sizeof(features[0]); i++) features[i]->loop();
 
-    // FIXME: when starting up, turn on/off depending on schedule (e.g. now when starting up, it's always off, even during night)
-    // FIXME: make a manual override (http server? or maybe a switch too, or both)
-    delay(15000);
+    if (!button.buttonPressed()) {
+        unsigned long nowLastButtonPress = button.lastButtonPress();
+        if (nowLastButtonPress > lastButtonPress) {
+            lastButtonPress = nowLastButtonPress;
+            relay.toggle();
+        }
+    }
+
+    delay(5000);
 }

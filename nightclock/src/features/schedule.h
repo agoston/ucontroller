@@ -28,9 +28,9 @@ class Schedule : public Feature {
     ScheduledTime *root = NULL;
 
    public:
-    Schedule(NtpClient *ntpClient) : ntpClient(ntpClient){};
-    Schedule(const Schedule *const other) { operator=(other); }
-    ~Schedule() { cleanup(); }
+    Schedule(NtpClient *ntpClient) : ntpClient(ntpClient) {};
+    Schedule(const Schedule *const other) : ntpClient(other->ntpClient) {};
+    virtual ~Schedule() { cleanup(); }
 
     void cleanup() {
         for (ScheduledTime *t = root; t != NULL;) {
@@ -45,14 +45,6 @@ class Schedule : public Feature {
         int ret = 0;
         for (ScheduledTime *t = root; t != NULL; t = t->next) ret++;
         return ret;
-    }
-
-    Schedule *operator=(const Schedule *const other) {
-        if (this == other) return this;
-
-        cleanup();
-        root = other->root;
-        return this;
     }
 
     void setup() {
