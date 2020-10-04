@@ -28,17 +28,25 @@ class Schedule : public Feature {
     ScheduledTime *root = NULL;
 
    public:
-    Schedule(NtpClient *ntpClient) : ntpClient(ntpClient) {};
-    Schedule(const Schedule *const other) : ntpClient(other->ntpClient) {};
+    Schedule(NtpClient *ntpClient) : ntpClient(ntpClient){};
+    Schedule(const Schedule *const other) : ntpClient(other->ntpClient){};
     virtual ~Schedule() { cleanup(); }
 
     void cleanup() {
-        for (ScheduledTime *t = root; t != NULL;) {
+        for (ScheduledTime *t = root; t;) {
             ScheduledTime *n = t->next;
             delete t;
             t = n;
         }
         root = NULL;
+    }
+
+    void stealFrom(Schedule *other) {
+        if (this == other) return;
+
+        cleanup();
+        root = other->root;
+        other->root = NULL;
     }
 
     int size() {

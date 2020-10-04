@@ -31,9 +31,9 @@ class Mesh : public Feature {
   Mesh(uint16_t port) : port(port) {};
 
   void setup() {
-      udp.begin(HEAD_PORT);
+// FIXME: WIP
+      // udp.begin(HEAD_PORT);
   }
-
   void loop() {
   }
 

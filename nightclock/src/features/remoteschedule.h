@@ -26,7 +26,8 @@ class RemoteSchedule : public Feature {
     Schedule *schedule;
     SwitchingCallback *switchingCallback;
 
-    unsigned long lastFetchMs = 0;
+    // millis() begins from 0
+    long lastFetchMs = -86400000;
 
    public:
     RemoteSchedule(Schedule *schedule, WiFiClient *tcpClient, HTTPClient *httpClient, const char *baseUrl, SwitchingCallback *switchingCallback) {
@@ -61,6 +62,7 @@ class RemoteSchedule : public Feature {
                     uint8_t endHour = line.substring(13, 15).toInt();
                     uint8_t endMin = line.substring(16, 18).toInt();
 
+                    // the file downloaded for Europe/Amsterdam long ago contains sunrise - sunset pairs
                     ret->schedule(month, day, beginHour, beginMin, switchingCallback->offCallback, switchingCallback->arg);
                     ret->schedule(month, day, endHour, endMin, switchingCallback->onCallback, switchingCallback->arg);
                 }
@@ -86,18 +88,20 @@ class RemoteSchedule : public Feature {
                 LOGP("Read %d scheduled entries\n", fresh->size())
 
                 // let poor operator know we're good to go!
-                for (int i = 0; i < 4; i++) {
-                    digitalWrite(LED_BUILTIN, LOW);
-                    delay(100);
-                    digitalWrite(LED_BUILTIN, HIGH);
-                    delay(100);
-                }
+                // for (int i = 0; i < 4; i++) {
+                //     digitalWrite(LED_BUILTIN, LOW);
+                //     delay(100);
+                //     digitalWrite(LED_BUILTIN, HIGH);
+                //     delay(100);
+                // }
 
-                delete schedule;
-                schedule = fresh;
+                schedule->stealFrom(fresh);
+                delete fresh;
 
                 lastFetchMs = now;
             }
+        } else {
+            LOG("skip reading schedule\n")
         }
     }
 };

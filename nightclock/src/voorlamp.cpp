@@ -22,7 +22,7 @@ HTTPClient httpClient;
 Relay relay(D5);
 // sync time from NTP
 NtpClient ntpClient;
-// D4 has an integrated 3.3V 12Kohm pullup on the d1 lite. it also is connected to the buildin led, so pressing the buttin lights it up.
+// D4 has an integrated 3.3V 12Kohm pullup on the d1 lite. it also is connected to the buildin led, so pressing the button lights it up.
 Button button(D4);
 // control schedule remotely
 Schedule schedule(&ntpClient);
