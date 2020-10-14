@@ -51,7 +51,7 @@ class Schedule : public Feature {
 
     int size() {
         int ret = 0;
-        for (ScheduledTime *t = root; t != NULL; t = t->next) ret++;
+        for (ScheduledTime *t = root; t; t = t->next) ret++;
         return ret;
     }
 
@@ -61,7 +61,7 @@ class Schedule : public Feature {
     void schedule(uint8_t month, uint8_t day, uint8_t hours, uint8_t mins, void (*callback)(void *), void *arg) {
         ScheduledTime *scheduledTime = new ScheduledTime(month, day, hours, mins, callback, arg);
 
-        // pfff this is some ugly ass ad-hoc sorted linked list
+        // pfff this is some ugly ass ad-hoc one-way sorted linked list
         ScheduledTime *next = root, *act = NULL;
         do {
             if (!next) {  // insert to end

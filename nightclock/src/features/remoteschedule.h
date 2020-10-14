@@ -22,18 +22,18 @@ class RemoteSchedule : public Feature {
    private:
     HTTPClient *httpClient;
     WiFiClient *tcpClient;
-    const char *baseUrl;
+    String baseUrl;
     Schedule *schedule;
     SwitchingCallback *switchingCallback;
 
     // millis() begins from 0
-    long lastFetchMs = -86400000;
+    long lastFetchMs = -864000000;
 
    public:
     RemoteSchedule(Schedule *schedule, WiFiClient *tcpClient, HTTPClient *httpClient, const char *baseUrl, SwitchingCallback *switchingCallback) {
         this->tcpClient = tcpClient;
         this->httpClient = httpClient;
-        this->baseUrl = baseUrl;
+        this->baseUrl = String(baseUrl);
         this->schedule = schedule;
         this->switchingCallback = switchingCallback;
     }
@@ -80,20 +80,20 @@ class RemoteSchedule : public Feature {
     void setup() {}
 
     void loop() {
-        unsigned long now = millis();
+        long now = millis();
 
         // refresh schedule every 24 hours
-        if (now - lastFetchMs > 86400000) {
+        if (now - lastFetchMs > 86400000l) {
             if (Schedule *fresh = fetchSchedule()) {
                 LOGP("Read %d scheduled entries\n", fresh->size())
 
                 // let poor operator know we're good to go!
-                // for (int i = 0; i < 4; i++) {
-                //     digitalWrite(LED_BUILTIN, LOW);
-                //     delay(100);
-                //     digitalWrite(LED_BUILTIN, HIGH);
-                //     delay(100);
-                // }
+                for (int i = 0; i < 4; i++) {
+                    digitalWrite(LED_BUILTIN, LOW);
+                    delay(100);
+                    digitalWrite(LED_BUILTIN, HIGH);
+                    delay(100);
+                }
 
                 schedule->stealFrom(fresh);
                 delete fresh;
