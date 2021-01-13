@@ -54,9 +54,8 @@ class RemoteSchedule : public Feature {
                     if (line.isEmpty()) break;
                     if (line.length() != 18) continue;
 
-                    String date = line.substring(0, 4);
-                    uint8_t month = date.substring(0, 2).toInt();
-                    uint8_t day = date.substring(2, 4).toInt();
+                    uint8_t month = line.substring(0, 2).toInt();
+                    uint8_t day = line.substring(2, 4).toInt();
                     uint8_t beginHour = line.substring(5, 7).toInt();
                     uint8_t beginMin = line.substring(8, 10).toInt();
                     uint8_t endHour = line.substring(13, 15).toInt();

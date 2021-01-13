@@ -2,19 +2,20 @@
 #define __FEATURES_RELAY_H
 
 #include <Arduino.h>
+
 #include "feature.h"
 #include "log.h"
 
 class Relay : public Feature {
-    private:
+   private:
     uint8_t relayPin;
-    uint8_t state = LOW;
+    uint8_t state;
 
-    public:
-    Relay(uint8_t relayPin) : relayPin(relayPin) {};
+   public:
+    Relay(uint8_t relayPin) : relayPin(relayPin){};
 
     void setup() {
-        digitalWrite(relayPin, LOW);
+        off();
         pinMode(relayPin, OUTPUT);
     }
 
@@ -32,8 +33,10 @@ class Relay : public Feature {
     }
 
     void toggle() {
-        if (state == HIGH) off();
-        else on();
+        if (state == HIGH)
+            off();
+        else
+            on();
     }
 };
 

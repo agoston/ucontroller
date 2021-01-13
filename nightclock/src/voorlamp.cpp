@@ -1,9 +1,12 @@
-// #define DEV
+#define DEVHTTP "voorlamp"
 
 #include <Arduino.h>
 #include <ESP8266HTTPClient.h>
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
+
+#include "secret.h"
+
 #include <features/log.h>
 #include <features/ntpclient.h>
 #include <features/relay.h>
@@ -13,8 +16,6 @@
 #define BUTTON_ON_D4
 #include <features/button.h>
 
-#include "secret.h"
-
 WiFiClient tcpClient;
 HTTPClient httpClient;
 
@@ -22,7 +23,7 @@ HTTPClient httpClient;
 Relay relay(D5);
 // sync time from NTP
 NtpClient ntpClient;
-// D4 has an integrated 3.3V 12Kohm pullup on the d1 lite. it also is connected to the buildin led, so pressing the button lights it up.
+// D4 has an integrated 3.3V 12Kohm pullup on the d1 lite. it also is connected to the builtin led, so pressing the button lights it up.
 Button button(D4);
 // control schedule remotely
 Schedule schedule(&ntpClient);

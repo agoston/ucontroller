@@ -19,9 +19,18 @@ class ScheduledTime {
 
     ScheduledTime(uint8_t month, uint8_t day, uint8_t hours, uint8_t minutes, void (*callback)(void *), void *arg) : month(month), day(day), hours(hours), minutes(minutes), callback(callback), arg(arg){};
 
-    bool operator<(const ScheduledTime &foo) const { return month < foo.month || day < foo.day || hours < foo.hours || minutes < foo.minutes; }
+    bool operator<(const ScheduledTime &foo) const {
+        if (month != foo.month) return month < foo.month;
+        if (day != foo.day) return day < foo.day;
+        if (hours != foo.hours) return hours < foo.hours;
+        if (minutes != foo.minutes) return minutes < foo.minutes;
+    }
 };
 
+/* FIXME: add support for embedded schedule (for lamp on/off), e.g.
+mydata data[] = { { "Archimedes", 2.12 }, 
+                  { "Vitruvius", 4.49 } } ;
+*/
 class Schedule : public Feature {
    private:
     NtpClient *ntpClient;
