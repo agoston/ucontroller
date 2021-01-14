@@ -1,4 +1,4 @@
-#define DEVHTTP "voorlamp"
+// #define DEVHTTP "voorlamp"
 
 #include <Arduino.h>
 #include <ESP8266HTTPClient.h>

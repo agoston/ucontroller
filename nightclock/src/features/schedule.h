@@ -24,6 +24,7 @@ class ScheduledTime {
         if (day != foo.day) return day < foo.day;
         if (hours != foo.hours) return hours < foo.hours;
         if (minutes != foo.minutes) return minutes < foo.minutes;
+        return false;
     }
 };
 
@@ -111,7 +112,7 @@ class Schedule : public Feature {
         for (ScheduledTime *s = root, **pNext = &root; s; pNext = &(s->next), s = s->next) {
             if (month != s->month || day != s->day) continue;
 
-            // found today; is it time?
+            // found today; run through the daily program in order (so that when powercycling the unit, it would assume its expected state)
             if (hours < s->hours || (hours == s->hours && minutes < s->minutes)) return;
 
             // match! run

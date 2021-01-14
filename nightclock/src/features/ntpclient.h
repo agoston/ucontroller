@@ -8,18 +8,20 @@
 #include <ezTime.h>
 
 class NtpClient : public Feature {
-    private:
+   private:
     Timezone timezone;
 
-    public:
+   public:
     NtpClient() {}
 
-    void setup() {
-        // LOG("ntpclient setup\n")
-
-        // see https://github.com/ropg/ezTime; avoids an extra network lookup
+    // europe/amsterdam: "CET-1CEST,M3.5.0/2,M10.5.0/3"
+    NtpClient(const String posix) {
+        // see https://github.com/ropg/ezTime; avoids an extra network lookup if we use posix string of a location instead of location name
         // timezone.Location("Europe/Amsterdam");
-        timezone.setPosix("CET-1CEST,M3.5.0/2,M10.5.0/3");
+        timezone.setPosix(posix);
+    }
+
+    void setup() {
         ezt::setServer("0.europe.pool.ntp.org");
     }
 
