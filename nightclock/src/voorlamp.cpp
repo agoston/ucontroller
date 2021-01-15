@@ -28,7 +28,7 @@ Button button(D4);
 // control schedule remotely
 Schedule schedule(&ntpClient);
 SwitchingCallback switchingCallback(&trampolineRelayOff, &trampolineRelayOn, &relay);
-RemoteSchedule remoteSchedule(&schedule, &tcpClient, &httpClient, BASEURL "/voorlamp/schedule", &switchingCallback);
+RemoteSchedule remoteSchedule(&schedule, &tcpClient, &httpClient, BASEURL "/voorlamp/schedule_utc", &switchingCallback);
 
 Feature *features[]{&relay, &ntpClient, &schedule, &remoteSchedule, &button};
 
