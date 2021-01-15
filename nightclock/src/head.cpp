@@ -22,7 +22,7 @@ Temperature temperature(D3);
 // D4 has an integrated 3.3V 12Kohm pullup on the d1 lite. it also is connected to the buildin led, so pressing the buttin lights it up.
 Button button(D4);
 // sync time from NTP
-NtpClient ntpClient;
+NtpClient ntpClient("CET-1CEST,M3.5.0/2,M10.5.0/3");
 // send/receive UDP packets
 Mesh mesh(HEAD_PORT);
 

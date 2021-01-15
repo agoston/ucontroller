@@ -22,7 +22,7 @@ NtpClient ntpClient;
 // control schedule remotely
 Schedule schedule(&ntpClient);
 SwitchingCallback switchingCallback(&trampolineRelayOff, &trampolineRelayOn, &relay);
-RemoteSchedule remoteSchedule(&schedule, &tcpClient, &httpClient, BASEURL "/schuurlamp/schedule", &switchingCallback);
+RemoteSchedule remoteSchedule(&schedule, &tcpClient, &httpClient, BASEURL "/schuurlamp/schedule_utc", &switchingCallback);
 
 Feature *features[]{&relay, &ntpClient, &schedule, &remoteSchedule};
 
