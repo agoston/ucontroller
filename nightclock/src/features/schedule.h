@@ -28,10 +28,6 @@ class ScheduledTime {
     }
 };
 
-/* FIXME: add support for embedded schedule (for lamp on/off), e.g.
-mydata data[] = { { "Archimedes", 2.12 }, 
-                  { "Vitruvius", 4.49 } } ;
-*/
 class Schedule : public Feature {
    private:
     NtpClient *ntpClient;
