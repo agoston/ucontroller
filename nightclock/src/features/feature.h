@@ -1,7 +1,4 @@
-#ifndef __FEATURE_H
-#define __FEATURE_H
-
-#include "log.h"
+#pragma once
 
 // keep it simple
 class Feature {
@@ -9,5 +6,3 @@ class Feature {
     virtual void setup() {};
     virtual void loop() {};
 };
-
-#endif

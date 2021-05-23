@@ -1,5 +1,4 @@
-#ifndef __FEATURES_LOG_H
-#define __FEATURES_LOG_H
+#pragma once
 
 #if defined(DEVHTTP)
     #define DEVHTTPBASEURL BASEURL "/" DEVHTTP "/"
@@ -34,6 +33,4 @@
 #else
     #define LOG(format)
     #define LOGP(format, args...)
-#endif
-
 #endif

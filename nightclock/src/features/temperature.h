@@ -1,5 +1,4 @@
-#ifndef __FEATURES_TEMPERATURE_H
-#define __FEATURES_TEMPERATURE_H
+#pragma once
 
 #include <DallasTemperature.h>
 #include <OneWire.h>
@@ -66,5 +65,3 @@ class Temperature : public Feature {
 
     float temperature() { return tempLast; }
 };
-
-#endif

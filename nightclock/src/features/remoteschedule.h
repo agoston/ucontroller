@@ -1,5 +1,4 @@
-#ifndef __FEATURES_REMOTESCHEDULE_H
-#define __FEATURES_REMOTESCHEDULE_H
+#pragma once
 
 #include <Arduino.h>
 #include <ESP8266HTTPClient.h>
@@ -104,5 +103,3 @@ class RemoteSchedule : public Feature {
         }
     }
 };
-
-#endif

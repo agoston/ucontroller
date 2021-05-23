@@ -1,5 +1,4 @@
-#ifndef __FEATURES_RELAY_H
-#define __FEATURES_RELAY_H
+#pragma once
 
 #include <Arduino.h>
 
@@ -47,5 +46,3 @@ void trampolineRelayOn(void *relay) {
 void trampolineRelayOff(void *relay) {
     ((Relay *)relay)->off();
 }
-
-#endif

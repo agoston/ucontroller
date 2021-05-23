@@ -1,5 +1,4 @@
-#ifndef __FEATURES_DAYLIGHT_SCHEDULE_H
-#define __FEATURES_DAYLIGHT_SCHEDULE_H
+#pragma once
 
 #include <Arduino.h>
 
@@ -415,5 +414,3 @@ class DaylightSchedule : public Feature {
         }
     }
 };
-
-#endif

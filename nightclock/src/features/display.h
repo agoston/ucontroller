@@ -1,5 +1,4 @@
-#ifndef __FEATURES_DISPLAY_H
-#define __FEATURES_DISPLAY_H
+#pragma once
 
 #include "feature.h"
 #include "log.h"
@@ -48,5 +47,3 @@ class Display : public Feature {
         time(tempInt, tempFrac); // haha
     }
 };
-
-#endif

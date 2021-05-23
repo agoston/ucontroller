@@ -1,5 +1,4 @@
-#ifndef __FEATURES_SCHEDULE_H
-#define __FEATURES_SCHEDULE_H
+#pragma once
 
 #include <Arduino.h>
 
@@ -121,5 +120,3 @@ class Schedule : public Feature {
         }
     }
 };
-
-#endif

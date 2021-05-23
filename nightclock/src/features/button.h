@@ -1,5 +1,4 @@
-#ifndef __FEATURES_BUTTON_H
-#define __FEATURES_BUTTON_H
+#pragma once
 
 #include <Arduino.h>
 
@@ -163,5 +162,3 @@ void Button::setup() {
     pinMode(pin, INPUT);
     attachInterrupt(digitalPinToInterrupt(pin), FeaturesButton::trampoline(pin, this), CHANGE);
 }
-
-#endif

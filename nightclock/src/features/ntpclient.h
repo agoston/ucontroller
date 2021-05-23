@@ -1,5 +1,4 @@
-#ifndef __FEATURES_NTP_H
-#define __FEATURES_NTP_H
+#pragma once
 
 #include "feature.h"
 
@@ -39,5 +38,3 @@ class NtpClient : public Feature {
     uint8_t minute() { return timezone.minute(); }
     uint8_t second() { return timezone.second(); }
 };
-
-#endif
