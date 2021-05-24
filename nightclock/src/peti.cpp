@@ -7,8 +7,7 @@
 #include <features/log.h>
 #include <features/ntpclient.h>
 #include <features/temperature.h>
-
-#include "secret.h"
+#include <features/mqtt.h>
 
 #define BUTTON_ON_D4
 #include <features/button.h>
@@ -21,8 +20,10 @@ Temperature temperature(D3);
 Button button(D4);
 // sync time from NTP
 NtpClient ntpClient("CET-1CEST,M3.5.0/2,M10.5.0/3");
+// MQTT client
+MqttClient mqttClient;
 
-Feature *features[]{&display, &temperature, &button, &ntpClient};
+Feature *features[]{&display, &temperature, &button, &ntpClient, &mqttClient};
 
 //----------------------------------------------------------------------------------------------------------------
 void setup() {
@@ -35,20 +36,18 @@ void setup() {
     pinMode(LED_BUILTIN, OUTPUT);
     digitalWrite(LED_BUILTIN, HIGH);
 
-    // upstream internet access for NTP sync
     WiFi.hostname("ESP-peti");
     WiFi.mode(WIFI_STA);
-    WiFi.begin(NTP_SSID, NTP_PW);
+    // enter into light sleep between DTIM updates, ~1mA consumption
+    WiFi.setSleepMode(WIFI_LIGHT_SLEEP);
+
     LOG("Waiting for wireless\n")
 
     // dhcp starts now in background (unless static IP)
-    while (WiFi.status() != WL_CONNECTED) {
+    while (!WiFi.isConnected()) {
         delay(50);
     }
     LOGP("Got IP: %s\n", WiFi.localIP().toString().c_str())
-
-    // enter into light sleep between DTIM updates, ~1mA consumption
-    WiFi.setSleepMode(WIFI_LIGHT_SLEEP);
 
     for (uint16_t i = 0; i < sizeof(features) / sizeof(features[0]); i++) features[i]->setup();
 }
