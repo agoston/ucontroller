@@ -5,6 +5,7 @@
 
 #include "feature.h"
 
+// for ds18b20 temperature sensor
 class Temperature : public Feature {
    private:
     OneWire oneWire;
