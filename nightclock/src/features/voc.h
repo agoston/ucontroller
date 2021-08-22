@@ -13,7 +13,7 @@ class VOC : public Feature {
 
     void setup() {
         if (!ccs.begin()) {
-            LOGP("Failed to start sensor! Please check your wiring.");
+            LOG("Failed to start sensor! Please check your wiring.");
         }
     }
 

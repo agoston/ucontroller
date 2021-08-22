@@ -15,9 +15,7 @@ class Humidity : public Feature {
     double lastTemp, lastHumidity;
 
    public:
-    Humidity(uint8_t pin_sda, uint8_t pin_scl, uint16_t tempRefreshMs = 5000) : tempRefreshMs(tempRefreshMs) {
-        Wire.pins(pin_sda, pin_scl);
-    };
+    Humidity(uint16_t tempRefreshMs = 5000) : tempRefreshMs(tempRefreshMs) {};
 
     void setup() {
         // TI hardwired address of hdc1080

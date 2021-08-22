@@ -6,20 +6,23 @@
 
 #include "feature.h"
 #include "log.h"
-#include "secret.h"
 
 class MqttClient : public Feature {
    private:
     AsyncMqttClient mqttClient;
+    const char *host;
+    uint16_t port;
 
    public:
+    MqttClient(const char* host, uint16_t port) : host(host), port(port) {}
+
     uint16_t publish(const char *topic, const char *payload) {
         // qos=0 --> fire & forget
         return mqttClient.publish(topic, 0, true, payload);
     }
 
     void setup() {
-        mqttClient.setServer(MQTT_HOST, MQTT_PORT);
+        mqttClient.setServer(host, port);
     }
 
     void loop() {

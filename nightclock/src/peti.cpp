@@ -6,24 +6,34 @@
 #include <features/display.h>
 #include <features/log.h>
 #include <features/ntpclient.h>
-#include <features/temperature.h>
+#include <features/humidity.h>
+#include <features/voc.h>
 #include <features/mqtt.h>
+
+#include "secret.h"
 
 #define BUTTON_ON_D4
 #include <features/button.h>
 
-// D1 & D2 are 'clean', direct connections on the d1 lite
-Display display(D1, D2);
-// D3 has  an integrated 3.3V 12Kohm pullup on the d1 lite, which works perfectly with ds18b20
-Temperature temperature(D3);
+// D3+D4 is pullup
+// D8 is pulldown
+// D0 is clean
+// D4+D5+D6 is clean (=serial, but normally unused)
+// A0 is clean (analog, but also works digital)
+
+// D1 & D2 are used for I2C SCL/SDA
+// VOC voc;
+// Humidity humidity;
+
+Display display(D5, D6);
 // D4 has an integrated 3.3V 12Kohm pullup on the d1 lite. it also is connected to the buildin led, so pressing the buttin lights it up.
 Button button(D4);
 // sync time from NTP
 NtpClient ntpClient("CET-1CEST,M3.5.0/2,M10.5.0/3");
 // MQTT client
-MqttClient mqttClient;
+// MqttClient mqttClient(MQTT_HOST, MQTT_PORT);
 
-Feature *features[]{&display, &temperature, &button, &ntpClient, &mqttClient};
+Feature *features[]{&display, &button, &ntpClient};
 
 //----------------------------------------------------------------------------------------------------------------
 void setup() {
@@ -40,6 +50,7 @@ void setup() {
     WiFi.mode(WIFI_STA);
     // enter into light sleep between DTIM updates, ~1mA consumption
     WiFi.setSleepMode(WIFI_LIGHT_SLEEP);
+    WiFi.begin(NTP_SSID, NTP_PW);
 
     LOG("Waiting for wireless\n")
 
@@ -66,7 +77,7 @@ void loop() {
 
     // this takes cca. 3ms per segment, roughly 15ms overall with overhead
     if (button.buttonPressedOrTtl(now)) {
-        display.temp(temperature.temperature());
+        display.temp(98.76);
     } else {
         display.brightness(hours, mins);
         display.time(hours, mins);
