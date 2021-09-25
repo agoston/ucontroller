@@ -2,38 +2,43 @@
 
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
-#include <NeoPixelBus.h>
+// #include <NeoPixelBus.h>
 #include <features/display.h>
 #include <features/log.h>
 #include <features/ntpclient.h>
-#include <features/humidity.h>
-#include <features/voc.h>
-#include <features/mqtt.h>
+// #include <features/humidity.h>
+// #include <features/voc.h>
+// #include <features/mqtt.h>
 
 #include "secret.h"
 
-#define BUTTON_ON_D4
-#include <features/button.h>
+// #define BUTTON_ON_D4
+// #include <features/button.h>
 
+// D1: I2C SCL pin
+// D2: I2C SDA pin
 // D3+D4 is pullup
 // D8 is pulldown
 // D0 is clean
 // D4+D5+D6 is clean (=serial, but normally unused)
 // A0 is clean (analog, but also works digital)
 
-// D1 & D2 are used for I2C SCL/SDA
+// TODO: these use I2C, so pins are D1+D2, hardwired!
 // VOC voc;
 // Humidity humidity;
 
+// TODO: led string; uses GPIO2 (hardwired)
+// NeoPixelBus<NeoGrbFeature, NeoEsp8266UartWs2813Method> strip(LEDS, 2);
+
 Display display(D5, D6);
 // D4 has an integrated 3.3V 12Kohm pullup on the d1 lite. it also is connected to the buildin led, so pressing the buttin lights it up.
-Button button(D4);
+// Button button(D4);
 // sync time from NTP
 NtpClient ntpClient("CET-1CEST,M3.5.0/2,M10.5.0/3");
-// MQTT client
+// TODO: MQTT client
 // MqttClient mqttClient(MQTT_HOST, MQTT_PORT);
 
-Feature *features[]{&display, &button, &ntpClient};
+Feature *features[]{&display, &ntpClient};
 
 //----------------------------------------------------------------------------------------------------------------
 void setup() {
@@ -76,12 +81,12 @@ void loop() {
     LOGP("Time: %d:%d:%d\n", hours, mins, secs);
 
     // this takes cca. 3ms per segment, roughly 15ms overall with overhead
-    if (button.buttonPressedOrTtl(now)) {
-        display.temp(98.76);
-    } else {
+    // if (button.buttonPressedOrTtl(now)) {
+    //     display.temp(98.76);
+    // } else {
         display.brightness(hours, mins);
         display.time(hours, mins);
-    }
+    // }
 
     // can't use deep sleep here, as it would turn off the modem, which defeats the purpose of a udp server.
     // however, the esp-arduino lib does an actual yield() on delay(), so consumption is kept to a minimum.
