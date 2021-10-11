@@ -2,43 +2,49 @@
 
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
-// #include <NeoPixelBus.h>
 #include <features/display.h>
 #include <features/log.h>
 #include <features/ntpclient.h>
 // #include <features/humidity.h>
 // #include <features/voc.h>
 // #include <features/mqtt.h>
+#include <features/infrared.h>
+#include <features/ledstring.h>
 
 #include "secret.h"
 
 // #define BUTTON_ON_D4
 // #include <features/button.h>
 
+// RX/TX: also usable, GPIO3/GPIO1
+// D0 is clean
 // D1: I2C SCL pin
 // D2: I2C SDA pin
 // D3+D4 is pullup
+// D5+D6+D7 is clean (=serial, but normally unused)
 // D8 is pulldown
-// D0 is clean
-// D4+D5+D6 is clean (=serial, but normally unused)
 // A0 is clean (analog, but also works digital)
 
-// TODO: these use I2C, so pins are D1+D2, hardwired!
+// CCS811 + HDC1080; these use I2C, so pins are D1+D2, hardwired!
+// "The ESP8266 doens’t have hardware I2C pins, but it can be implemented in software. So you can use any GPIOs as I2C. Usually, the following GPIOs are used as I2C pins: GPIO5: SCL, GPIO4: SDA"
 // VOC voc;
 // Humidity humidity;
 
-// TODO: led string; uses GPIO2 (hardwired)
-// NeoPixelBus<NeoGrbFeature, NeoEsp8266UartWs2813Method> strip(LEDS, 2);
+// uses the RX pin, hardwired; uses DMA to send data. when enabled, can't send serial to esp, only esp can send debug log via serial.
+LedString ledstring;
 
-Display display(D5, D6);
+// infrared needs pullup
+Infrared infrared(D3);
 // D4 has an integrated 3.3V 12Kohm pullup on the d1 lite. it also is connected to the buildin led, so pressing the buttin lights it up.
 // Button button(D4);
+Display display(D5, D6);
+
 // sync time from NTP
-NtpClient ntpClient("CET-1CEST,M3.5.0/2,M10.5.0/3");
+NtpClient ntpClient;
 // TODO: MQTT client
 // MqttClient mqttClient(MQTT_HOST, MQTT_PORT);
 
-Feature *features[]{&display, &ntpClient};
+Feature *features[]{&display, &ntpClient, &infrared, &ledstring};
 
 //----------------------------------------------------------------------------------------------------------------
 void setup() {
@@ -56,6 +62,7 @@ void setup() {
     // enter into light sleep between DTIM updates, ~1mA consumption
     WiFi.setSleepMode(WIFI_LIGHT_SLEEP);
     WiFi.begin(NTP_SSID, NTP_PW);
+    WiFi.setAutoReconnect(true);
 
     LOG("Waiting for wireless\n")
 

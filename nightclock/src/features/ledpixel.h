@@ -1,6 +1,8 @@
 #pragma once
 #include <Arduino.h>
 
+// FIXME: not used/tested yet
+
 // represents one pixel
 class LedPixel {
    protected:

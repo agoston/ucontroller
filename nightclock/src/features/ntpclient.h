@@ -11,7 +11,9 @@ class NtpClient : public Feature {
     Timezone timezone;
 
    public:
-    NtpClient() {}
+    NtpClient() {
+        timezone.setPosix("CET-1CEST,M3.5.0/2,M10.5.0/3");
+    }
 
     // europe/amsterdam: "CET-1CEST,M3.5.0/2,M10.5.0/3"
     NtpClient(const String posix) {
