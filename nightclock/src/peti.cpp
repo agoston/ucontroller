@@ -1,4 +1,4 @@
-#define DEV
+// #define DEV
 
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
@@ -13,10 +13,17 @@
 
 #include "secret.h"
 
+// led string on full power can draw over 1A, spare that poor USB 
+#ifdef DEV
+#define NUMLEDS 3
+#else
+#define NUMLEDS 60
+#endif
+
 // #define BUTTON_ON_D4
 // #include <features/button.h>
 
-// RX/TX: also usable, GPIO3/GPIO1
+// RX/TX: also usable, GPIO3/GPIO1; used in Serial.print()/read() & flashing
 // D0 is clean
 // D1: I2C SCL pin
 // D2: I2C SDA pin
@@ -31,7 +38,7 @@
 // Humidity humidity;
 
 // uses the RX pin, hardwired; uses DMA to send data. when enabled, can't send serial to esp, only esp can send debug log via serial.
-LedString ledstring;
+LedString ledstring(NUMLEDS);
 
 // infrared needs pullup
 Infrared infrared(D3);
@@ -76,16 +83,63 @@ void setup() {
 }
 
 //----------------------------------------------------------------------------------------------------------------
+RgbColor color = RgbColor(128, 0, 0);
+uint8_t power = 128;
+
+void setColor(RgbColor newColor) {
+    color = newColor;
+    ledstring.setAll(color.Dim(power));
+}
+
+void setPower(int16_t delta) {
+    int16_t newPower = (int16_t)power + delta;
+    if (newPower < 0) newPower = 0;
+    if (newPower > 255) newPower = 255;
+    power = (uint8_t) newPower;
+    setColor(color);
+}
+
+//----------------------------------------------------------------------------------------------------------------
 void loop() {
     for (uint16_t i = 0; i < sizeof(features) / sizeof(features[0]); i++) features[i]->loop();
 
-    unsigned long now = millis();
+    // unsigned long now = millis();
 
     uint8_t hours = ntpClient.hour();
     uint8_t mins = ntpClient.minute();
-    uint8_t secs = ntpClient.second();
+    // uint8_t secs = ntpClient.second();
 
-    LOGP("Time: %d:%d:%d\n", hours, mins, secs);
+    // LOGP("Time: %d:%d:%d\n", hours, mins, secs);
+
+    if (infrared.buttonPressed()) {
+        switch (infrared.lastButtonPress()) {
+            case Remote::ON: LOG("ON\n"); setColor(color); break;
+            case Remote::OFF: LOG("OFF\n"); ledstring.setAll(RgbColor(0, 0, 0)); break;
+            case Remote::DIM_DOWN: LOG("DIM_DOWN\n"); setPower(-16); break;
+            case Remote::DIM_UP: LOG("DIM_UP\n"); setPower(16); break;
+
+            case Remote::RED: setColor(RgbColor(255, 0, 0)); break;  
+            case Remote::GREEN: setColor(RgbColor(0, 255, 0)); break;   
+            case Remote::BLUE: setColor(RgbColor(0, 0, 255)); break;    
+            case Remote::WHITE: setColor(RgbColor(255, 255, 255)); break;
+
+            case Remote::RED_ORANGE: setColor(RgbColor(255, 69, 0)); break; 
+            case Remote::GREEN_SEAGREEN: setColor(RgbColor(170, 240, 209)); break;  
+            case Remote::BLUE_PURPLE: setColor(RgbColor(106, 90, 205)); break;  
+            
+            case Remote::ORANGE: setColor(RgbColor(255, 150, 0)); break;    
+            case Remote::SEAGREEN: setColor(RgbColor(127, 255, 212)); break;
+            case Remote::PURPLE: setColor(RgbColor(255, 0, 255)); break;    
+
+            case Remote::ORANGE_YELLOW: setColor(RgbColor(255, 191, 0)); break; 
+            case Remote::SEAGREEN_CYAN: setColor(RgbColor(64, 224, 208)); break;    
+            case Remote::PURPLE_PINK: setColor(RgbColor(223, 115, 255)); break;
+
+            case Remote::YELLOW: setColor(RgbColor(255, 255, 0)); break;    
+            case Remote::CYAN: setColor(RgbColor(0, 255, 255)); break;      
+            case Remote::PINK: setColor(RgbColor(255, 105, 180)); break;    
+        }
+    }
 
     // this takes cca. 3ms per segment, roughly 15ms overall with overhead
     // if (button.buttonPressedOrTtl(now)) {
