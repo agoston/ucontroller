@@ -10,46 +10,6 @@
 #include "feature.h"
 #include "log.h"
 
-// for the VS1838b's
-// pinout as seen from front (left-middle-right): data, ground, vcc (2.7-5.5V)
-// data pin has to be pull-up! or disable pull-up on irrecv.enableIRIn()
-
-class Infrared : public Feature {
-   private:
-    IRrecv irrecv;
-    decode_results results;
-    uint32_t lastButton = 0;
-
-   public:
-    Infrared(uint8_t pin) : irrecv(pin){};
-
-    void setup() {
-        // enable input pullup on provided pin
-        irrecv.enableIRIn(true);
-        // irrecv.setTolerance(50);
-    }
-
-    void loop() {
-        if (irrecv.decode(&results)) {
-            // the remote uses the NEC protocol
-            LOGP("type: %d, value: %llu, address: %u, command: %u\n", results.decode_type, results.value, results.address, results.command);
-            if (results.decode_type == decode_type_t::NEC) lastButton = results.command;
-            irrecv.resume();  // Receive the next value
-        }
-    }
-
-    bool buttonPressed() {
-        return lastButton;
-    }
-
-    // also clear
-    uint32_t lastButtonPress() {
-        uint32_t result = lastButton;
-        lastButton = 0;
-        return result;
-    }
-};
-
 /* cheap chinese 'magic lighting': type NEC
 commands list (position represented as ascii-art):
  5  4  6  7
@@ -89,4 +49,43 @@ enum Remote {
     CYAN = 16,
     PINK = 18,
     SMOOTH = 19
+};
+
+// for the VS1838b's
+// pinout as seen from front (left-middle-right): data, ground, vcc (2.7-5.5V)
+// data pin has to be pull-up! or disable pull-up on irrecv.enableIRIn()
+class Infrared : public Feature {
+   private:
+    IRrecv irrecv;
+    decode_results results;
+    uint32_t lastButton = 0;
+
+   public:
+    Infrared(uint8_t pin) : irrecv(pin){};
+
+    void setup() {
+        // enable input pullup on provided pin
+        irrecv.enableIRIn(true);
+        // irrecv.setTolerance(50);
+    }
+
+    void loop() {
+        if (irrecv.decode(&results)) {
+            // the remote uses the NEC protocol
+            LOGP("type: %d, value: %llu, address: %u, command: %u\n", results.decode_type, results.value, results.address, results.command);
+            if (results.decode_type == decode_type_t::NEC) lastButton = results.command;
+            irrecv.resume();  // Receive the next value
+        }
+    }
+
+    bool buttonPressed() {
+        return lastButton;
+    }
+
+    // also clear
+    Remote lastButtonPress() {
+        uint32_t result = lastButton;
+        lastButton = 0;
+        return (Remote)result;
+    }
 };
