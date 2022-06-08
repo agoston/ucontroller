@@ -389,16 +389,18 @@ class DaylightSchedule : public Feature {
     NtpClient *ntpClient;
     Schedule *schedule;
 
-    void (*callback)(void *);
+    std::function<void(bool)> callback;
 
-    uint8_t state = 2;
+    bool lastState = false;
 
    public:
-    DaylightSchedule(NtpClient *ntpClient, Schedule (&schedule)[365], void (*callback)(void *)) : ntpClient(ntpClient), schedule(schedule), callback(callback){};
+    DaylightSchedule(NtpClient *ntpClient, Schedule *schedule, std::function<void(bool)> callback) : ntpClient(ntpClient), schedule(schedule), callback(callback){};
 
     void setup() {}
 
     void loop() {
+        ntpClient->refresh();
+
         uint8_t month = ntpClient->month();
         uint8_t day = ntpClient->day();
         uint8_t hours = ntpClient->hour();
@@ -409,7 +411,12 @@ class DaylightSchedule : public Feature {
                 bool on = (hours < schedule[i].beginHours) || (hours == schedule[i].beginHours && minutes < schedule[i].beginMinutes) ||
                           (hours > schedule[i].endHours) || (hours == schedule[i].endHours && minutes > schedule[i].endMinutes);
 
-                callback((void*)on);
+                if (lastState != on) {
+                    callback(on);
+                    lastState = on;
+                }
+                
+                break;
             }
         }
     }

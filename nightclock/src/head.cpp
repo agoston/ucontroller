@@ -19,7 +19,7 @@ Temperature temperature(D3);
 // D4 has an integrated 3.3V 12Kohm pullup on the d1 lite. it also is connected to the buildin led, so pressing the buttin lights it up.
 Button button(D4);
 // sync time from NTP
-NtpClient ntpClient("CET-1CEST,M3.5.0/2,M10.5.0/3");
+NtpClient ntpClient(TZ_AMSTERDAM);
 
 Feature *features[]{&display, &temperature, &button, &ntpClient};
 
@@ -34,18 +34,18 @@ void setup() {
     pinMode(LED_BUILTIN, OUTPUT);
     digitalWrite(LED_BUILTIN, HIGH);
 
-    // upstream internet access for NTP sync
     WiFi.hostname("ESP-apa");
     WiFi.mode(WIFI_STA);
-    // enter into light sleep between DTIM updates, ~1mA consumption
-    WiFi.setSleepMode(WIFI_LIGHT_SLEEP);
     WiFi.begin(NTP_SSID, NTP_PW);
+    WiFi.setAutoReconnect(true);
+
     LOG("Waiting for wireless\n")
 
     // dhcp starts now in background (unless static IP)
     while (!WiFi.isConnected()) {
         delay(50);
     }
+
     LOGP("Got IP: %s\n", WiFi.localIP().toString().c_str())
 
     for (uint16_t i = 0; i < sizeof(features) / sizeof(features[0]); i++) features[i]->setup();
@@ -56,6 +56,7 @@ void loop() {
     for (uint16_t i = 0; i < sizeof(features) / sizeof(features[0]); i++) features[i]->loop();
 
     unsigned long now = millis();
+    ntpClient.refresh();
 
     uint8_t hours = ntpClient.hour();
     uint8_t mins = ntpClient.minute();

@@ -6,6 +6,7 @@
 #include "feature.h"
 
 // for HDC1080 humidity and temperature sensor
+// uses I2C, so pins are D1 (=SCL) +D2 (=SDA), hardwired!
 class Humidity : public Feature {
    private:
     ClosedCube_HDC1080 hdc1080;

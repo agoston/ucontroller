@@ -38,7 +38,7 @@
 
 // TODO: remoteschedule/mqtt - based blinking (or add speaker? haha) to mark bathtime, morning alarm, etc...
 
-// CCS811 + HDC1080; these use I2C, so pins are D1+D2, hardwired!
+// CCS811 + HDC1080; these use I2C, so pins are D1 (=SCL) +D2 (=SDA), hardwired!
 // "The ESP8266 doens’t have hardware I2C pins, but it can be implemented in software. So you can use any GPIOs as I2C. Usually, the following GPIOs are used as I2C pins: GPIO5: SCL, GPIO4: SDA"
 VOC voc;
 Humidity humidity;
@@ -52,7 +52,7 @@ Infrared infrared(D3);
 Button button(D4);
 Display display(D5, D6);
 
-NtpClient ntpClient;
+NtpClient ntpClient(TZ_AMSTERDAM);
 MqttClient mqttClient(MQTT_HOST, MQTT_PORT);
 
 Feature* features[]{&display, &ntpClient, &infrared, &ledstring, &mqttClient, &button, &voc, &humidity};
@@ -136,9 +136,6 @@ void setup() {
 
     WiFi.hostname("ESP-peti");
     WiFi.mode(WIFI_STA);
-    // FIXME: this is suspicious to cause network outages/timeouts
-    // enter into light sleep between DTIM updates, ~1mA consumption
-    // WiFi.setSleepMode(WIFI_LIGHT_SLEEP);
     WiFi.begin(NTP_SSID, NTP_PW);
     WiFi.setAutoReconnect(true);
 
@@ -164,6 +161,7 @@ void loop() {
     if (infrared.buttonPressed()) processButton(infrared.lastButtonPress());
 
     if (!(loopCounter & 15)) {
+        ntpClient.refresh();
         uint8_t hours = ntpClient.hour();
         uint8_t mins = ntpClient.minute();
 

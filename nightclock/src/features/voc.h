@@ -4,6 +4,7 @@
 #include "feature.h"
 #include "log.h"
 
+// uses I2C, so pins are D1 (=SCL) +D2 (=SDA), hardwired!
 class VOC : public Feature {
    private:
     Adafruit_CCS811 ccs;

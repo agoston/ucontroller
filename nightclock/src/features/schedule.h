@@ -98,6 +98,8 @@ class Schedule : public Feature {
     void loop() {
         if (!root) return;
 
+        ntpClient->refresh();
+        
         uint8_t month = ntpClient->month();
         uint8_t day = ntpClient->day();
         uint8_t hours = ntpClient->hour();

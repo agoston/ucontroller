@@ -21,6 +21,11 @@ class Relay : public Feature {
     void loop() {
     }
 
+    void set(bool _on) {
+        if (_on) on();
+        else off();
+    }
+
     void on() {
         digitalWrite(relayPin, HIGH);
         state = HIGH;

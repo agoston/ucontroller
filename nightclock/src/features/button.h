@@ -12,7 +12,8 @@ class Button : public Feature {
 
     // these are changed from the ISR
     volatile bool isrButtonPressed = false;
-    volatile unsigned long isrButtonPressTtl = 0;
+    volatile unsigned long isrButtonPressMs = 0;
+    unsigned long lastReadButtonPressMs = 0;
 
    public:
     Button(uint8_t pin, uint16_t pressTtl = 3000) : pin(pin), pressTtl(pressTtl){};
@@ -24,10 +25,10 @@ class Button : public Feature {
         if (digitalRead(pin) == HIGH) {
             LOGP("ButtonRelease %d\n", pin);
             isrButtonPressed = false;
-            isrButtonPressTtl = millis();
         } else {
             LOGP("ButtonPress %d\n", pin);
             isrButtonPressed = true;
+            isrButtonPressMs = millis();
         }
     }
 
@@ -36,11 +37,22 @@ class Button : public Feature {
     }
 
     bool buttonPressedOrTtl(unsigned long now) {
-        return isrButtonPressed || now < isrButtonPressTtl + pressTtl;
+        return isrButtonPressed || now < isrButtonPressMs + pressTtl;
+    }
+
+    // was there a button press since last time this method was called?
+    bool wasButtonPress() {
+        unsigned long isrCopy = isrButtonPressMs;
+        if (lastReadButtonPressMs < isrCopy) {
+            LOG("wasButtonPress\n");
+            lastReadButtonPressMs = isrCopy;
+            return true;
+        }
+        return false;
     }
 
     unsigned long lastButtonPress() {
-        return isrButtonPressTtl;
+        return isrButtonPressMs;
     }
 };
 
