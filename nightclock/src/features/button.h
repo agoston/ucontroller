@@ -5,12 +5,15 @@
 #include "feature.h"
 #include "log.h"
 
+// FIXME: because of attachInterrupt() helper, this really only supports a single button right now.
+// FIXME: use lambda in attachInterrupt() instead of age-old trampoline solution, it's so much cleaner
 class Button : public Feature {
    private:
     uint8_t pin;
     uint16_t pressTtl;
 
     // these are changed from the ISR
+    // FIXME: use 'lastButtonPressMs' and 'lastButtonReleaseMs' instead of this; much cleaner, e.g. isButtonPressed() = lastButtonPressMs > lastButtonReleaseMs, etc...
     volatile bool isrButtonPressed = false;
     volatile unsigned long isrButtonPressMs = 0;
     unsigned long lastReadButtonPressMs = 0;
@@ -56,9 +59,9 @@ class Button : public Feature {
     }
 };
 
-// need a trampoline for attachInterrupt(); it expects function pointer without class reference
+// put it in a namespace to avoid polluting global namespace with this hack:
+// need a trampoline for attachInterrupt()! it expects function pointer without class reference
 // I've only did d0-d8 here as that's how many data pins there are on the d1 lite
-// FIXME: do this with lambdas instead
 namespace FeaturesButton {
 #ifdef BUTTON_ON_D0
 Button *button_d0 = NULL;

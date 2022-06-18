@@ -57,8 +57,6 @@ MqttClient mqttClient(MQTT_HOST, MQTT_PORT);
 
 Feature* features[]{&display, &ntpClient, &infrared, &ledstring, &mqttClient, &button};
 
-uint loopCounter = 0;
-
 //----------------------------------------------------------------------------------------------------------------
 RgbColor color = RgbColor(128, 0, 0);
 uint8_t power = 128;
@@ -155,11 +153,15 @@ void setup() {
 }
 
 //----------------------------------------------------------------------------------------------------------------
+uint loopCounter = 0;
+
 void loop() {
     for (uint16_t i = 0; i < sizeof(features) / sizeof(features[0]); i++) features[i]->loop();
 
+    // IR needs quick reaction time, so this runs at every loop
     if (infrared.buttonPressed()) processButton(infrared.lastButtonPress());
 
+    // no need to refresh too often
     if (!(loopCounter & 31)) {
         ntpClient.refresh();
         uint8_t hours = ntpClient.hour();
@@ -178,5 +180,6 @@ void loop() {
     // can't use deep sleep here, as it would turn off the modem, which defeats the purpose of a udp server.
     // however, the esp-arduino lib does an actual yield() on delay(), so consumption is kept to a minimum.
     delay(50);
+
     loopCounter++;
 }
