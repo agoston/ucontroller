@@ -5,8 +5,8 @@
 #include <features/display.h>
 #include <features/log.h>
 #include <features/ntpclient.h>
-#include <features/humidity.h>
-#include <features/voc.h>
+// #include <features/humidity.h>
+// #include <features/voc.h>
 #include <features/infrared.h>
 #include <features/ledstring.h>
 #include <features/mqtt.h>
@@ -40,8 +40,8 @@
 
 // CCS811 + HDC1080; these use I2C, so pins are D1 (=SCL) +D2 (=SDA), hardwired!
 // "The ESP8266 doens’t have hardware I2C pins, but it can be implemented in software. So you can use any GPIOs as I2C. Usually, the following GPIOs are used as I2C pins: GPIO5: SCL, GPIO4: SDA"
-VOC voc;
-Humidity humidity;
+// VOC voc;
+// Humidity humidity;
 
 // uses the RX pin, hardwired; uses DMA to send data. when enabled, can't send serial to esp, only esp can send debug log via serial.
 LedString ledstring(NUMLEDS);
@@ -55,7 +55,7 @@ Display display(D5, D6);
 NtpClient ntpClient(TZ_AMSTERDAM);
 MqttClient mqttClient(MQTT_HOST, MQTT_PORT);
 
-Feature* features[]{&display, &ntpClient, &infrared, &ledstring, &mqttClient, &button, &voc, &humidity};
+Feature* features[]{&display, &ntpClient, &infrared, &ledstring, &mqttClient, &button};
 
 uint loopCounter = 0;
 
@@ -160,10 +160,11 @@ void loop() {
 
     if (infrared.buttonPressed()) processButton(infrared.lastButtonPress());
 
-    if (!(loopCounter & 15)) {
+    if (!(loopCounter & 31)) {
         ntpClient.refresh();
         uint8_t hours = ntpClient.hour();
         uint8_t mins = ntpClient.minute();
+        // LOGP("time: %02d:%02d\n", hours, mins);
 
         // this takes cca. 3ms per segment, roughly 15ms overall with overhead
         // if (button.buttonPressedOrTtl(now)) {
@@ -176,6 +177,6 @@ void loop() {
 
     // can't use deep sleep here, as it would turn off the modem, which defeats the purpose of a udp server.
     // however, the esp-arduino lib does an actual yield() on delay(), so consumption is kept to a minimum.
-    delay(100);
+    delay(50);
     loopCounter++;
 }

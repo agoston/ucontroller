@@ -36,7 +36,7 @@ class NtpClient : public Feature {
 
     // this is separated so that the month()/day()/... can be called individually without overhead. is relatively cheap.
     void refresh() {
-        time_t now = ezt::now();
+        time_t now = timezone.now();
         ezt::breakTime(now, tm);
     }
 
