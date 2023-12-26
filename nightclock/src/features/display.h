@@ -19,6 +19,8 @@ class Display : public Feature {
     }
 
     void time(uint8_t hours, uint8_t mins) {
+        LOGP("Time: %d:%d\n", hours, mins);
+
         uint8_t data[] = {
             timeDisplay.encodeDigit(hours / 10),
             timeDisplay.encodeDigit(hours % 10),
