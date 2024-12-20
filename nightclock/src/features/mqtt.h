@@ -13,12 +13,11 @@
 class MqttClient : public Feature {
    private:
     AsyncMqttClient mqttClient;
-    const char *host;
-    uint16_t port;
+    const char *me;
     std::list<const char *> subscriptions;
 
    public:
-    MqttClient(const char *host, uint16_t port) : host(host), port(port) {}
+    MqttClient(const char *me) : me(me) {}
 
     uint16_t publish(const char *topic, const char *payload) {
         // qos=0 --> fire & forget
@@ -36,13 +35,16 @@ class MqttClient : public Feature {
     }
 
     void setup() {
+        mqttClient.setServer(MQTT_HOST, MQTT_PORT);
         mqttClient.setCredentials(MQTT_USER, MQTT_PW);
-        mqttClient.setServer(host, port);
         mqttClient.onConnect([&] (bool x) {
             for (auto const& sub : subscriptions) {
                 LOGP("subscribing to %s\n", sub);
-                mqttClient.subscribe(sub, 0);
+                mqttClient.subscribe(sub, 1);
             }
+
+            // send HELLO, to allow remote re-configure us
+            mqttClient.publish("hello", 1, false, me);
         });
     }
 

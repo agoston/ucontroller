@@ -1,0 +1,68 @@
+esphome:
+  name: robi-fan
+  on_boot:
+    priority: 1000
+    then:
+      - delay: 1s
+      - fan.turn_on: robi_fan
+      - output.turn_on: robi_fan_pwm
+      - output.set_level:
+          id: robi_fan_pwm
+          level: "50%"
+
+esp8266:
+  board: d1_mini_lite
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  password: !secret api.password
+
+ota:
+  - platform: esphome
+    password: !secret ota.password
+
+wifi:
+  # a fritzbox AP mellett van. az ott a LAN-ra route-ol, szoval elerheto.
+  ssid: !secret wifi.ssid
+  password: !secret wifi.password
+  domain: ""
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Robi-Fan Fallback Hotspot"
+    password: !secret wifi.ap.password
+
+captive_portal:
+
+# code
+# sensor:
+#   - platform: pulse_counter
+#     pin:
+#       number: D2
+#     name: Fan Speed
+#     id: fan_pulse
+#     unit_of_measurement: 'RPM'
+#     filters:
+#       - multiply: 0.5
+#     count_mode:
+#       rising_edge: INCREMENT
+#       falling_edge: DISABLE
+#     update_interval: 5s
+
+output:
+  - platform: esp8266_pwm
+    id: robi_fan_pwm
+    pin: D1
+    frequency: "10000 Hz"
+
+    # min_power: 0%
+    # max_power: 100%
+
+fan:
+  - platform: speed
+    output: robi_fan_pwm
+    name: "Robi fan"
+    id: robi_fan
