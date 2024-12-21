@@ -8,7 +8,7 @@ esphome:
       - output.turn_on: robi_fan_pwm
       - output.set_level:
           id: robi_fan_pwm
-          level: "50%"
+          level: "100%"
 
 esp8266:
   board: d1_mini_lite
@@ -37,20 +37,23 @@ wifi:
 
 captive_portal:
 
-# code
-# sensor:
-#   - platform: pulse_counter
-#     pin:
-#       number: D2
-#     name: Fan Speed
-#     id: fan_pulse
-#     unit_of_measurement: 'RPM'
-#     filters:
-#       - multiply: 0.5
-#     count_mode:
-#       rising_edge: INCREMENT
-#       falling_edge: DISABLE
-#     update_interval: 5s
+sensor:
+  - platform: pulse_counter
+    pin:
+      number: D2
+      inverted: true
+      mode:
+        input: true
+        pullup: true
+    name: "Robi Fan RPM"
+    id: robi_fan_rpm
+    unit_of_measurement: 'RPM'
+    filters:
+      - multiply: 0.5
+    count_mode:
+      rising_edge: INCREMENT
+      falling_edge: DISABLE
+    update_interval: 15s
 
 output:
   - platform: esp8266_pwm
