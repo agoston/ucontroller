@@ -1,0 +1,72 @@
+# lots of dirty pins on esp32-c3!
+# GPIO0+1 are used for rx/tx; pulse_counter counted phantom signals and PWM had noise
+# GPIO2+3;20+21 seem to be clean.
+
+esphome:
+  name: peti-fan
+  # on_boot:
+  #   priority: 1000
+  #   then:
+  #     - delay: 1s
+  #     - fan.turn_on: peti_fan
+  #     - output.turn_on: peti_fan_pwm
+  #     - output.set_level:
+  #         id: peti_fan_pwm
+  #         level: 0%
+
+preferences:
+  flash_write_interval: 120min
+
+esp32:
+  board: esp32-c3-devkitm-1
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  password: !secret api.password
+
+ota:
+  - platform: esphome
+    password: !secret ota.password
+
+wifi:
+  # a fritzbox AP mellett van. az ott a LAN-ra route-ol, szoval elerheto.
+  ssid: !secret wifi.ssid
+  password: !secret wifi.password
+  domain: ""
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Peti-Fan Fallback Hotspot"
+    password: !secret wifi.ap.password
+
+captive_portal:
+
+sensor:
+  - platform: pulse_counter
+    pin:
+      number: GPIO2
+      # inverted: true
+    name: "Peti Fan RPM"
+    id: peti_fan_rpm
+    unit_of_measurement: 'RPM'
+    filters:
+      - multiply: 0.5
+    update_interval: 5s
+
+output:
+  - platform: ledc
+    id: peti_fan_pwm
+    pin: 
+      number: GPIO21
+    frequency: "40000 Hz"
+    min_power: 0%
+    max_power: 60%
+
+fan:
+  - platform: speed
+    output: peti_fan_pwm
+    name: "Peti fan"
+    id: peti_fan
