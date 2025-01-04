@@ -66,7 +66,7 @@ sensor:
     update_interval: 15s
 
   - platform: internal_temperature
-    name: "Internal Temperature"
+    name: "Robi Fan ESP Temperature"
 
 output:
   - platform: ledc
