@@ -1,24 +1,34 @@
+# lots of dirty pins on esp32-c3!
+# GPIO0+1 are used for rx/tx; pulse_counter counted phantom signals and PWM had noise
+# GPIO2+3;20+21 seem to be clean.
+
 esphome:
   name: robi-fan
-  on_boot:
-    priority: 1000
-    then:
-      - delay: 1s
-      - fan.turn_on: robi_fan
-      - output.turn_on: robi_fan_pwm
-      - output.set_level:
-          id: robi_fan_pwm
-          level: "100%"
+  ### no need -- default value is 0
+  # on_boot:
+  #   priority: 1000
+  #   then:
+  #     - delay: 1s
+  #     - fan.turn_on: robi_fan
+  #     - output.turn_on: robi_fan_pwm
+  #     - output.set_level:
+  #         id: robi_fan_pwm
+  #         level: 0%
 
-esp8266:
-  board: d1_mini_lite
+preferences:
+  flash_write_interval: 120min
+
+esp32:
+  board: esp32-c3-devkitm-1
 
 # Enable logging
 logger:
 
 # Enable Home Assistant API
 api:
-  password: !secret api.password
+  #password: !secret api.password
+  encryption:
+    key: !secret api.key
 
 ota:
   - platform: esphome
@@ -29,6 +39,11 @@ wifi:
   ssid: !secret wifi.ssid
   password: !secret wifi.password
   domain: ""
+  # use_address: 
+  # manual_ip:
+  #   static_ip: 
+  #   gateway: 
+  #   subnet: 255.255.255.0
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
@@ -37,32 +52,30 @@ wifi:
 
 captive_portal:
 
+
 sensor:
   - platform: pulse_counter
     pin:
-      number: D2
-      inverted: true
-      mode:
-        input: true
-        pullup: true
+      number: GPIO2
+      # inverted: true
     name: "Robi Fan RPM"
     id: robi_fan_rpm
     unit_of_measurement: 'RPM'
     filters:
       - multiply: 0.5
-    count_mode:
-      rising_edge: INCREMENT
-      falling_edge: DISABLE
     update_interval: 15s
 
-output:
-  - platform: esp8266_pwm
-    id: robi_fan_pwm
-    pin: D1
-    frequency: "10000 Hz"
+  - platform: internal_temperature
+    name: "Internal Temperature"
 
-    # min_power: 0%
-    # max_power: 100%
+output:
+  - platform: ledc
+    id: robi_fan_pwm
+    pin:
+      number: GPIO21
+    frequency: "40000 Hz"
+    min_power: 0%
+    max_power: 60%
 
 fan:
   - platform: speed
