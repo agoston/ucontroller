@@ -18,8 +18,13 @@ esphome:
 preferences:
   flash_write_interval: 120min
 
+# mdns:
+#   disabled: true
+
 esp32:
   board: esp32-c3-devkitm-1
+  framework:
+    type: esp-idf
 
 # Enable logging
 logger:
@@ -35,15 +40,18 @@ ota:
     password: !secret ota.password
 
 wifi:
+  power_save_mode: none
   # a fritzbox AP mellett van. az ott a LAN-ra route-ol, szoval elerheto.
-  ssid: !secret wifi.ssid
-  password: !secret wifi.password
+  ssid: !secret wifi.guest.ssid
+  password: !secret wifi.guest.password
   domain: ""
-  # use_address: 
+  #use_address:
+  
+  # static_ip seems to get disabled after first reboot
   # manual_ip:
-  #   static_ip: 
-  #   gateway: 
-  #   subnet: 255.255.255.0
+  #   static_ip: !secret ip.robi-fan
+  #   gateway: !secret ip.gateway
+  #   subnet: !secret ip.subnet
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
@@ -67,6 +75,12 @@ sensor:
 
   - platform: internal_temperature
     name: "Robi Fan ESP Temperature"
+
+  - platform: wifi_signal
+    name: Signal strength
+
+  - platform: uptime
+    name: Uptime
 
 output:
   - platform: ledc
