@@ -1,14 +1,5 @@
 esphome:
   name: robi-fan
-  on_boot:
-    priority: 1000
-    then:
-      - delay: 1s
-      - fan.turn_on: robi_fan
-      - output.turn_on: robi_fan_pwm
-      - output.set_level:
-          id: robi_fan_pwm
-          level: "100%"
 
 esp8266:
   board: d1_mini_lite
@@ -25,7 +16,6 @@ ota:
     password: !secret ota.password
 
 wifi:
-  # a fritzbox AP mellett van. az ott a LAN-ra route-ol, szoval elerheto.
   ssid: !secret wifi.ssid
   password: !secret wifi.password
   domain: ""

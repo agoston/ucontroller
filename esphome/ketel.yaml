@@ -1,0 +1,55 @@
+esphome:
+  name: ketel
+  # on_boot:
+  #   priority: 1000
+  #   then:
+  #     - delay: 1s
+  #     - fan.turn_on: robi_fan
+  #     - output.turn_on: robi_fan_pwm
+  #     - output.set_level:
+  #         id: robi_fan_pwm
+  #         level: "100%"
+
+esp8266:
+  board: d1_mini_lite
+
+# RX/TX: also usable, GPIO3/GPIO1; used in Serial.print()/read() & flashing
+# D0 is clean
+# D1: I2C SCL pin
+# D2: I2C SDA pin
+# D3+D4 is 12Kohm pullup
+# D5+D6+D7 is clean (=serial, but normally unused)
+# D8 is pulldown
+# A0 is clean (analog, but also works digital)
+
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  password: !secret api.password
+
+ota:
+  - platform: esphome
+    password: !secret ota.password
+
+wifi:
+  ssid: !secret wifi.home.ssid
+  password: !secret wifi.home.password
+  domain: ""
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Ketel Fallback Hotspot"
+    password: !secret wifi.ap.password
+
+captive_portal:
+
+switch:
+  - platform: gpio
+    pin: 
+      number: D8
+      # inverted: true
+    id: ketel_relay
+    name: "Ketel relay"

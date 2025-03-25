@@ -16,7 +16,7 @@ esphome:
   #         level: 0%
 
 preferences:
-  flash_write_interval: 120min
+  flash_write_interval: 5min
 
 # mdns:
 #   disabled: true
@@ -28,6 +28,7 @@ esp32:
 
 # Enable logging
 logger:
+  baud_rate: 0 # disable UART
 
 # Enable Home Assistant API
 api:
@@ -96,3 +97,4 @@ fan:
     output: robi_fan_pwm
     name: "Robi fan"
     id: robi_fan
+    restore_mode: RESTORE_DEFAULT_OFF
