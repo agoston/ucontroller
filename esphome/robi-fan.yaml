@@ -43,8 +43,8 @@ ota:
 wifi:
   power_save_mode: none
   # a fritzbox AP mellett van. az ott a LAN-ra route-ol, szoval elerheto.
-  ssid: !secret wifi.guest.ssid
-  password: !secret wifi.guest.password
+  ssid: !secret wifi.home.ssid
+  password: !secret wifi.home.password
   domain: ""
   #use_address:
   
@@ -65,14 +65,14 @@ captive_portal:
 sensor:
   - platform: pulse_counter
     pin:
-      number: GPIO2
+      number: GPIO5
       # inverted: true
     name: "Robi Fan RPM"
     id: robi_fan_rpm
     unit_of_measurement: 'RPM'
     filters:
       - multiply: 0.5
-    update_interval: 15s
+    update_interval: 10s
 
   - platform: internal_temperature
     name: "Robi Fan ESP Temperature"
@@ -87,7 +87,7 @@ output:
   - platform: ledc
     id: robi_fan_pwm
     pin:
-      number: GPIO21
+      number: GPIO7
     frequency: "40000 Hz"
     min_power: 0%
     max_power: 60%

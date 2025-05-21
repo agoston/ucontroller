@@ -1,4 +1,5 @@
 .vscode
 *~
 .pio
+esp-idf
 nightclock.code-workspace
