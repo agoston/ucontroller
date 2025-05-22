@@ -75,7 +75,7 @@ sensor:
     update_interval: 10s
 
   - platform: internal_temperature
-    name: "Robi Fan ESP Temperature"
+    name: "ESP Temperature"
 
   - platform: wifi_signal
     name: Signal strength

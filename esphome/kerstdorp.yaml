@@ -1,0 +1,132 @@
+esphome:
+  name: kerstdorp
+
+preferences:
+  flash_write_interval: 15min
+
+mdns:
+  disabled: true
+
+# lolin s3 mini has 2 MB of PSRAM
+esp32:
+  board: lolin_s2_mini
+  framework:
+    type: esp-idf
+
+# Enable logging
+logger:
+  baud_rate: 0 # disable UART
+
+# Enable Home Assistant API
+api:
+  reboot_timeout: 0s
+  #password: !secret api.password
+  encryption:
+    key: !secret api.key
+
+ota:
+  - platform: esphome
+    password: !secret ota.password
+
+wifi:
+  power_save_mode: none
+  # a fritzbox AP mellett van. az ott a LAN-ra route-ol, szoval elerheto.
+  ssid: !secret wifi.home.ssid
+  password: !secret wifi.home.password
+  domain: ""
+  #use_address:
+  
+  # static_ip seems to get disabled after first reboot
+  # manual_ip:
+  #   static_ip: !secret ip.robi-fan
+  #   gateway: !secret ip.gateway
+  #   subnet: !secret ip.subnet
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  # ap:
+  #   ssid: "Robi-Fan Fallback Hotspot"
+  #   password: !secret wifi.ap.password
+
+# captive_portal:
+
+sensor:
+  - platform: internal_temperature
+    name: "ESP Temperature"
+
+  - platform: wifi_signal
+    name: Signal strength
+
+  - platform: uptime
+    name: Uptime
+
+#######################################################################################################
+# AUDIO - MAX98357 - https://learn.adafruit.com/adafruit-max98357-i2s-class-d-mono-amp/pinouts
+i2s_audio:
+  i2s_lrclk_pin: GPIOXX # -> LRC
+  i2s_bclk_pin: GPIOXX  # -> BCLK
+
+# GAIN is, well, the gain setting. You can have a gain of 3dB, 6dB, 9dB, 12dB or 15dB.
+#     15dB if a 100K resistor is connected between GAIN and GND
+#     12dB if GAIN is connected directly to GND
+#     9dB if GAIN is not connected to anything (this is the default)
+#     6dB if GAIN is connected directly to Vin
+#     3dB if a 100K resistor is connected between GAIN and Vin
+# This way, the default gain is 9dB but you can easily change it by tweaking the connection to the GAIN pin.
+# Note you may need to perform a power reset to adjust the gain.
+media_player:
+  - platform: i2s_audio
+    name: Kerstdorp media player
+    dac_type: external
+    mode: mono
+    i2s_dout_pin: GPIOXX  # -> DIN
+### SD / MODE
+# This pin is used for shutdown mode but is also used for setting which channel is output. It's a little confusing but essentially:
+#     If SD is connected to ground directly (voltage is under 0.16V) then the amp is shut down
+#     If the voltage on SD is between 0.16V and 0.77V then the output is (Left + Right)/2, that is the stereo average. 
+#     If the voltage on SD is between 0.77V and 1.4V then the output is just the Right channel
+#     If the voltage on SD is higher than 1.4V then the output is the Left channel.
+# This is compounded by an internal 100K pulldown resistor on SD so you need to use a pullup resistor on SD to balance out the 100K internal pulldown.
+# For the breakout board, there's a 1Mohm resistor from SD to Vin which, when powering from 5V will give you the 'stereo average' output.
+# If you want left or right channel only, or if you are powering from non-5V power, you may need to experiment with different resistors to get the desired voltage on SD.
+    mute_pin:
+      number: GPIOXX    # -> SD
+      inverted: true  # when mute active, ground pin; when unmute, high impedance for stereo
+      mode:
+        output: true
+        open_drain: true
+
+#######################################################################################################
+# LED DRIVERS - 2x LDO6AJSA
+# yellow/red: 2v DC
+# blue/green/pink: 3.2v DC
+# black/white: GND
+#
+# Pins:
+# V1 -> 5V
+# CE: PWM pin (<2kHz) (shared between led drivers!)
+# G: ground (also led's ground)
+# L: LED forward
+
+output:
+  - platform: ledc
+    id: kerstdorp_pwm
+    pin: GPIOXX   # -> CE (x2)
+    frequency: "2000 Hz"
+
+
+#######################################################################################################
+# MOTOR - TB6612FNG - https://www.otronic.nl/nl/motor-driver-module-tb6612fng-voor-arduino.html
+# Kenmerken:
+# 1. Stand-bycontrole om stroom te besparen.
+# 2. CW / CCW / korte rem / stop motorbesturingsmodi.
+# 3. Ingebouwde thermische uitschakeling circuit en laagspanning detectie circuit.
+# Omschrijving:
+# De TB6612FNG-motordriver kan maximaal twee DC-motoren aansturen met een constante stroom van 1,2 A (3,2 A piek).
+# Twee ingangssignalen (IN1 en IN2) kunnen worden gebruikt om de motor te besturen in een van de vier functiemodi:
+# rechtsom, linksom, korte rem en stop.
+# De twee motoruitgangen (A en B) kunnen afzonderlijk worden aangestuurd,
+# de snelheid van elke motor wordt geregeld via een PWM-ingangssignaal met een frequentie tot 100 kHz.
+# De STBY-pin moet hoog worden uitgetrokken om de motor uit de stand-bymodus te halen.
+# Logische voedingsspanning (VCC) kan in het bereik van 2,7-5,5 VDC liggen,
+# terwijl de motorvoeding (VM) beperkt is tot een maximale spanning van 15 VDC. 
+# De uitgangsstroom is nominaal tot 1,2 A per kanaal (of tot 3,2 A voor een korte, enkele puls).
