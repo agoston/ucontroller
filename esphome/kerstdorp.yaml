@@ -62,8 +62,8 @@ sensor:
 #######################################################################################################
 # AUDIO - MAX98357 - https://learn.adafruit.com/adafruit-max98357-i2s-class-d-mono-amp/pinouts
 i2s_audio:
-  i2s_lrclk_pin: GPIOXX # -> LRC
-  i2s_bclk_pin: GPIOXX  # -> BCLK
+  i2s_lrclk_pin: GPIO05 # -> LRC
+  i2s_bclk_pin: GPIO06  # -> BCLK
 
 # GAIN is, well, the gain setting. You can have a gain of 3dB, 6dB, 9dB, 12dB or 15dB.
 #     15dB if a 100K resistor is connected between GAIN and GND
@@ -73,12 +73,12 @@ i2s_audio:
 #     3dB if a 100K resistor is connected between GAIN and Vin
 # This way, the default gain is 9dB but you can easily change it by tweaking the connection to the GAIN pin.
 # Note you may need to perform a power reset to adjust the gain.
-media_player:
+speaker:
   - platform: i2s_audio
-    name: Kerstdorp media player
+    id: mp_kerstdorp
     dac_type: external
-    mode: mono
-    i2s_dout_pin: GPIOXX  # -> DIN
+    channel: mono
+    i2s_dout_pin: GPIO07  # -> DIN
 ### SD / MODE
 # This pin is used for shutdown mode but is also used for setting which channel is output. It's a little confusing but essentially:
 #     If SD is connected to ground directly (voltage is under 0.16V) then the amp is shut down
@@ -88,12 +88,14 @@ media_player:
 # This is compounded by an internal 100K pulldown resistor on SD so you need to use a pullup resistor on SD to balance out the 100K internal pulldown.
 # For the breakout board, there's a 1Mohm resistor from SD to Vin which, when powering from 5V will give you the 'stereo average' output.
 # If you want left or right channel only, or if you are powering from non-5V power, you may need to experiment with different resistors to get the desired voltage on SD.
-    mute_pin:
-      number: GPIOXX    # -> SD
-      inverted: true  # when mute active, ground pin; when unmute, high impedance for stereo
-      mode:
-        output: true
-        open_drain: true
+
+# TODO: mute, with external switch/config
+    # mute_pin:
+    #   number: GPIO08    # -> SD
+    #   inverted: true  # when mute active, ground pin; when unmute, high impedance for stereo
+    #   mode:
+    #     output: true
+    #     open_drain: true
 
 #######################################################################################################
 # LED DRIVERS - 2x LDO6AJSA
@@ -109,8 +111,8 @@ media_player:
 
 output:
   - platform: ledc
-    id: kerstdorp_pwm
-    pin: GPIOXX   # -> CE (x2)
+    id: led_pwm
+    pin: GPIO09   # -> CE (x2)
     frequency: "2000 Hz"
 
 
@@ -130,3 +132,47 @@ output:
 # Logische voedingsspanning (VCC) kan in het bereik van 2,7-5,5 VDC liggen,
 # terwijl de motorvoeding (VM) beperkt is tot een maximale spanning van 15 VDC. 
 # De uitgangsstroom is nominaal tot 1,2 A per kanaal (of tot 3,2 A voor een korte, enkele puls).
+
+# A01 - A02 output pins -> 2 pins of DC motor!
+  - platform: gpio
+    pin: GPIO10
+    id: motor_ain1
+  - platform: gpio
+    pin: GPIO11
+    id: motor_ain2
+  - platform: ledc
+    pin: GPIO12
+    id: motor_apwm
+    frequency: "10000 Hz" # max: 100kHz
+  - platform: gpio
+    pin: GPIO13
+    id: motor_standby
+
+number:
+  - platform: template
+    name: "Motor Power Level"
+    id: motor_power
+    min_value: -100
+    max_value: 100
+    step: 1
+    optimistic: true
+    on_value:
+      then:
+        - lambda: |-
+            ESP_LOGI("motor", "Power set to %.1f%%", x);
+            if (x == 0) {       // stop/standby
+              id(motor_ain1).turn_off();
+              id(motor_ain2).turn_off();
+              id(motor_apwm).set_level(0);
+              id(motor_standby).turn_off();
+            } else if (x > 0) { // clockwise
+              id(motor_ain1).turn_on();
+              id(motor_ain2).turn_off();
+              id(motor_apwm).set_level(abs(x));
+              id(motor_standby).turn_on();
+            } else {            // counter clockwise
+              id(motor_ain1).turn_off();
+              id(motor_ain2).turn_on();
+              id(motor_apwm).set_level(abs(x));
+              id(motor_standby).turn_on();
+            }
