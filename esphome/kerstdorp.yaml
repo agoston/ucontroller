@@ -1,5 +1,14 @@
+# S2 mini 'dirty' pins:
+# - GPIO0: SW2
+# - GPIO18: pullup
+# - GPIO15: LED
+# - GPIO33/35: SCL/SDA (default only; can be remapped w/o drawbacks)
+# - GPIO7/9/11: SCK/MISO/MOSI (default only; can be remapped w/o drawbacks)
+
 esphome:
   name: kerstdorp
+  restore_from_flash: true
+  early_pin_init: false
 
 preferences:
   flash_write_interval: 15min
@@ -7,7 +16,7 @@ preferences:
 mdns:
   disabled: true
 
-# lolin s3 mini has 2 MB of PSRAM
+# has 2 MB of PSRAM
 esp32:
   board: lolin_s2_mini
   framework:
@@ -62,8 +71,8 @@ sensor:
 #######################################################################################################
 # AUDIO - MAX98357 - https://learn.adafruit.com/adafruit-max98357-i2s-class-d-mono-amp/pinouts
 i2s_audio:
-  i2s_lrclk_pin: GPIO05 # -> LRC
-  i2s_bclk_pin: GPIO06  # -> BCLK
+  i2s_lrclk_pin: GPIO03 # -> LRC
+  i2s_bclk_pin: GPIO05  # -> BCLK
 
 # GAIN is, well, the gain setting. You can have a gain of 3dB, 6dB, 9dB, 12dB or 15dB.
 #     15dB if a 100K resistor is connected between GAIN and GND
@@ -135,17 +144,17 @@ output:
 
 # A01 - A02 output pins -> 2 pins of DC motor!
   - platform: gpio
-    pin: GPIO10
+    pin: GPIO39
     id: motor_ain1
   - platform: gpio
-    pin: GPIO11
+    pin: GPIO37
     id: motor_ain2
   - platform: ledc
-    pin: GPIO12
+    pin: GPIO35
     id: motor_apwm
     frequency: "10000 Hz" # max: 100kHz
   - platform: gpio
-    pin: GPIO13
+    pin: GPIO33
     id: motor_standby
 
 number:

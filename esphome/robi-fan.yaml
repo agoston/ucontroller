@@ -4,6 +4,9 @@
 
 esphome:
   name: robi-fan
+  restore_from_flash: true
+  early_pin_init: false
+
   ### no need -- default value is 0
   # on_boot:
   #   priority: 1000

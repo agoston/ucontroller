@@ -10,8 +10,11 @@ esphome:
   #         id: robi_fan_pwm
   #         level: "100%"
 
+# https://esphome.io/components/esp8266
 esp8266:
   board: d1_mini_lite
+  restore_from_flash: true
+  early_pin_init: false
 
 # RX/TX: also usable, GPIO3/GPIO1; used in Serial.print()/read() & flashing
 # D0 is clean
@@ -22,6 +25,9 @@ esp8266:
 # D8 is pulldown
 # A0 is clean (analog, but also works digital)
 
+
+preferences:
+  flash_write_interval: 5min
 
 # Enable logging
 logger:
