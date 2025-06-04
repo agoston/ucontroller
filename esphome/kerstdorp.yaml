@@ -1,3 +1,7 @@
+#######
+### to flash: hold button0. click rst. release button 0. run flash.
+#######
+
 # S2 mini 'dirty' pins:
 # - GPIO0: SW2
 # - GPIO18: pullup
@@ -7,8 +11,6 @@
 
 esphome:
   name: kerstdorp
-  restore_from_flash: true
-  early_pin_init: false
 
 preferences:
   flash_write_interval: 15min
@@ -39,7 +41,6 @@ ota:
 
 wifi:
   power_save_mode: none
-  # a fritzbox AP mellett van. az ott a LAN-ra route-ol, szoval elerheto.
   ssid: !secret wifi.home.ssid
   password: !secret wifi.home.password
   domain: ""
@@ -84,10 +85,18 @@ i2s_audio:
 # Note you may need to perform a power reset to adjust the gain.
 speaker:
   - platform: i2s_audio
-    id: mp_kerstdorp
+    id: speaker_kerstdorp
     dac_type: external
     channel: mono
     i2s_dout_pin: GPIO07  # -> DIN
+
+media_player:
+  - platform: speaker
+    id: media_player_kerstdorp
+    announcement_pipeline:
+      speaker: speaker_kerstdorp
+      format: NONE  # disables transcoding in Home Assistant
+
 ### SD / MODE
 # This pin is used for shutdown mode but is also used for setting which channel is output. It's a little confusing but essentially:
 #     If SD is connected to ground directly (voltage is under 0.16V) then the amp is shut down
@@ -118,11 +127,17 @@ speaker:
 # G: ground (also led's ground)
 # L: LED forward
 
+light:
+  - platform: monochromatic
+    name: "led"
+    output: led_pwm
+    # gamma_correct: 1.0
+
 output:
   - platform: ledc
     id: led_pwm
     pin: GPIO09   # -> CE (x2)
-    frequency: "2000 Hz"
+    frequency: "20000 Hz"
 
 
 #######################################################################################################
