@@ -40,7 +40,7 @@ ota:
     password: !secret ota.password
 
 wifi:
-  power_save_mode: none
+  # power_save_mode: none
   ssid: !secret wifi.home.ssid
   password: !secret wifi.home.password
   domain: ""
@@ -93,6 +93,7 @@ speaker:
 media_player:
   - platform: speaker
     id: media_player_kerstdorp
+    name: "Media Player Kerstdorp"
     announcement_pipeline:
       speaker: speaker_kerstdorp
       format: NONE  # disables transcoding in Home Assistant
@@ -129,8 +130,9 @@ media_player:
 
 light:
   - platform: monochromatic
-    name: "led"
+    name: "Lights"
     output: led_pwm
+    restore_mode: RESTORE_DEFAULT_ON
     # gamma_correct: 1.0
 
 output:
@@ -159,17 +161,17 @@ output:
 
 # A01 - A02 output pins -> 2 pins of DC motor!
   - platform: gpio
-    pin: GPIO39
+    pin: GPIO01
     id: motor_ain1
   - platform: gpio
-    pin: GPIO37
+    pin: GPIO02
     id: motor_ain2
   - platform: ledc
-    pin: GPIO35
+    pin: GPIO04
     id: motor_apwm
     frequency: "10000 Hz" # max: 100kHz
   - platform: gpio
-    pin: GPIO33
+    pin: GPIO06
     id: motor_standby
 
 number:
@@ -180,6 +182,8 @@ number:
     max_value: 100
     step: 1
     optimistic: true
+    restore_value: true
+    initial_value: 0
     on_value:
       then:
         - lambda: |-
@@ -192,11 +196,11 @@ number:
             } else if (x > 0) { // clockwise
               id(motor_ain1).turn_on();
               id(motor_ain2).turn_off();
-              id(motor_apwm).set_level(abs(x));
+              id(motor_apwm).set_level(abs(x)/100.0);
               id(motor_standby).turn_on();
             } else {            // counter clockwise
               id(motor_ain1).turn_off();
               id(motor_ain2).turn_on();
-              id(motor_apwm).set_level(abs(x));
+              id(motor_apwm).set_level(abs(x)/100.0);
               id(motor_standby).turn_on();
             }

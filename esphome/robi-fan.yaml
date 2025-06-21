@@ -44,7 +44,7 @@ ota:
     password: !secret ota.password
 
 wifi:
-  power_save_mode: none
+  # power_save_mode: none
   # a fritzbox AP mellett van. az ott a LAN-ra route-ol, szoval elerheto.
   ssid: !secret wifi.home.ssid
   password: !secret wifi.home.password
