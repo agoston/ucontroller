@@ -103,14 +103,15 @@ speaker:
   - platform: i2s_audio
     id: speaker_kerstdorp
     dac_type: external
-    channel: mono
+    # channel: mono
     i2s_dout_pin: GPIO07  # -> DIN
-    num_channels: 1
+    # num_channels: 1
 
 media_player:
   - platform: speaker
     id: media_player_kerstdorp
     name: "Media Player Kerstdorp"
+    
     announcement_pipeline:
       speaker: speaker_kerstdorp
       format: NONE  # disables transcoding in Home Assistant
