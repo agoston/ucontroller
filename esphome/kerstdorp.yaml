@@ -104,8 +104,8 @@ speaker:
   - platform: i2s_audio
     id: speaker_kerstdorp
     dac_type: external
-    channel: mono
-    sample_rate: 44100
+    #channel: mono
+    #sample_rate: 44100
     i2s_dout_pin: GPIO07  # -> DIN
 
 media_player:
@@ -127,13 +127,16 @@ media_player:
 # For the breakout board, there's a 1Mohm resistor from SD to Vin which, when powering from 5V will give you the 'stereo average' output.
 # If you want left or right channel only, or if you are powering from non-5V power, you may need to experiment with different resistors to get the desired voltage on SD.
 
-# TODO: mute, with external switch/config
+# not available in esp-idf ; need output:gpio, or just skip it
     # mute_pin:
     #   number: GPIO08    # -> SD
-    #   inverted: true  # when mute active, ground pin; when unmute, high impedance for stereo
+    #   inverted: true    # when mute active, ground pin; when unmute, high impedance for stereo
     #   mode:
     #     output: true
-    #     open_drain: true
+    #     # A normal pin is called push pull, it can push the value to Vcc and pull it to ground.
+    #     # In open drain configurations the esp can only pull it to 0 (set to GND), 
+    #     # if a 1 is written the pin will be driven by the rest of the circuit.
+    #     open_drain: true  # mute inactive -> pin=high -> high impedance. mute active -> pin=low -> GND -> DAC shutdown ^^^
 
 #######################################################################################################
 # LED DRIVERS - 2x LDO6AJSA
@@ -147,18 +150,18 @@ media_player:
 # G: ground (also led's ground)
 # L: LED forward
 
-# light:
-#   - platform: monochromatic
-#     name: "Lights"
-#     output: led_pwm
-#     restore_mode: RESTORE_DEFAULT_ON
-#     # gamma_correct: 1.0
+light:
+  - platform: monochromatic
+    name: "Lights"
+    output: led_pwm
+    restore_mode: RESTORE_DEFAULT_ON
+    # gamma_correct: 1.0
 
-# output:
-#   - platform: ledc
-#     id: led_pwm
-#     pin: GPIO09   # -> CE (x2)
-#     frequency: "20000 Hz"
+output:
+  - platform: ledc
+    id: led_pwm
+    pin: GPIO09   # -> CE
+    frequency: "40000 Hz"
 
 
 #######################################################################################################
@@ -179,50 +182,50 @@ media_player:
 # De uitgangsstroom is nominaal tot 1,2 A per kanaal (of tot 3,2 A voor een korte, enkele puls).
 
 # A01 - A02 output pins -> 2 pins of DC motor!
-#   - platform: gpio
-#     pin: GPIO01
-#     id: motor_ain1
-#   - platform: gpio
-#     pin: GPIO02
-#     id: motor_ain2
-#   - platform: ledc
-#     pin: GPIO04
-#     id: motor_apwm
-#     frequency: "10000 Hz" # max: 100kHz
-#   - platform: gpio
-#     pin: GPIO06
-#     id: motor_standby
+  - platform: gpio
+    pin: GPIO01   # -> AIN1
+    id: motor_ain1
+  - platform: gpio
+    pin: GPIO02   # -> AIN2
+    id: motor_ain2
+  - platform: ledc
+    pin: GPIO04   # -> PWMA
+    id: motor_apwm
+    frequency: "10000 Hz" # max: 100kHz
+  - platform: gpio
+    pin: GPIO06   # -> STBY
+    id: motor_standby
 
-# number:
-#   - platform: template
-#     name: "Motor Power Level"
-#     id: motor_power
-#     min_value: -100
-#     max_value: 100
-#     step: 1
-#     optimistic: true
-#     restore_value: true
-#     initial_value: 0
-#     on_value:
-#       then:
-#         - lambda: |-
-#             ESP_LOGI("motor", "Power set to %.1f%%", x);
-#             if (x == 0) {       // stop/standby
-#               id(motor_ain1).turn_off();
-#               id(motor_ain2).turn_off();
-#               id(motor_apwm).set_level(0);
-#               id(motor_standby).turn_off();
-#             } else if (x > 0) { // clockwise
-#               id(motor_ain1).turn_on();
-#               id(motor_ain2).turn_off();
-#               id(motor_apwm).set_level(abs(x)/100.0);
-#               id(motor_standby).turn_on();
-#             } else {            // counter clockwise
-#               id(motor_ain1).turn_off();
-#               id(motor_ain2).turn_on();
-#               id(motor_apwm).set_level(abs(x)/100.0);
-#               id(motor_standby).turn_on();
-#             }
+number:
+  - platform: template
+    name: "Motor Power Level"
+    id: motor_power
+    min_value: -100
+    max_value: 100
+    step: 1
+    optimistic: true
+    restore_value: true
+    initial_value: 0
+    on_value:
+      then:
+        - lambda: |-
+            ESP_LOGI("motor", "Power set to %.1f%%", x);
+            if (x == 0) {       // stop/standby
+              id(motor_ain1).turn_off();
+              id(motor_ain2).turn_off();
+              id(motor_apwm).set_level(0);
+              id(motor_standby).turn_off();
+            } else if (x > 0) { // clockwise
+              id(motor_ain1).turn_on();
+              id(motor_ain2).turn_off();
+              id(motor_apwm).set_level(abs(x)/100.0);
+              id(motor_standby).turn_on();
+            } else {            // counter clockwise
+              id(motor_ain1).turn_off();
+              id(motor_ain2).turn_on();
+              id(motor_apwm).set_level(abs(x)/100.0);
+              id(motor_standby).turn_on();
+            }
 
 switch:
   - platform: restart

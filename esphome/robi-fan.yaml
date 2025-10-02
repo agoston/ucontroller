@@ -18,16 +18,16 @@ esphome:
   #         id: robi_fan_pwm
   #         level: 0%
 
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: esp-idf
+
 preferences:
   flash_write_interval: 5min
 
 # mdns:
 #   disabled: true
-
-esp32:
-  board: esp32-c3-devkitm-1
-  framework:
-    type: esp-idf
 
 # Enable logging
 logger:

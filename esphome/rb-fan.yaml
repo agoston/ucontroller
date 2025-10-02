@@ -1,10 +1,10 @@
 esphome:
-  name: peti-fan
-  restore_from_flash: true
-  early_pin_init: false
+  name: rb-fan
 
 esp8266:
-  board: d1_mini_lite
+  board: d1_mini
+  restore_from_flash: true
+  early_pin_init: false
 
 preferences:
   flash_write_interval: 5min
@@ -24,13 +24,13 @@ ota:
     password: !secret ota.password
 
 wifi:
-  ssid: !secret wifi.ssid
-  password: !secret wifi.password
+  ssid: !secret wifi.home.ssid
+  password: !secret wifi.home.password
   domain: ""
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
-    ssid: "Robi-Fan Fallback Hotspot"
+    ssid: "RB-Fan Fallback Hotspot"
     password: !secret wifi.ap.password
 
 captive_portal:
@@ -43,15 +43,15 @@ sensor:
       mode:
         input: true
         pullup: true
-    name: "Robi Fan RPM"
-    id: robi_fan_rpm
+    name: "Fan RPM"
+    id: fan_rpm
     unit_of_measurement: 'RPM'
     filters:
       - multiply: 0.5
     count_mode:
       rising_edge: INCREMENT
       falling_edge: DISABLE
-    update_interval: 15s
+    update_interval: 5s
 
 output:
   - platform: esp8266_pwm
