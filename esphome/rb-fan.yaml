@@ -9,6 +9,10 @@ esp8266:
 preferences:
   flash_write_interval: 5min
 
+# saving on memory
+mdns:
+  disabled: true
+
 # Enable logging
 logger:
   baud_rate: 0 # disable UART
@@ -28,13 +32,6 @@ wifi:
   password: !secret wifi.home.password
   domain: ""
 
-  # Enable fallback hotspot (captive portal) in case wifi connection fails
-  ap:
-    ssid: "RB-Fan Fallback Hotspot"
-    password: !secret wifi.ap.password
-
-captive_portal:
-
 sensor:
   - platform: pulse_counter
     pin:
@@ -46,16 +43,11 @@ sensor:
     name: "Fan RPM"
     id: fan_rpm
     unit_of_measurement: 'RPM'
-    filters:
-      - multiply: 0.5
-    count_mode:
-      rising_edge: INCREMENT
-      falling_edge: DISABLE
-    update_interval: 5s
+    update_interval: 2s
 
 output:
   - platform: esp8266_pwm
-    id: robi_fan_pwm
+    id: fan_pwm
     pin: D1
     frequency: "10000 Hz"
 
@@ -64,6 +56,6 @@ output:
 
 fan:
   - platform: speed
-    output: robi_fan_pwm
-    name: "Robi fan"
+    output: fan_pwm
+    name: "Fan speed"
     id: robi_fan

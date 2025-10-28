@@ -14,7 +14,7 @@ esphome:
 # https://esphome.io/components/esp8266
 esp8266:
   board: d1_mini_lite
-  restore_from_flash: true
+  # restore_from_flash: true
   early_pin_init: false
 
 ############################
@@ -32,8 +32,8 @@ esp8266:
 # A0 is clean (analog, but also works digital)
 
 
-preferences:
-  flash_write_interval: 5min
+#preferences:
+#  flash_write_interval: 5min
 
 # Enable logging
 logger:
@@ -59,11 +59,6 @@ wifi:
   password: !secret wifi.home.password
   domain: ""
 
-  # Enable fallback hotspot (captive portal) in case wifi connection fails
-  ap:
-    ssid: "Ketel Fallback Hotspot"
-    password: !secret wifi.ap.password
-
 sensor:
   - platform: wifi_signal
     name: Signal strength
@@ -74,9 +69,9 @@ sensor:
 switch:
   - platform: gpio
     pin: 
-      number: D8
+      number: D7
       # inverted: true
     id: ketel_relay
     name: "Ketel relay"
-    restore_mode: RESTORE_DEFAULT_OFF
+    restore_mode: ALWAYS_ON
 
