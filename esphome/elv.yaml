@@ -1,0 +1,59 @@
+esphome:
+  name: elv
+
+esp8266:
+  board: d1_mini
+  restore_from_flash: true
+  early_pin_init: false
+
+preferences:
+  flash_write_interval: 5min
+
+# saving on memory
+mdns:
+  disabled: true
+
+# Enable logging
+logger:
+  # baud_rate: 0 # disable UART
+
+# Enable Home Assistant API
+api:
+  #password: !secret api.password
+  encryption:
+    key: !secret api.key
+
+ota:
+  - platform: esphome
+    password: !secret ota.password
+
+# using IOT network as this is a very old esp8266, doesn't support wpa3
+wifi:
+  ssid: !secret wifi.iot.ssid
+  password: !secret wifi.iot.password
+  domain: ""
+
+sensor:
+  - platform: wifi_signal
+    name: Signal strength
+
+  - platform: uptime
+    name: Uptime
+
+switch:
+  - platform: gpio
+    pin: 
+      number: D5
+      # inverted: true
+    id: relay1
+    name: "Switch"
+    restore_mode: RESTORE_DEFAULT_OFF
+
+binary_sensor:    
+  - platform: gpio
+    pin: D4
+    name: "Button"
+    id: button1
+    on_press:
+      then:
+        switch.toggle: relay1
