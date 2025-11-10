@@ -86,11 +86,13 @@ sensor:
   - platform: uptime
     name: Uptime
 
+####### works, but disabled in favor of external circuitry
 #######################################################################################################
 # AUDIO - MAX98357 - https://learn.adafruit.com/adafruit-max98357-i2s-class-d-mono-amp/pinouts
-i2s_audio:
-  i2s_lrclk_pin: GPIO03 # -> LRC
-  i2s_bclk_pin: GPIO05  # -> BCLK
+
+# i2s_audio:
+#   i2s_lrclk_pin: GPIO03 # -> LRC
+#   i2s_bclk_pin: GPIO05  # -> BCLK
 
 # GAIN is, well, the gain setting. You can have a gain of 3dB, 6dB, 9dB, 12dB or 15dB.
 #     15dB if a 100K resistor is connected between GAIN and GND
@@ -100,22 +102,23 @@ i2s_audio:
 #     3dB if a 100K resistor is connected between GAIN and Vin
 # This way, the default gain is 9dB but you can easily change it by tweaking the connection to the GAIN pin.
 # Note you may need to perform a power reset to adjust the gain.
-speaker:
-  - platform: i2s_audio
-    id: speaker_kerstdorp
-    dac_type: external
-    #channel: mono
-    #sample_rate: 44100
-    i2s_dout_pin: GPIO07  # -> DIN
 
-media_player:
-  - platform: speaker
-    id: media_player_kerstdorp
-    name: "Media Player Kerstdorp"
-    # task_stack_in_psram: true    
-    announcement_pipeline:
-      speaker: speaker_kerstdorp
-      format: NONE  # disables transcoding in Home Assistant
+# speaker:
+#   - platform: i2s_audio
+#     id: speaker_kerstdorp
+#     dac_type: external
+#     #channel: mono
+#     #sample_rate: 44100
+#     i2s_dout_pin: GPIO07  # -> DIN
+
+# media_player:
+#   - platform: speaker
+#     id: media_player_kerstdorp
+#     name: "Media Player Kerstdorp"
+#     # task_stack_in_psram: true    
+#     announcement_pipeline:
+#       speaker: speaker_kerstdorp
+#       format: NONE  # disables transcoding in Home Assistant
 
 ### SD / MODE
 # This pin is used for shutdown mode but is also used for setting which channel is output. It's a little confusing but essentially:
@@ -204,7 +207,7 @@ number:
     max_value: 100
     step: 1
     optimistic: true
-    restore_value: true
+    #restore_value: true
     initial_value: 0
     on_value:
       then:
