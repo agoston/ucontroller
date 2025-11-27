@@ -205,7 +205,7 @@ number:
     id: motor_power
     min_value: -100
     max_value: 100
-    step: 1
+    step: 10
     optimistic: true
     #restore_value: true
     initial_value: 0
@@ -213,7 +213,7 @@ number:
       then:
         - lambda: |-
             ESP_LOGI("motor", "Power set to %.1f%%", x);
-            if (x == 0) {       // stop/standby
+            if (abs(x) <= 20) {       // stop/standby
               id(motor_ain1).turn_off();
               id(motor_ain2).turn_off();
               id(motor_apwm).set_level(0);

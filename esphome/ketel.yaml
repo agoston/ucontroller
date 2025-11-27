@@ -72,6 +72,5 @@ switch:
       number: D7
       # inverted: true
     id: ketel_relay
-    name: "Ketel relay"
-    restore_mode: ALWAYS_ON
-
+    name: "Ketel block"
+    restore_mode: ALWAYS_OFF
