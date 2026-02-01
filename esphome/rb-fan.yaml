@@ -33,6 +33,12 @@ wifi:
   domain: ""
 
 sensor:
+  - platform: wifi_signal
+    name: Signal strength
+
+  - platform: uptime
+    name: Uptime
+
   - platform: pulse_counter
     pin:
       number: D2
@@ -59,3 +65,4 @@ fan:
     output: fan_pwm
     name: "Fan speed"
     id: robi_fan
+    restore_mode: RESTORE_DEFAULT_ON
