@@ -42,7 +42,7 @@ sensor:
   - platform: pulse_counter
     pin:
       number: D2
-      inverted: true
+      # inverted: true
       mode:
         input: true
         pullup: true

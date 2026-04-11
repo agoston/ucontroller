@@ -46,7 +46,7 @@ void setup() {
 
     WiFi.hostname("ESP-robi");
     WiFi.mode(WIFI_STA);
-    WiFi.begin(NTP_SSID, NTP_PW);
+    WiFi.begin(WIFI_SSID, WIFI_PW);
     WiFi.setAutoReconnect(true);
 
     LOG("Waiting for wireless\n")

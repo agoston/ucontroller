@@ -9,7 +9,6 @@
 // #include <features/voc.h>
 #include <features/infrared.h>
 #include <features/ledstring.h>
-#include <features/mqtt.h>
 
 #include <map>
 
@@ -53,9 +52,8 @@ Button button(D4);
 Display display(D5, D6);
 
 NtpClient ntpClient(TZ_AMSTERDAM);
-MqttClient mqttClient(MQTT_HOST, MQTT_PORT);
 
-Feature* features[]{&display, &ntpClient, &infrared, &ledstring, &mqttClient, &button};
+Feature* features[]{&display, &ntpClient, &infrared, &ledstring, &button};
 
 //----------------------------------------------------------------------------------------------------------------
 RgbColor color = RgbColor(128, 0, 0);
@@ -72,19 +70,6 @@ void setPower(int16_t delta) {
     if (newPower > 255) newPower = 255;
     power = (uint8_t)newPower;
     setColor(color);
-}
-
-void mqttHandler(char* topic, char* payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total) {
-    LOGP("MQTT: %s %s\n", topic, payload)
-    if (strcmp(topic, MQTT_COLOR_TOPIC)) return;
-
-    int mr, mg, mb, mpower;
-    sscanf(payload, "%d %d %d %d", &mr, &mg, &mb, &mpower);
-
-    LOGP("Color: %d %d %d %d\n", mr, mg, mb, mpower)
-
-    power = mpower;
-    setColor(RgbColor(mr, mg, mb));
 }
 
 std::map<Remote, RgbColor> remoteColors = {
@@ -134,11 +119,8 @@ void setup() {
 
     WiFi.hostname("ESP-peti");
     WiFi.mode(WIFI_STA);
-    WiFi.begin(NTP_SSID, NTP_PW);
+    WiFi.begin(WIFI_SSID, WIFI_PW);
     WiFi.setAutoReconnect(true);
-
-    mqttClient.subscribe(MQTT_COLOR_TOPIC);
-    mqttClient.messageHander(mqttHandler);
 
     LOG("Waiting for wireless\n")
 

@@ -1,4 +1,4 @@
-// #define DEV
+#define DEV
 
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
@@ -36,7 +36,7 @@ void setup() {
 
     WiFi.hostname("ESP-apa");
     WiFi.mode(WIFI_STA);
-    WiFi.begin(NTP_SSID, NTP_PW);
+    WiFi.begin(WIFI_SSID, WIFI_PW);
     WiFi.setAutoReconnect(true);
 
     LOG("Waiting for wireless\n")
