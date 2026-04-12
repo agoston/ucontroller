@@ -140,3 +140,5 @@ binary_sensor:
         pullup: true
       inverted: true
     name: "Button"
+    on_press:
+      - script.execute: show_temp_script

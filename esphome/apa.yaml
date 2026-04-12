@@ -1,5 +1,5 @@
 esphome:
-  name: head
+  name: apa
 
 esp8266:
   board: d1_mini_lite
@@ -88,7 +88,7 @@ sun:
 time:
   - platform: sntp
     id: sntp_time
-    timezone: Europe/Amsterdam
+    timezone: Europe/Budapest
 
 # Smooth dimming based on sun elevation. 
 # ESPHome's TM1637 component uses an intensity scale from 0 to 7, exactly like the original C++ library.
@@ -140,3 +140,5 @@ binary_sensor:
         pullup: true
       inverted: true
     name: "Button"
+    on_press:
+      - script.execute: show_temp_script
