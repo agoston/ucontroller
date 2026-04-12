@@ -14,7 +14,7 @@ esphome:
 # https://esphome.io/components/esp8266
 esp8266:
   board: d1_mini_lite
-  # restore_from_flash: true
+  restore_from_flash: true
   early_pin_init: false
 
 ############################
@@ -32,8 +32,8 @@ esp8266:
 # A0 is clean (analog, but also works digital)
 
 
-#preferences:
-#  flash_write_interval: 5min
+preferences:
+  flash_write_interval: 5min
 
 # Enable logging
 logger:
@@ -41,10 +41,9 @@ logger:
 
 # Enable Home Assistant API
 api:
-  #password: !secret api.password
   encryption:
     key: !secret api.key
-  reboot_timeout: "0s"
+  reboot_timeout: 15min
 
 # saving on memory
 mdns:
@@ -73,4 +72,4 @@ switch:
       # inverted: true
     id: ketel_relay
     name: "Ketel block"
-    restore_mode: ALWAYS_OFF
+    restore_mode: RESTORE_DEFAULT_ON
