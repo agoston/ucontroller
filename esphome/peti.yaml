@@ -6,6 +6,21 @@ esp8266:
   restore_from_flash: true
   early_pin_init: false
 
+############################
+# d1_mini_lite has 1MB flash -- DO NOT ADD HEAVY FEATURES, there is little memory left, might OOMkill!
+# Disable OTA or encryption if further OOMKills occur.
+############################
+
+# PINOUT REFERENCE:
+# RX/TX: also usable as GPIO3/GPIO1. Used for flashing.
+# D0: clean
+# D1: I2C SCL pin (clean)
+# D2: I2C SDA pin (clean)
+# D3, D4: 12Kohm pullup
+# D5, D6, D7: clean (hardware SPI, normally unused)
+# D8: pulldown
+# A0: clean (analog, but also works digital)
+
 preferences:
   flash_write_interval: 5min
 
@@ -13,7 +28,7 @@ mdns:
   disabled: true
 
 logger:
-  baud_rate: 0
+  baud_rate: 0 # disable UART to save memory and free up RX/TX pins
 
 api:
   encryption:
@@ -46,6 +61,11 @@ time:
     id: sntp_time
     timezone: Europe/Budapest
 
+# Smooth dimming based on sun elevation. 
+# ESPHome's TM1637 component uses an intensity scale from 0 to 7, exactly like the original C++ library.
+# -10 degrees (full dark/night) -> intensity 0 (minimum brightness, but still on)
+# +10 degrees (full day) -> intensity 5 (~71% brightness, matching original code to avoid being overly bright)
+# In between (dawn/dusk) -> smooth interpolation
 display:
   - platform: tm1637
     id: tm1637_display
@@ -70,6 +90,8 @@ display:
         it.strftime("%H%M", time);
       }
 
+# D4 has an integrated 3.3V 12Kohm pullup on the d1 lite.
+# It is also physically connected to the builtin LED, so pressing the button completes the circuit and lights it up in hardware.
 binary_sensor:
   - platform: gpio
     pin:
@@ -81,14 +103,22 @@ binary_sensor:
     name: "Button"
 
 light:
+  # Uses the RX pin (hardwired). NeoPixelBus uses DMA to send data here.
+  # When enabled, you can't send serial to the ESP, only the ESP can send debug logs via TX.
+  # The 1m LED string on full power can draw 18W on 5V.
+  # To prevent drawing too much power from USB during development, we ensure it boots up OFF.
+  # DEV MODE: If you need to test over USB, temporarily change num_leds to 3.
   - platform: neopixelbus
     type: GRB
     variant: WS2812
     pin: RX
-    num_leds: 60
+    num_leds: 60 # DEV MODE: change to 3
     name: "LED String"
     id: led_string
+    restore_mode: DEFAULT_OFF
 
+# Infrared receiver (e.g. VS1838b). Data pin needs a pull-up, so D3 is perfect.
+# The lambda maps the cheap chinese 'magic lighting' NEC remote codes to LED actions.
 remote_receiver:
   pin: 
     number: D3
