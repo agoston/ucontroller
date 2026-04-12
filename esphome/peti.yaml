@@ -1,0 +1,159 @@
+esphome:
+  name: peti
+
+esp8266:
+  board: d1_mini_lite
+  restore_from_flash: true
+  early_pin_init: false
+
+preferences:
+  flash_write_interval: 5min
+
+mdns:
+  disabled: true
+
+logger:
+  baud_rate: 0
+
+api:
+  encryption:
+    key: !secret api.key
+  reboot_timeout: 15min
+
+ota:
+  - platform: esphome
+    password: !secret ota.password
+
+wifi:
+  ssid: !secret wifi.home.ssid
+  password: !secret wifi.home.password
+  domain: ""
+
+sensor:
+  - platform: wifi_signal
+    name: Signal strength
+  - platform: uptime
+    name: Uptime
+
+
+sun:
+  latitude: 47.46111654725821
+  longitude: 18.94606336461776
+  id: sun_sensor
+
+time:
+  - platform: sntp
+    id: sntp_time
+    timezone: Europe/Budapest
+
+display:
+  - platform: tm1637
+    id: tm1637_display
+    clk_pin: D5
+    dio_pin: D6
+    update_interval: 500ms
+    lambda: |-
+      float elev = id(sun_sensor).elevation();
+      if (!std::isnan(elev)) {
+        int brightness = 5;
+        if (elev < -10.0f) {
+          brightness = 0;
+        } else if (elev > 10.0f) {
+          brightness = 5;
+        } else {
+          brightness = (int)(((elev + 10.0f) / 20.0f) * 5.0f);
+        }
+        id(tm1637_display).set_intensity(brightness);
+      }
+      auto time = id(sntp_time).now();
+      if (time.is_valid()) {
+        it.strftime("%H%M", time);
+      }
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: D4
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+    name: "Button"
+
+light:
+  - platform: neopixelbus
+    type: GRB
+    variant: WS2812
+    pin: RX
+    num_leds: 60
+    name: "LED String"
+    id: led_string
+
+remote_receiver:
+  pin: 
+    number: D3
+    mode:
+      input: true
+      pullup: true
+  dump: all
+  on_nec:
+    then:
+      - lambda: |-
+          auto call = id(led_string).turn_on();
+          switch(x.command) {
+            case 7: // ON
+              call.perform();
+              break;
+            case 6: // OFF
+              id(led_string).turn_off().perform();
+              break;
+            case 5: { // DIM_UP
+              float b = id(led_string).remote_values.get_brightness();
+              call.set_brightness_if_supported(std::min(1.0f, b + 16/255.0f));
+              call.perform();
+              break;
+            }
+            case 4: { // DIM_DOWN
+              float b = id(led_string).remote_values.get_brightness();
+              call.set_brightness_if_supported(std::max(0.0f, b - 16/255.0f));
+              call.perform();
+              break;
+            }
+            case 9: call.set_rgb(1.0f, 0.0f, 0.0f); call.perform(); break; // RED
+            case 8: call.set_rgb(0.0f, 1.0f, 0.0f); call.perform(); break; // GREEN
+            case 10: call.set_rgb(0.0f, 0.0f, 1.0f); call.perform(); break; // BLUE
+            case 11: call.set_rgb(1.0f, 1.0f, 1.0f); call.perform(); break; // WHITE
+            case 13: call.set_rgb(1.0f, 69/255.0f, 0.0f); call.perform(); break; // RED_ORANGE
+            case 12: call.set_rgb(170/255.0f, 240/255.0f, 209/255.0f); call.perform(); break; // GREEN_SEAGREEN
+            case 14: call.set_rgb(106/255.0f, 90/255.0f, 205/255.0f); call.perform(); break; // BLUE_PURPLE
+            case 21: call.set_rgb(1.0f, 150/255.0f, 0.0f); call.perform(); break; // ORANGE
+            case 20: call.set_rgb(127/255.0f, 1.0f, 212/255.0f); call.perform(); break; // SEAGREEN
+            case 22: call.set_rgb(1.0f, 0.0f, 1.0f); call.perform(); break; // PURPLE
+            case 25: call.set_rgb(1.0f, 191/255.0f, 0.0f); call.perform(); break; // ORANGE_YELLOW
+            case 24: call.set_rgb(64/255.0f, 224/255.0f, 208/255.0f); call.perform(); break; // SEAGREEN_CYAN
+            case 26: call.set_rgb(223/255.0f, 115/255.0f, 1.0f); call.perform(); break; // PURPLE_PINK
+            case 17: call.set_rgb(1.0f, 1.0f, 0.0f); call.perform(); break; // YELLOW
+            case 16: call.set_rgb(0.0f, 1.0f, 1.0f); call.perform(); break; // CYAN
+            case 18: call.set_rgb(1.0f, 105/255.0f, 180/255.0f); call.perform(); break; // PINK
+            case 15: { // FLASH
+              float r = id(led_string).remote_values.get_red();
+              call.set_red(std::min(1.0f, r + 8/255.0f));
+              call.perform();
+              break;
+            }
+            case 23: { // STROBE
+              float g = id(led_string).remote_values.get_green();
+              call.set_green(std::min(1.0f, g + 8/255.0f));
+              call.perform();
+              break;
+            }
+            case 27: { // FADE
+              float b = id(led_string).remote_values.get_blue();
+              call.set_blue(std::min(1.0f, b + 8/255.0f));
+              call.perform();
+              break;
+            }
+            case 19: // SMOOTH
+              id(led_string).turn_off().perform();
+              break;
+          }

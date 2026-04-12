@@ -1,0 +1,117 @@
+esphome:
+  name: head
+
+esp8266:
+  board: d1_mini_lite
+  restore_from_flash: true
+  early_pin_init: false
+
+preferences:
+  flash_write_interval: 5min
+
+mdns:
+  disabled: true
+
+logger:
+  baud_rate: 0
+
+api:
+  encryption:
+    key: !secret api.key
+  reboot_timeout: 15min
+
+ota:
+  - platform: esphome
+    password: !secret ota.password
+
+wifi:
+  ssid: !secret wifi.home.ssid
+  password: !secret wifi.home.password
+  domain: ""
+
+sensor:
+  - platform: wifi_signal
+    name: Signal strength
+  - platform: uptime
+    name: Uptime
+  - platform: dallas_temp
+    address: 0x0000000000000000
+    name: "Temperature"
+    id: temp_sensor
+
+one_wire:
+  - platform: gpio
+    pin: D3
+
+
+globals:
+  - id: show_temp
+    type: bool
+    initial_value: 'false'
+
+script:
+  - id: show_temp_script
+    mode: restart
+    then:
+      - globals.set:
+          id: show_temp
+          value: 'true'
+      - delay: 2s
+      - globals.set:
+          id: show_temp
+          value: 'false'
+
+
+sun:
+  latitude: 47.46111654725821
+  longitude: 18.94606336461776
+  id: sun_sensor
+
+time:
+  - platform: sntp
+    id: sntp_time
+    timezone: Europe/Amsterdam
+
+display:
+  - platform: tm1637
+    id: tm1637_display
+    clk_pin: D1
+    dio_pin: D2
+    update_interval: 500ms
+    lambda: |-
+      float elev = id(sun_sensor).elevation();
+      if (!std::isnan(elev)) {
+        int brightness = 5;
+        if (elev < -10.0f) {
+          brightness = 0;
+        } else if (elev > 10.0f) {
+          brightness = 5;
+        } else {
+          brightness = (int)(((elev + 10.0f) / 20.0f) * 5.0f);
+        }
+        id(tm1637_display).set_intensity(brightness);
+      }
+      if (id(show_temp)) {
+        if (id(temp_sensor).has_state()) {
+          it.printf("%.1f", id(temp_sensor).state);
+        } else {
+          it.print("----");
+        }
+      } else {
+        auto time = id(sntp_time).now();
+        if (time.is_valid()) {
+          it.strftime("%H%M", time);
+        } else {
+          it.print("----");
+        }
+      }
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: D4
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+    name: "Button"
