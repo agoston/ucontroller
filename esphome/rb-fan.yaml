@@ -48,6 +48,8 @@ sensor:
         pullup: true
     name: "Fan RPM"
     id: fan_rpm
+    filters:
+      - multiply: 0.5
     unit_of_measurement: 'RPM'
     update_interval: 2s
 
