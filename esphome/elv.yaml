@@ -15,7 +15,7 @@ mdns:
 
 # Enable logging
 logger:
-  # baud_rate: 0 # disable UART
+  baud_rate: 0 # disable UART
 
 # Enable Home Assistant API
 api:
