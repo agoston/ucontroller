@@ -83,24 +83,12 @@ display:
         } else {
           brightness = (int)(((elev + 10.0f) / 20.0f) * 5.0f);
         }
-        id(tm1637_display).set_intensity(brightness);
+        it.set_intensity(brightness);
       }
       auto time = id(sntp_time).now();
       if (time.is_valid()) {
-        it.strftime("%H%M", time);
+        it.strftime("%H:%M", time);
       }
-
-# D4 has an integrated 3.3V 12Kohm pullup on the d1 lite.
-# It is also physically connected to the builtin LED, so pressing the button completes the circuit and lights it up in hardware.
-binary_sensor:
-  - platform: gpio
-    pin:
-      number: D4
-      mode:
-        input: true
-        pullup: true
-      inverted: true
-    name: "Button"
 
 light:
   # Uses the RX pin (hardwired). NeoPixelBus uses DMA to send data here.
@@ -126,7 +114,7 @@ remote_receiver:
     mode:
       input: true
       pullup: true
-  dump: all
+  # dump: all
   on_nec:
     then:
       - lambda: |-
