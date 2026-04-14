@@ -115,13 +115,14 @@ light:
     num_leds: 60 # DEV MODE: change to 3
     name: "LED String"
     id: led_string
-    restore_mode: DEFAULT_OFF
+    restore_mode: RESTORE_DEFAULT_OFF
 
 # Infrared receiver (e.g. VS1838b). Data pin needs a pull-up, so D3 is perfect.
 # The lambda maps the cheap chinese 'magic lighting' NEC remote codes to LED actions.
 remote_receiver:
   pin: 
     number: D3
+    inverted: true
     mode:
       input: true
       pullup: true
@@ -130,7 +131,7 @@ remote_receiver:
     then:
       - lambda: |-
           auto call = id(led_string).turn_on();
-          switch(x.command) {
+          switch(x.command & 0xFF) {
             case 7: // ON
               call.perform();
               break;
