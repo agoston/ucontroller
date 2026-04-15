@@ -87,7 +87,7 @@ display:
       }
       auto time = id(sntp_time).now();
       if (time.is_valid()) {
-        it.strftime("%H:%M", time);
+        it.strftime("%H%M", time);
       }
 
 light:
@@ -119,6 +119,7 @@ remote_receiver:
     then:
       - lambda: |-
           auto call = id(led_string).turn_on();
+          // esphome sends the full 16 bit signal, where the high_byte = !low_byte
           switch(x.command & 0xFF) {
             case 7: // ON
               call.perform();
