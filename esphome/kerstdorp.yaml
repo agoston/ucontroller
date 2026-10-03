@@ -18,12 +18,6 @@
 esphome:
   name: kerstdorp
 
-preferences:
-  flash_write_interval: 15min
-
-mdns:
-  disabled: true
-
 esp32:
   board: lolin_s2_mini
   cpu_frequency: "240MHz"
@@ -39,6 +33,12 @@ esp32:
 psram:
   mode: quad
   speed: 80MHz
+
+preferences:
+  flash_write_interval: 15min
+
+mdns:
+  disabled: true
 
 # Enable logging
 logger:

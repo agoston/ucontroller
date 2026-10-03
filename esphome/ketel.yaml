@@ -31,7 +31,6 @@ esp8266:
 # D8 is pulldown
 # A0 is clean (analog, but also works digital)
 
-
 preferences:
   flash_write_interval: 5min
 
@@ -45,18 +44,31 @@ api:
     key: !secret api.key
   reboot_timeout: 15min
 
+  # wifi connection is crap. re-sync on re-connect
+  on_client_connected:
+    then:
+      - homeassistant.service:
+          service: homeassistant.update_entity
+          data:
+            entity_id: switch.ketel_relay
+
 # saving on memory
 mdns:
   disabled: true
 
 ota:
   - platform: esphome
-    password: !secret ota.password
+    encryption:   # use api encryption
+    # password: !secret ota.password
 
 wifi:
   ssid: !secret wifi.home.ssid
   password: !secret wifi.home.password
   domain: ""
+  
+  # really weak wifi signal
+  #power_save_mode: none
+  #output_power: 20.5dB
 
 sensor:
   - platform: wifi_signal
@@ -67,7 +79,7 @@ sensor:
 
 switch:
   - platform: gpio
-    pin: 
+    pin:
       number: D7
       # inverted: true
     id: ketel_relay

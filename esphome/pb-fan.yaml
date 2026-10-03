@@ -1,0 +1,77 @@
+esphome:
+  name: pb-fan
+
+# "tenstar robot esp32-c3 super mini"
+# Dirty pins:
+# GPIO8: Hardwired to the onboard blue LED
+# GPIO9: Hardwired to the physical BOOT button
+# GPIO2: Bootloader strapping pin
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: esp-idf
+
+preferences:
+  flash_write_interval: 15min
+
+# saving on memory
+mdns:
+  disabled: true
+
+# Enable logging
+logger:
+  baud_rate: 0 # disable UART
+
+# Enable Home Assistant API
+api:
+  #password: !secret api.password
+  encryption:
+    key: !secret api.key
+
+ota:
+  - platform: esphome
+    password: !secret ota.password
+
+wifi:
+  ssid: !secret wifi.home.ssid
+  password: !secret wifi.home.password
+  domain: ""
+
+sensor:
+  - platform: internal_temperature
+    name: "ESP Temperature"
+
+  - platform: wifi_signal
+    name: Signal strength
+
+  - platform: uptime
+    name: Uptime
+
+  - platform: pulse_counter
+    pin:
+      number: GPIO07
+      # inverted: true
+      mode:
+        input: true
+        pullup: true
+    name: "Fan RPM"
+    id: fan_rpm
+    filters:
+      - multiply: 0.5
+    unit_of_measurement: 'RPM'
+    update_interval: 2s
+
+output:
+  - platform: ledc
+    id: fan_pwm
+    pin: GPIO06
+    frequency: "10000 Hz"
+    # min_power: 0%
+    # max_power: 100%
+
+fan:
+  - platform: speed
+    output: fan_pwm
+    name: "Fan speed"
+    id: robi_fan
+    restore_mode: RESTORE_DEFAULT_ON
