@@ -50,7 +50,6 @@ sensor:
   - platform: uptime
     name: Uptime
 
-
 sun:
   latitude: 47.46111654725821
   longitude: 18.94606336461776

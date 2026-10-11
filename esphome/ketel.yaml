@@ -75,6 +75,9 @@ sensor:
 # all this because normal HA drops events that happened while esphome had broken connection
 # and where `ketel` is, there is plenty of broken connection
 switch:
+  - platform: restart
+    name: "Restart"
+
   - platform: gpio
     pin:
       number: D7
